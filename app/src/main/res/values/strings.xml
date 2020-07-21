@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">SaveMe</string>
+    <!-- Facebook application ID and custom URL scheme (app ID prefixed by 'fb'). -->
+    <string name="facebook_application_id" translatable="false">320315309105962</string>
+    <string name="facebook_login_protocol_scheme" translatable="false">fb320315309105962</string>
+    <string name="facebook_app_id">320315309105962</string>
+    <string name="fb_login_protocol_scheme">fb320315309105962</string>
+
+    <!-- Twitter consumer key and secret -->
+    <string name="twitter_consumer_key" translatable="false">YOUR_CONSUMER_KEY</string>
+    <string name="twitter_consumer_secret" translatable="false">YOUR_CONSUMER_SECRET</string>
 </resources>
