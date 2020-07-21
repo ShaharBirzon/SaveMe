@@ -9,6 +9,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 
 public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -29,12 +31,16 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-
+        Category catItem = categories.get(position);
+        CategoryItemHolder catHolder = ((CategoryItemHolder) holder);
+        // Picasso.get().load(catItem.image).into(catHolder.image); todo check
+        catHolder.title.setText(catItem.title);
+        catHolder.desc.setText(catItem.description);
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return categories.size();
     }
 }
 

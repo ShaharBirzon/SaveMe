@@ -5,8 +5,13 @@ import android.graphics.drawable.Drawable;
 import java.util.ArrayList;
 
 public class Category {
-    private String title;
-    private String description;
-    private Drawable image;
-    private ArrayList<Document> docsList;
+    public String title;
+    public String description;
+    public Drawable image;
+    public ArrayList<Document> docsList;
+
+    public Category(String title, String desc){
+        this.title = title;
+        this.description = desc;
+    }
 }
