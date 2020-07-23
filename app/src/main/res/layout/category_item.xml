@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/card"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <!-- Media -->
             <ImageView
                 android:id="@+id/category_img"
-                android:layout_width="match_parent"
+                android:layout_width="194dp"
                 android:layout_height="194dp"
                 android:src="@drawable/car_icon"
                 android:scaleType="centerCrop"
@@ -46,31 +46,30 @@
                     android:textAppearance="?attr/textAppearanceBody2"
                     android:textColor="?android:attr/textColorSecondary"
                     />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="bla bla"
-                    android:textAppearance="?attr/textAppearanceBody2"
-                    android:textColor="?android:attr/textColorSecondary"
-                    />
 
             </LinearLayout>
 
             <!-- Buttons -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:orientation="horizontal">
-                <com.google.android.material.button.MaterialButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:text="delete"
-                    style="?attr/borderlessButtonStyle"
-                    />
-            </LinearLayout>
+<!--            <LinearLayout-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_margin="8dp"-->
+<!--                android:orientation="horizontal">-->
+<!--                <com.google.android.material.button.MaterialButton-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginEnd="8dp"-->
+<!--                    android:text="edit"-->
+<!--                    style="?attr/borderlessButtonStyle"-->
+<!--                    />-->
+
+<!--                <com.google.android.material.button.MaterialButton-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="delete"-->
+<!--                    style="?attr/borderlessButtonStyle"-->
+<!--                    />-->
+<!--            </LinearLayout>-->
 
         </LinearLayout>
 
