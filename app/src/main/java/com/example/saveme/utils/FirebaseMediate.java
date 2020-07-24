@@ -8,10 +8,9 @@ import androidx.annotation.Nullable;
 
 import com.example.saveme.Category;
 import com.example.saveme.User;
-import com.google.android.gms.tasks.OnCompleteListener;
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -20,15 +19,13 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.List;
+
 
 
 public class FirebaseMediate {
-    private static List<Category> categories = new ArrayList<Category>();
+    private static ArrayList<Category> categories = new ArrayList<Category>();
     private static final String TAG = "FirebaseMediate";
     private static FirebaseFirestore db;
     private static DocumentReference userDocumentRef;
@@ -45,12 +42,12 @@ public class FirebaseMediate {
         String userDocumentPath = MyPreferences.getUserDocumentPathFromPreferences(appContext);
         if (userDocumentPath != null) {
             userDocumentRef = db.document(userDocumentPath);
-            initializeUserCollectionRefFromDB();
+            initializeUserDocumentSnapshotFromDB();
             categoriesRef = userDocumentRef.collection("categories");
         }
     }
 
-    public static void initializeUserCollectionRefFromDB() {
+    public static void initializeUserDocumentSnapshotFromDB() {
         userDocumentRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -60,19 +57,18 @@ public class FirebaseMediate {
         Log.d(TAG, "successful setUserCollectionRef from db");
     }
 
-    public static List<Category> getUserCategories() {
+    public static ArrayList<Category> getUserCategories() {
         Log.d(TAG, "got to getUserCategories");
         User user = userDocumentSnapshot.toObject(User.class);
         categories = user.getCategories();
         return categories;
     }
 
-    public static List<Category> addUserToFirestoreDB() {
-        // Create a new user with a first and last name
-        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        List<Category> categories = new ArrayList<>();
-        categories = getDefaultCategories();
-        User user = new User(categories);
+    public static ArrayList<Category> addUserToFirestoreDB() {
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();//todo use
+        ArrayList<Category> defaultCategories;
+        defaultCategories = getDefaultCategories();
+        User user = new User(defaultCategories);
 
         // Add a new document with a generated ID
         usersCollectionRef.add(user)
@@ -93,8 +89,8 @@ public class FirebaseMediate {
         return categories;
     }
 
-    private static List<Category> getDefaultCategories() {
-        List<Category> defaultCategories = new ArrayList<>();
+    private static ArrayList<Category> getDefaultCategories() {
+        ArrayList<Category> defaultCategories = new ArrayList<>();
         defaultCategories.add(new Category("Car", "car category"));
         defaultCategories.add(new Category("Bank", "bank category"));
         defaultCategories.add(new Category("Personal", "personal category"));
