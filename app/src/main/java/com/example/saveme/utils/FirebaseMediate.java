@@ -85,7 +85,7 @@ public class FirebaseMediate {
                         Log.w(TAG, "Error adding document", e);
                     }
                 });
-        return categories;
+        return defaultCategories;
     }
 
     private static ArrayList<Category> getDefaultCategories() {
