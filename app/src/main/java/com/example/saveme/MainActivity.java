@@ -7,6 +7,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 
+import com.example.saveme.utils.FirebaseMediate;
+import com.example.saveme.utils.MyPreferences;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -17,12 +20,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        categoryList = new ArrayList<>();
+        if(MyPreferences.isFirstTime(getApplicationContext())){
+            categoryList = FirebaseMediate.addUserToFirestoreDB();
+        }
+        else {
+            categoryList = FirebaseMediate.getUserCategories();
+        }
+
         recyclerView = findViewById(R.id.category_recycler);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-        categoryList.add(new Category("Car", "car category"));
-        categoryList.add(new Category("Bank", "bank category"));
-        categoryList.add(new Category("Personal", "personal category"));
 
         recyclerView.setAdapter(new CategoryAdapter(categoryList));
     }

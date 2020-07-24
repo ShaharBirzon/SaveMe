@@ -10,6 +10,9 @@ public class Category {
     public Drawable image;
     public ArrayList<Document> docsList;
 
+    public Category(){
+    }
+
     public Category(String title, String desc){
         this.title = title;
         this.description = desc;
