@@ -56,6 +56,10 @@ public class FirebaseMediate {
         Log.d(TAG, "successful setUserCollectionRef from db");
     }
 
+    /**
+     * This method is a getter  for user categories list.
+     * @return user categories list.
+     */
     public static ArrayList<Category> getUserCategories() {
         Log.d(TAG, "got to getUserCategories");
         User user = userDocumentSnapshot.toObject(User.class);
@@ -63,14 +67,15 @@ public class FirebaseMediate {
         return categories;
     }
 
-    public static ArrayList<Category> addUserToFirestoreDB() {
+    /**
+     * This method adds a user to firestore database. called only once, when sign up.
+     * @param userToAdd the user to add.
+     */
+    public static void addUserToFirestoreDB(User userToAdd) {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();//todo use
-        ArrayList<Category> defaultCategories;
-        defaultCategories = getDefaultCategories();
-        User user = new User(defaultCategories);
 
-        // Add a new document with a generated ID
-        usersCollectionRef.add(user)
+        // Add a new User document with a generated ID
+        usersCollectionRef.add(userToAdd)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
@@ -85,10 +90,13 @@ public class FirebaseMediate {
                         Log.w(TAG, "Error adding document", e);
                     }
                 });
-        return defaultCategories;
     }
 
-    private static ArrayList<Category> getDefaultCategories() {
+    /**
+     * This method returns the default categories list.
+     * @return default categories list.
+     */
+    public static ArrayList<Category> getDefaultCategories() {
         ArrayList<Category> defaultCategories = new ArrayList<>();
         defaultCategories.add(new Category("Car", "car category"));
         defaultCategories.add(new Category("Bank", "bank category"));
