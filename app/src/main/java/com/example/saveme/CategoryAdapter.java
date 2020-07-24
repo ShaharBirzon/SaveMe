@@ -12,13 +12,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<Category> categories;
+    private ArrayList<Category> categories;
 
-    CategoryAdapter(List<Category> items) {
+    CategoryAdapter(ArrayList<Category> items) {
         categories = items;
     }
 
