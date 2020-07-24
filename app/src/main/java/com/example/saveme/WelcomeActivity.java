@@ -8,32 +8,29 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 
-import com.facebook.AccessToken;
+import com.example.saveme.utils.FirebaseMediate;
+import com.example.saveme.utils.MyPreferences;
 import com.facebook.FacebookSdk;
-import com.facebook.login.LoginManager;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-
-import com.facebook.FacebookSdk;
-import com.facebook.appevents.AppEventsLogger;
-
 
 import java.util.Arrays;
 import java.util.List;
 
+
 public class WelcomeActivity extends AppCompatActivity {
     private static final int SPLASH_TIME_OUT = 5000;
     private static final int RC_SIGN_IN = 123;
+    private static final String TAG = "WelcomeActivity";
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(this);
+        FirebaseMediate.initializeDataFromDB(getApplicationContext());
 
         //todo maybe use for facebook login
 //        AccessToken accessToken = AccessToken.getCurrentAccessToken();
@@ -46,26 +43,34 @@ public class WelcomeActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                // Choose authentication providers
-                List<AuthUI.IdpConfig> providers = Arrays.asList(
-                        new AuthUI.IdpConfig.EmailBuilder().build(),
-                        new AuthUI.IdpConfig.GoogleBuilder().build(),
-                        new AuthUI.IdpConfig.FacebookBuilder().build(),
-                        new AuthUI.IdpConfig.TwitterBuilder().build());
-
-                // Create and launch sign-in intent
-                startActivityForResult(
-                        AuthUI.getInstance()
-                                .createSignInIntentBuilder()
-                                .setAvailableProviders(providers)
-                                .build(),
-                        RC_SIGN_IN);
-
-//                Intent mainIntent = new Intent(WelcomeActivity.this, MainActivity.class);
-//                startActivity(mainIntent);
-
+                if (MyPreferences.isFirstTime(getApplicationContext())) {
+                    callSignUpActivity();
+                } else {
+                    Intent mainIntent = new Intent(WelcomeActivity.this, MainActivity.class);
+                    startActivity(mainIntent);
+                    finish();
+                }
             }
         }, SPLASH_TIME_OUT);
+    }
+
+
+    private void callSignUpActivity() {
+        // Choose authentication providers
+        List<AuthUI.IdpConfig> providers = Arrays.asList(
+                new AuthUI.IdpConfig.EmailBuilder().build(),
+                new AuthUI.IdpConfig.GoogleBuilder().build(),
+                new AuthUI.IdpConfig.FacebookBuilder().build(),
+                new AuthUI.IdpConfig.TwitterBuilder().build());
+
+        // Create and launch sign-in intent
+        startActivityForResult(
+                AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setAvailableProviders(providers)
+                        .setIsSmartLockEnabled(false)//todo delete?
+                        .build(),
+                RC_SIGN_IN);
     }
 
     // [START auth_fui_result]
@@ -78,9 +83,8 @@ public class WelcomeActivity extends AppCompatActivity {
 
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-                Log.d("MainActivity", "Sign in successfully");
+                Log.d(TAG, "Sign in successfully");
                 Intent mainIntent = new Intent(WelcomeActivity.this, MainActivity.class);
                 startActivity(mainIntent);
                 finish();
@@ -89,10 +93,12 @@ public class WelcomeActivity extends AppCompatActivity {
                 // Sign in failed. If response is null the user canceled the
                 // sign-in flow using the back button. Otherwise check
                 // response.getError().getErrorCode() and handle the error.
-                Log.e("MainActivity", "Sign in failed");
+                Log.e(TAG, "Sign in failed");
             }
         }
     }
+
+
     // [END auth_fui_result]
 
     public void signOut() {//todo is in right place

@@ -7,4 +7,5 @@ public class Document {
     private String comment;
     private Date expirationDate;
     // todo add attr for images
+    public Document(){}
 }
