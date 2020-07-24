@@ -9,8 +9,10 @@ import androidx.annotation.Nullable;
 import com.example.saveme.Category;
 import com.example.saveme.User;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -76,19 +78,39 @@ public class FirebaseMediate {
     }
 
     /**
-     * This method adds a category
-     * @param category
+     * This method adds a category to user categories list.
+     * @param category category to add.
      */
-    public static void addCategory(Category category){
-        userDocumentRef.update("categories", FieldValue.arrayUnion(category));
+    public static void addCategory(final Category category){
+        userDocumentRef.update("categories", FieldValue.arrayUnion(category)).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    Log.d(TAG, "add category %s successfully" + category.title);
+                }
+                else {
+                    Log.e(TAG, "error occurred while trying to add category %s " + category.title);
+                }
+            }
+        });
     }
 
     /**
      * This method removes a category from user categories list.
      * @param category to be removed from user categories list.
      */
-    public static void removeCategory(Category category){
-        userDocumentRef.update("categories", FieldValue.arrayRemove(category));
+    public static void removeCategory(final Category category){
+        userDocumentRef.update("categories", FieldValue.arrayRemove(category)).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    Log.d(TAG, "remove category %s successfully" + category.title);
+                }
+                else {
+                    Log.e(TAG, "error occurred while trying to remove category %s " + category.title);
+                }
+            }
+        });
     }
 
     /**
