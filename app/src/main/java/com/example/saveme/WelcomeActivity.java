@@ -16,7 +16,6 @@ import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,7 +24,6 @@ public class WelcomeActivity extends AppCompatActivity {
     private static final int SPLASH_TIME_OUT = 5000;
     private static final int RC_SIGN_IN = 123;
     private static final String TAG = "WelcomeActivity";
-
 
 
     @Override
@@ -55,7 +53,6 @@ public class WelcomeActivity extends AppCompatActivity {
             }
         }, SPLASH_TIME_OUT);
     }
-
 
 
     private void callSignUpActivity() {
@@ -100,7 +97,6 @@ public class WelcomeActivity extends AppCompatActivity {
             }
         }
     }
-
 
 
     // [END auth_fui_result]

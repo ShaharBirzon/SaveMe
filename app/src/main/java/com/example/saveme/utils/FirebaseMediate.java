@@ -23,7 +23,6 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import java.util.ArrayList;
 
 
-
 public class FirebaseMediate {
     private static ArrayList<Category> categories = new ArrayList<Category>();
     private static final String TAG = "FirebaseMediate";
