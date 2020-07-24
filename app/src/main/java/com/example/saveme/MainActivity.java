@@ -2,7 +2,6 @@ package com.example.saveme;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
@@ -10,12 +9,12 @@ import android.os.Bundle;
 import com.example.saveme.utils.FirebaseMediate;
 import com.example.saveme.utils.MyPreferences;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
-    private ArrayList<Category> categoryList;
+    private List<Category> categoryList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
