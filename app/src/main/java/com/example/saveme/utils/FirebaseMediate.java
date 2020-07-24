@@ -17,6 +17,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 
@@ -33,6 +34,10 @@ public class FirebaseMediate {
     private static CollectionReference categoriesRef;
     private static DocumentSnapshot userDocumentSnapshot;
 
+    /**
+     * This method initializes the firestore fields from data from the database.
+     * @param context
+     */
     public static void initializeDataFromDB(Context context) {
         appContext = context;
         db = FirebaseFirestore.getInstance();
@@ -46,6 +51,9 @@ public class FirebaseMediate {
         }
     }
 
+    /**
+     * This method initializes the userDocumentSnapshot.
+     */
     public static void initializeUserDocumentSnapshotFromDB() {
         userDocumentRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
@@ -65,6 +73,22 @@ public class FirebaseMediate {
         User user = userDocumentSnapshot.toObject(User.class);
         categories = user.getCategories();
         return categories;
+    }
+
+    /**
+     * This method adds a category
+     * @param category
+     */
+    public static void addCategory(Category category){
+        userDocumentRef.update("categories", FieldValue.arrayUnion(category));
+    }
+
+    /**
+     * This method removes a category from user categories list.
+     * @param category to be removed from user categories list.
+     */
+    public static void removeCategory(Category category){
+        userDocumentRef.update("categories", FieldValue.arrayRemove(category));
     }
 
     /**
