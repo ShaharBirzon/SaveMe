@@ -2,15 +2,12 @@ package com.example.saveme;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
-
-import com.example.saveme.utils.FirebaseMediate;
 
 import java.util.ArrayList;
 
@@ -25,15 +22,14 @@ public class DocumentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_document);
 
-        // todo set adapter and recyclerView
         // initializes the recycler view and the adapter
         initializeRecyclerView();
 
         // when a document is clicked
-        onDocumentClicked();
+        initializeDocumentClickListener();
 
         // when a document is long clicked
-        onDocumentLongClicked();
+        initializeDocumentLongClickListener();
     }
 
     /*
@@ -52,7 +48,7 @@ public class DocumentActivity extends AppCompatActivity {
     /*
     when a document is clicked
     */
-    private void onDocumentClicked() {
+    private void initializeDocumentClickListener() {
         // click listener - to go inside a document
         documentAdapter.setDocumentClickListener(new DocumentClickListener() {
             @Override
@@ -64,11 +60,10 @@ public class DocumentActivity extends AppCompatActivity {
         });
     }
 
-
     /*
     when a document is long clicked - can delete it
     */
-    private void onDocumentLongClicked() {
+    private void initializeDocumentLongClickListener() {
         // builder for the delete dialog of long click
         final AlertDialog.Builder deleteAlertBuilder = new AlertDialog.Builder(this);
 
