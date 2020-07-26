@@ -8,13 +8,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import com.example.saveme.utils.FirebaseMediate;
 import com.example.saveme.utils.MyPreferences;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AddCategoryDialog.OnInputListener {
 
     private RecyclerView recyclerView;
     private ArrayList<Category> categoryList;
@@ -105,4 +106,22 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    public void onClickAddCategoryButton(View view) {
+        AddCategoryDialog addCategoryDialog = new AddCategoryDialog();
+        addCategoryDialog.show(getSupportFragmentManager(), "AddCategoryDialogFragment");
+    }
+
+    @Override
+    public void sendInput(String title, String description) {
+        Category category = new Category(title, description);
+        addNewCategory(category);
+    }
+
+    private void addNewCategory(Category category) {
+        categoryList.add(category);
+        FirebaseMediate.addCategory(category);
+        categoryAdapter.notifyItemInserted(categoryList.size()-1);
+    }
+
 }
