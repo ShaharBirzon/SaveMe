@@ -86,10 +86,10 @@ public class FirebaseMediate {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
-                    Log.d(TAG, "add category %s successfully" + category.title);
+                    Log.d(TAG, "add category %s successfully" + category.getTitle());
                 }
                 else {
-                    Log.e(TAG, "error occurred while trying to add category %s " + category.title);
+                    Log.e(TAG, "error occurred while trying to add category %s " + category.getTitle());
                 }
             }
         });
@@ -104,10 +104,10 @@ public class FirebaseMediate {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
-                    Log.d(TAG, "remove category %s successfully" + category.title);
+                    Log.d(TAG, "remove category %s successfully" + category.getTitle());
                 }
                 else {
-                    Log.e(TAG, "error occurred while trying to remove category %s " + category.title);
+                    Log.e(TAG, "error occurred while trying to remove category %s " + category.getTitle());
                 }
             }
         });

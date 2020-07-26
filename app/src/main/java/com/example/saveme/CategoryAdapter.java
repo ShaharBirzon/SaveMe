@@ -37,8 +37,8 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         Category catItem = categories.get(position);
         CategoryItemHolder catHolder = ((CategoryItemHolder) holder);
         // Picasso.get().load(catItem.image).into(catHolder.image); todo check
-        catHolder.title.setText(catItem.title);
-        catHolder.desc.setText(catItem.description);
+        catHolder.title.setText(catItem.getTitle());
+        catHolder.desc.setText(catItem.getDescription());
 
         // set click listener
         holder.itemView.setOnClickListener(new View.OnClickListener() {

@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -63,7 +64,10 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
             public void onCategoryClicked(int position) {
                 Log.d("category clicked", "category was clicked");
                 Category category = categoryList.get(position); //todo check how to get current category like this or from adapter?
-                //todo move to the category activity
+                String categoryTitle = category.getTitle();
+                Intent intent = new Intent(MainActivity.this, CategoryActivity.class);
+                intent.putExtra("category title",categoryTitle);
+                startActivity(intent);
             }
         });
     }

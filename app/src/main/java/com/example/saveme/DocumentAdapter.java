@@ -12,7 +12,6 @@ public class DocumentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private ArrayList<Document> documents;
 
-    //todo add listeners
     private DocumentClickListener documentClickListener;
     private DocumentLongClickListener documentLongClickListener;
 

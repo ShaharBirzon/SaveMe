@@ -6,12 +6,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
 import java.util.ArrayList;
 
-public class DocumentActivity extends AppCompatActivity {
+public class CategoryActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private ArrayList<Document> documentList;
@@ -21,6 +22,12 @@ public class DocumentActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_document);
+
+        //get the document list of the category
+        Intent intent = getIntent();
+        String categoryTitle = intent.getStringExtra("category title");
+        // todo show the category's list of documents
+        Log.d("inside category ", categoryTitle);
 
         // initializes the recycler view and the adapter
         initializeRecyclerView();
@@ -41,6 +48,9 @@ public class DocumentActivity extends AppCompatActivity {
         // todo check which layout
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
+
+        //todo take document list from firebase
+        documentList = new ArrayList<>();
         documentAdapter = new DocumentAdapter(documentList);
         recyclerView.setAdapter(documentAdapter);
     }
