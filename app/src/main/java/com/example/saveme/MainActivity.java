@@ -39,10 +39,10 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
         initializeRecyclerView();
 
         // when a category is clicked
-        onCategoryClicked();
+        initializeCategoryClickListener();
 
         // when a category is long clicked
-        onCategoryLongClicked();
+        initializeCategoryLongClickListener();
     }
 
     private void initializeRecyclerView() {
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
     /*
     when a category is clicked
     */
-    private void onCategoryClicked() {
+    private void initializeCategoryClickListener() {
         // click listener - to go inside a category
         categoryAdapter.setCategoryClickListener(new CategoryClickListener() {
             @Override
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
     /*
     when a category is long clicked
      */
-    private void onCategoryLongClicked() {
+    private void initializeCategoryLongClickListener() {
         // builder for the delete dialog of long click
         final AlertDialog.Builder deleteAlertBuilder = new AlertDialog.Builder(this);
 
