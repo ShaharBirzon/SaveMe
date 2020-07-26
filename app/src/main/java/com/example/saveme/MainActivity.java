@@ -14,7 +14,6 @@ import com.example.saveme.utils.FirebaseMediate;
 import com.example.saveme.utils.MyPreferences;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -70,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         categoryAdapter.deleteCategory(category_to_delete);
+                        FirebaseMediate.removeCategory(category_to_delete);
                         categoryAdapter.notifyDataSetChanged();
                         dialog.cancel();
                     }
