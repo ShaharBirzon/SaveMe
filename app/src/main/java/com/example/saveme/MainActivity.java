@@ -1,11 +1,13 @@
 package com.example.saveme;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -63,14 +65,23 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
             public void onCategoryClicked(int position) {
                 Log.d("category clicked", "category was clicked");
                 Category category = categoryList.get(position); //todo check how to get current category like this or from adapter?
-                //todo move to the category activity
+                Intent intent = new Intent(MainActivity.this, DocumentActivity.class);
+                intent.putExtra("category_name", category.title);
+                // todo add more
+                startActivityForResult(intent, 123);
             }
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // todo
+    }
+
     /*
-    when a category is long clicked
-     */
+        when a category is long clicked
+         */
     private void initializeCategoryLongClickListener() {
         // builder for the delete dialog of long click
         final AlertDialog.Builder deleteAlertBuilder = new AlertDialog.Builder(this);

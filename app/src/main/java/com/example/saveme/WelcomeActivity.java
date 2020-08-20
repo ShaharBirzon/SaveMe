@@ -69,6 +69,8 @@ public class WelcomeActivity extends AppCompatActivity {
                         .createSignInIntentBuilder()
                         .setAvailableProviders(providers)
                         .setIsSmartLockEnabled(false)//todo delete?
+                        .setTheme(R.style.LoginTheme)
+                        .setLogo(R.drawable.logo)
                         .build(),
                 RC_SIGN_IN);
     }
