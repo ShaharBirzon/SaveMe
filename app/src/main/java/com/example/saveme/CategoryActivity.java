@@ -13,10 +13,10 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class DocumentActivity extends AppCompatActivity {
+public class CategoryActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
-    private ArrayList<Document> documentList = new ArrayList<>();
+    private ArrayList<Document> documentList;
     private DocumentAdapter documentAdapter;
 
     @Override
@@ -48,6 +48,7 @@ public class DocumentActivity extends AppCompatActivity {
         // todo check which layout
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
+        documentList = new ArrayList<>();
         documentAdapter = new DocumentAdapter(documentList);
         recyclerView.setAdapter(documentAdapter);
     }
