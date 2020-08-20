@@ -4,24 +4,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:background="@drawable/dialog_back">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/category_recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="60dp"
-        app:layout_constraintBottom_toTopOf="@+id/btn_add_category" />
+        app:layout_constraintBottom_toBottomOf="parent" />
 
-    <Button
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_add_category"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add category"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
         android:onClick="onClickAddCategoryButton"
+        android:src="@drawable/ic_create_new_folde"
+        app:backgroundTint="@color/DarkBlue"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:rippleColor="@color/softBlue"
+        app:tint="@android:color/white" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

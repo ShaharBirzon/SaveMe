@@ -6,15 +6,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
 public class DocumentActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
-    private ArrayList<Document> documentList;
+    private ArrayList<Document> documentList = new ArrayList<>();
     private DocumentAdapter documentAdapter;
 
     @Override
@@ -30,6 +32,11 @@ public class DocumentActivity extends AppCompatActivity {
 
         // when a document is long clicked
         initializeDocumentLongClickListener();
+
+        Intent mainIntent = getIntent();
+        String title = mainIntent.getStringExtra("category_name");
+        TextView titleTxt = findViewById(R.id.tv_category_title);
+        titleTxt.setText(title);
     }
 
     /*

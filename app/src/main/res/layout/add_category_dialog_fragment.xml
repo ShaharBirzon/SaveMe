@@ -1,75 +1,96 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_back">
 
-    <RelativeLayout
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_add_category"
+        android:layout_width="68dp"
+        android:layout_height="47dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="16dp"
+        android:foregroundGravity="clip_horizontal"
+        android:src="@drawable/folder" />
+
+    <TextView
+        android:id="@+id/heading"
+        android:layout_width="wrap_content"
+        android:layout_height="46dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:gravity="center_vertical"
+        android:text="Add New Category"
+        android:textColor="#000"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_choose_name"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:padding="10dp">
+        android:layout_height="wrap_content"
+        android:layout_below="@id/iv_add_category"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:text="Category Name"
+        android:textColor="@color/browser_actions_title_color"
+        android:textSize="18sp" />
 
-        <TextView
-            android:id="@+id/heading"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Your Custom Dialog Heading"
-            android:textColor="#000"
-            android:textSize="18sp"
-             />
+    <EditText
+        android:id="@+id/et_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_choose_name"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@null"
+        android:hint="Enter name..."
+        android:textColor="#000" />
 
-        <EditText
-            android:id="@+id/et_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/heading"
-            android:layout_marginTop="20dp"
-            android:background="@null"
-            android:hint="enter some text..."
-            android:textColor="#000"
-           />
+    <TextView
+        android:id="@+id/tv_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/et_title"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="22dp"
+        android:text="Description"
+        android:textColor="@color/browser_actions_title_color"
+        android:textSize="18sp" />
 
-        <TextView
-            android:id="@+id/tv_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/et_title"
-            android:layout_marginTop="20dp"
-            android:text="Your description"
-            android:textColor="#000"
-            android:textSize="18sp"
-            />
+    <EditText
+        android:id="@+id/et_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_description"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@null"
+        android:hint="Enter description..."
+        android:textColor="#000" />
 
-        <EditText
-            android:id="@+id/et_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_description"
-            android:layout_marginTop="20dp"
-            android:background="@null"
-            android:hint="enter description..."
-            android:textColor="#000"
-            />
+    <Button
+        android:id="@+id/btn_action_ok"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/et_description"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="20dp"
+        android:text="SAVE" />
 
-        <Button
-            android:id="@+id/btn_action_ok"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginRight="20dp"
-            android:text="OK"
-            android:textColor="#33bbff"
-            android:textSize="18sp" />
+    <Button
+        android:id="@+id/btn_action_cancel"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/et_description"
+        android:layout_marginTop="20dp"
+        android:layout_toStartOf="@+id/btn_action_ok"
+        android:layout_toLeftOf="@+id/btn_action_ok"
+        android:text="CANCEL" />
 
-        <Button
-            android:id="@+id/btn_action_cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginRight="20dp"
-            android:text="CANCEL"
-            android:textColor="#33bbff"
-            android:textSize="18sp" />
-
-    </RelativeLayout>
 </RelativeLayout>
