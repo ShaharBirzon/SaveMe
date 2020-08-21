@@ -1,7 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/dialog_back">
+    android:layout_height="wrap_content">
 
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -28,49 +27,41 @@
         android:textSize="20sp"
         android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/tv_choose_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/iv_add_category"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:text="Category Name"
-        android:textColor="@color/browser_actions_title_color"
-        android:textSize="18sp" />
-
-    <EditText
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/et_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tv_choose_name"
+        android:hint="Category Name"
+        android:layout_below="@id/iv_add_category"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
-        android:background="@null"
-        android:hint="Enter name..."
-        android:textColor="#000" />
+        android:layout_marginRight="16dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-    <TextView
-        android:id="@+id/tv_description"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/et_title"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="22dp"
-        android:text="Description"
-        android:textColor="@color/browser_actions_title_color"
-        android:textSize="18sp" />
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+             />
 
-    <EditText
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/et_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_description"
+        android:hint="Description"
+        android:layout_below="@id/et_title"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
-        android:background="@null"
-        android:hint="Enter description..."
-        android:textColor="#000" />
+        android:layout_marginRight="16dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
 
     <Button
         android:id="@+id/btn_action_ok"
