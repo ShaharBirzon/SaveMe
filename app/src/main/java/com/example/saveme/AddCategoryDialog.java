@@ -12,6 +12,8 @@ import android.widget.EditText;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.google.android.material.textfield.TextInputLayout;
+
 public class AddCategoryDialog extends DialogFragment {
     private static final String TAG = "AddCategoryFragment";
     public AddCategoryDialog(){
@@ -24,8 +26,8 @@ public class AddCategoryDialog extends DialogFragment {
     public OnInputListener mOnInputListener;
 
     //widgets
-    private EditText titleInput;
-    private EditText descriptionInput;
+    private TextInputLayout titleInput;
+    private TextInputLayout descriptionInput;
     private Button actionOkButton, actionCancelButton;
 
 
@@ -51,8 +53,8 @@ public class AddCategoryDialog extends DialogFragment {
             public void onClick(View v) {
                 Log.d(TAG, "onClick: capturing input");
 
-                String title = titleInput.getText().toString();
-                String description = descriptionInput.getText().toString();
+                String title = titleInput.getEditText().getText().toString();
+                String description = descriptionInput.getEditText().getText().toString();
                 //TODO  add image
                 mOnInputListener.sendInput(title, description);
 

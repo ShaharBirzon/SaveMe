@@ -23,7 +23,7 @@
         android:clickable="true"
         android:onClick="onClickAddCategoryButton"
         android:src="@drawable/ic_create_new_folde"
-        app:backgroundTint="@color/DarkBlue"
+        app:backgroundTint="@color/colorPrimaryDark"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:rippleColor="@color/softBlue"
