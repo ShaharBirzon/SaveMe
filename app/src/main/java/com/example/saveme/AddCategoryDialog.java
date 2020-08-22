@@ -6,8 +6,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
@@ -29,6 +34,7 @@ public class AddCategoryDialog extends DialogFragment {
     private TextInputLayout titleInput;
     private TextInputLayout descriptionInput;
     private Button actionOkButton, actionCancelButton;
+    private Spinner titleSpinner;
 
 
     @Nullable
@@ -38,6 +44,9 @@ public class AddCategoryDialog extends DialogFragment {
         actionCancelButton = view.findViewById(R.id.btn_action_cancel);
         actionOkButton = view.findViewById(R.id.btn_action_ok);
         titleInput = view.findViewById(R.id.et_title);
+        titleInput.setVisibility(View.INVISIBLE);
+        titleSpinner = view.findViewById(R.id.spinner_title);
+        setCategoryTitle();
         descriptionInput = view.findViewById(R.id.et_description);
 
         actionCancelButton.setOnClickListener(new View.OnClickListener() {
@@ -54,7 +63,11 @@ public class AddCategoryDialog extends DialogFragment {
                 Log.d(TAG, "onClick: capturing input");
 
                 String title = titleInput.getEditText().getText().toString();
+                if (title == null || title.equals("")){
+                    title = titleSpinner.getSelectedItem().toString();
+                }
                 String description = descriptionInput.getEditText().getText().toString();
+
                 //TODO  add image
                 mOnInputListener.sendInput(title, description);
 
@@ -73,5 +86,32 @@ public class AddCategoryDialog extends DialogFragment {
         }catch (ClassCastException e){
             Log.e(TAG, "onAttach: ClassCastException: " + e.getMessage() );
         }
+    }
+
+    /**
+     * Handles the event where the user chooses a neighborhood
+     */
+    private void setCategoryTitle() {
+        final ArrayAdapter<String> titlesAdapter = new ArrayAdapter<>(AddCategoryDialog.this.getActivity(), android.R.layout.simple_list_item_1, getActivity().getResources().getStringArray(R.array.categories));
+        titlesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        titleSpinner.setAdapter(titlesAdapter);
+        titleSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                titleSpinner.setSelection(position);
+                String title = titlesAdapter.getItem(position);
+                if (title.equals("Other")){
+                    titleInput.setVisibility(View.VISIBLE);
+                    ((RelativeLayout.LayoutParams) descriptionInput.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.et_title);
+                }
+                else {
+                    titleInput.setVisibility(View.INVISIBLE);
+                    ((RelativeLayout.LayoutParams) descriptionInput.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.spinner_title);
+                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+            }
+        });
     }
 }

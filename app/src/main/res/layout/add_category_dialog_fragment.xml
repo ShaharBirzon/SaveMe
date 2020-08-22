@@ -27,12 +27,21 @@
         android:textSize="20sp"
         android:textStyle="bold" />
 
+    <Spinner
+        android:id="@+id/spinner_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/heading"
+        android:layout_marginTop="16dp"
+
+        />
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/et_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Category Name"
-        android:layout_below="@id/iv_add_category"
+        android:layout_below="@id/spinner_title"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginRight="16dp"
