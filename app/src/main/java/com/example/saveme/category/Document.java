@@ -5,10 +5,15 @@ import java.util.Date;
 public class Document {
     private String title;
     private String comment;
-    private Date expirationDate;
+    private String expirationDate;
 
     // todo add attr for images
     public Document() {
+    }
+
+    public Document(String title, String expirationDate) {
+        this.title = title;
+        this.expirationDate = expirationDate;
     }
 
 
@@ -21,7 +26,7 @@ public class Document {
         return comment;
     }
 
-    public Date getExpirationDate() {
+    public String getExpirationDate() {
         return expirationDate;
     }
 
@@ -33,7 +38,7 @@ public class Document {
         this.comment = comment;
     }
 
-    public void setExpirationDate(Date expirationDate) {
+    public void setExpirationDate(String expirationDate) {
         this.expirationDate = expirationDate;
     }
 }

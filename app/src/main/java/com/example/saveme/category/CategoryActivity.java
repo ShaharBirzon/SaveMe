@@ -54,7 +54,11 @@ public class CategoryActivity extends AppCompatActivity {
     }
 
     private void addNewDocument(Intent intent) {
+        String title = intent.getStringExtra("document_title");
+        String date = intent.getStringExtra("document_date");
         Log.e(Tag, "adding new document " + intent.getStringExtra("document_title"));
+        Document newDocument = new Document(title, date);
+        documentList.add(newDocument);
 //        Toast.(CategoryActivity.this, , Toast.LENGTH_LONG);
     }
 
