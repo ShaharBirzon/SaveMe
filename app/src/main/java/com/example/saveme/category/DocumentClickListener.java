@@ -1,4 +1,4 @@
-package com.example.saveme;
+package com.example.saveme.category;
 
 public interface DocumentClickListener {
     public void onDocumentClicked(int position); // todo check what needs to get

@@ -1,4 +1,4 @@
-package com.example.saveme;
+package com.example.saveme.document;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+
+import com.example.saveme.R;
+import com.example.saveme.category.CategoryActivity;
 
 public class DocumentActivity extends AppCompatActivity {
 

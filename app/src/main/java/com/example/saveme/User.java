@@ -1,7 +1,8 @@
 package com.example.saveme;
 
+import com.example.saveme.main.Category;
+
 import java.util.ArrayList;
-import java.util.List;
 
 public class User {
     ArrayList<Category> categories;

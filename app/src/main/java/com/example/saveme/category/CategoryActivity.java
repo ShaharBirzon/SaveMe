@@ -1,4 +1,4 @@
-package com.example.saveme;
+package com.example.saveme.category;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,7 +11,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.example.saveme.document.DocumentActivity;
+import com.example.saveme.R;
 
 import java.util.ArrayList;
 

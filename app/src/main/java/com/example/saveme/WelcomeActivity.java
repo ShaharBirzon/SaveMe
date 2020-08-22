@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 
+import com.example.saveme.main.MainActivity;
 import com.example.saveme.utils.FirebaseMediate;
 import com.example.saveme.utils.MyPreferences;
 import com.facebook.FacebookSdk;

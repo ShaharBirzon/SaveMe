@@ -1,4 +1,4 @@
-package com.example.saveme;
+package com.example.saveme.main;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -9,14 +9,13 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.example.saveme.R;
 import com.google.android.material.textfield.TextInputLayout;
 
 public class AddCategoryDialog extends DialogFragment {

@@ -6,7 +6,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.example.saveme.Category;
+import com.example.saveme.main.Category;
 import com.example.saveme.User;
 
 import com.google.android.gms.tasks.OnCompleteListener;
