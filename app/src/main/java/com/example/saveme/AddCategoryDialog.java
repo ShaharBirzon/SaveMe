@@ -63,12 +63,11 @@ public class AddCategoryDialog extends DialogFragment {
                 Log.d(TAG, "onClick: capturing input");
 
                 String title = titleInput.getEditText().getText().toString();
-                String description = descriptionInput.getEditText().getText().toString();
-                String title = titleInput.getText().toString();
                 if (title == null || title.equals("")){
                     title = titleSpinner.getSelectedItem().toString();
                 }
-                String description = descriptionInput.getText().toString();
+                String description = descriptionInput.getEditText().getText().toString();
+
                 //TODO  add image
                 mOnInputListener.sendInput(title, description);
 
@@ -103,11 +102,11 @@ public class AddCategoryDialog extends DialogFragment {
                 String title = titlesAdapter.getItem(position);
                 if (title.equals("Other")){
                     titleInput.setVisibility(View.VISIBLE);
-                    ((RelativeLayout.LayoutParams) descriptionTV.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.et_title);
+                    ((RelativeLayout.LayoutParams) descriptionInput.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.et_title);
                 }
                 else {
                     titleInput.setVisibility(View.INVISIBLE);
-                    ((RelativeLayout.LayoutParams) descriptionTV.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.spinner_title);
+                    ((RelativeLayout.LayoutParams) descriptionInput.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.spinner_title);
                 }
             }
             @Override
