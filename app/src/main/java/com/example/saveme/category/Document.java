@@ -11,8 +11,9 @@ public class Document {
     public Document() {
     }
 
-    public Document(String title, String expirationDate) {
+    public Document(String title,String comment, String expirationDate) {
         this.title = title;
+        this.comment = comment;
         this.expirationDate = expirationDate;
     }
 

@@ -36,6 +36,7 @@ public class DocumentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         Document docItem = documents.get(position);
         DocumentItemHolder docHolder = ((DocumentItemHolder) holder);
         docHolder.title.setText(docItem.getTitle());
+        docHolder.expirationDate.setText(docItem.getExpirationDate());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,11 +82,15 @@ public class DocumentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
 class DocumentItemHolder extends RecyclerView.ViewHolder {
     TextView title;
+    TextView expirationDate;
+
     // todo check if need to add more
 
     public DocumentItemHolder(@NonNull View itemView) {
         super(itemView);
         //todo check what needs to hold
         title = itemView.findViewById(R.id.document_title);
+        expirationDate = itemView.findViewById(R.id.tv_expiry_date);
+
     }
 }

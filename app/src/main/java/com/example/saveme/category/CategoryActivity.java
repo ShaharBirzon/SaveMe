@@ -19,6 +19,9 @@ import java.util.ArrayList;
 
 public class CategoryActivity extends AppCompatActivity {
 
+    public static final int NEW_DOCUMENT = 111;
+    public static final int EDIT_DOCUMENT = 222;
+    public static final int DEFAULT_VALUE = -1;
     private RecyclerView recyclerView;
     private ArrayList<Document> documentList;
     private DocumentAdapter documentAdapter;
@@ -44,23 +47,16 @@ public class CategoryActivity extends AppCompatActivity {
         titleTxt.setText(title);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Intent intent = getIntent();
-        if ("new_document".equals(intent.getStringExtra("call_from"))){
-            addNewDocument(intent);
-        }
-    }
+    //todo maybe not needed
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        Intent intent = getIntent();
+//        if ("new_document".equals(intent.getStringExtra("call_from"))) {
+//            addNewDocument(intent);
+//        }
+//    }
 
-    private void addNewDocument(Intent intent) {
-        String title = intent.getStringExtra("document_title");
-        String date = intent.getStringExtra("document_date");
-        Log.e(Tag, "adding new document " + intent.getStringExtra("document_title"));
-        Document newDocument = new Document(title, date);
-        documentList.add(newDocument);
-//        Toast.(CategoryActivity.this, , Toast.LENGTH_LONG);
-    }
 
     /*
     the function initializes the recycler view and the adapter
@@ -76,6 +72,66 @@ public class CategoryActivity extends AppCompatActivity {
         recyclerView.setAdapter(documentAdapter);
     }
 
+    /**
+     * when the add document button is clicked
+     * @param view - view
+     */
+    public void onClickAddDocumentButton(View view) {
+        Intent intent = new Intent(CategoryActivity.this, DocumentActivity.class);
+        intent.putExtra("call_reason", "new_document");
+        startActivityForResult(intent, NEW_DOCUMENT);
+    }
+
+
+    /**
+     *
+     * @param requestCode - a new document or an edited documetn
+     * @param resultCode
+     * @param data - the info from document activity
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == NEW_DOCUMENT) {
+            //add new document
+            if (resultCode == RESULT_OK) {
+                String title = data.getStringExtra("document_title");
+                String comment = data.getStringExtra("document_comment");
+                String expirationDate = data.getStringExtra("document_expiration_date");
+
+                Log.e(Tag, "adding new document " + title);
+                Document newDocument = new Document(title,comment, expirationDate); //todo change
+                documentList.add(newDocument);
+                documentAdapter.notifyItemInserted(documentList.size()-1);
+            }
+        }
+        if (requestCode == EDIT_DOCUMENT) {
+            //edit existing document
+            String title = data.getStringExtra("document_title");
+            String comment = data.getStringExtra("document_comment");
+            String expirationDate = data.getStringExtra("document_expiration_date");
+            int position = data.getIntExtra("document_position", DEFAULT_VALUE);
+
+            Log.e(Tag, "editing document " + title);
+            Document document = documentList.get(position); //todo check how to get current document like this or from adapter?
+            document.setTitle(title);
+            document.setComment(comment);
+            document.setExpirationDate(expirationDate);
+            documentAdapter.notifyDataSetChanged();
+        }
+    }
+
+    //todo maybe delete
+//    private void addNewDocument(Intent intent) {
+//        String title = intent.getStringExtra("document_title");
+//        String date = intent.getStringExtra("document_date");
+//        Log.e(Tag, "adding new document " + intent.getStringExtra("document_title"));
+//        Document newDocument = new Document(title, date);
+//        documentList.add(newDocument);
+////        Toast.(CategoryActivity.this, , Toast.LENGTH_LONG);
+//    }
+
     /*
     when a document is clicked
     */
@@ -86,7 +142,14 @@ public class CategoryActivity extends AppCompatActivity {
             public void onDocumentClicked(int position) {
                 Log.d("document clicked", "document was clicked");
                 Document document = documentList.get(position); //todo check how to get current document like this or from adapter?
-                //todo go inside the document
+                Intent intent = new Intent(CategoryActivity.this, DocumentActivity.class);
+                intent.putExtra("call_reason", "edit_document");
+                intent.putExtra("position", position);
+                intent.putExtra("document_title", document.getTitle());
+                intent.putExtra("document_comment", document.getComment());
+                intent.putExtra("document_expiration_date", document.getExpirationDate());
+                // todo add more into intent
+                startActivityForResult(intent, EDIT_DOCUMENT);
             }
         });
     }
@@ -127,10 +190,5 @@ public class CategoryActivity extends AppCompatActivity {
                 DeleteAlertDialog.show();
             }
         });
-    }
-
-    public void onClickAddDocumentButton(View view) {
-        Intent intent = new Intent(CategoryActivity.this, DocumentActivity.class);
-        startActivity(intent);
     }
 }
