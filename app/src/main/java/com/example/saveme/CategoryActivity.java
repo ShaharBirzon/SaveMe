@@ -9,7 +9,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -18,11 +20,12 @@ public class CategoryActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ArrayList<Document> documentList;
     private DocumentAdapter documentAdapter;
+    private static final String Tag = "CategoryActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_document);
+        setContentView(R.layout.activity_category);
 
         // initializes the recycler view and the adapter
         initializeRecyclerView();
@@ -37,6 +40,20 @@ public class CategoryActivity extends AppCompatActivity {
         String title = mainIntent.getStringExtra("category_name");
         TextView titleTxt = findViewById(R.id.tv_category_title);
         titleTxt.setText(title);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Intent intent = getIntent();
+        if ("new_document".equals(intent.getStringExtra("call_from"))){
+            addNewDocument(intent);
+        }
+    }
+
+    private void addNewDocument(Intent intent) {
+        Log.e(Tag, "adding new document " + intent.getStringExtra("document_title"));
+//        Toast.(CategoryActivity.this, , Toast.LENGTH_LONG);
     }
 
     /*
@@ -104,5 +121,10 @@ public class CategoryActivity extends AppCompatActivity {
                 DeleteAlertDialog.show();
             }
         });
+    }
+
+    public void onClickAddDocumentButton(View view) {
+        Intent intent = new Intent(CategoryActivity.this, DocumentActivity.class);
+        startActivity(intent);
     }
 }
