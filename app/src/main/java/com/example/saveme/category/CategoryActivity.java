@@ -191,4 +191,8 @@ public class CategoryActivity extends AppCompatActivity {
             }
         });
     }
+
+    public void onBackClick(View view){
+        finish();  //todo maybe change to flags in intent
+    }
 }
