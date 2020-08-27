@@ -22,7 +22,7 @@ import java.util.List;
 
 
 public class WelcomeActivity extends AppCompatActivity {
-    private static final int SPLASH_TIME_OUT = 5000;
+    private static final int SPLASH_TIME_OUT = 3000;
     private static final int RC_SIGN_IN = 123;
     private static final String TAG = "WelcomeActivity";
 
