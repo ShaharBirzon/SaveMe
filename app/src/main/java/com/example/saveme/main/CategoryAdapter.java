@@ -41,6 +41,30 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         // Picasso.get().load(catItem.image).into(catHolder.image); todo check
         catHolder.title.setText(catItem.title);
         catHolder.desc.setText(catItem.description);
+        switch (catItem.getTitle()){
+            case "Car":
+                catHolder.image.setImageResource(R.drawable.car);
+                break;
+            case "Bank":
+                catHolder.image.setImageResource(R.drawable.money);
+                break;
+            case "Taxes":
+                catHolder.image.setImageResource(R.drawable.tax);
+                break;
+            case "Personal":
+                catHolder.image.setImageResource(R.drawable.id);
+                break;
+            case "Appliances":
+                catHolder.image.setImageResource(R.drawable.fan);
+                break;
+            case "Work":
+                catHolder.image.setImageResource(R.drawable.portfolio);
+                break;
+            default:
+                catHolder.image.setImageResource(R.drawable.fan);
+                break;
+        }
+
 
         // set click listener
         holder.itemView.setOnClickListener(new View.OnClickListener() {
