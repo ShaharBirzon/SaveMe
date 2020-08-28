@@ -14,7 +14,11 @@ import android.widget.TextView;
 
 import com.example.saveme.document.DocumentActivity;
 import com.example.saveme.R;
+import com.example.saveme.main.MainActivity;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 public class CategoryActivity extends AppCompatActivity {
@@ -32,6 +36,16 @@ public class CategoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
 
+        Intent mainIntent = getIntent();
+        Gson gson = new Gson();
+        String json = mainIntent.getStringExtra("docList");
+        Type type = new TypeToken<ArrayList<Document>>() {
+        }.getType();
+        documentList = gson.fromJson(json, type);
+        if (documentList == null) {
+            documentList = new ArrayList<>();
+        }
+
         // initializes the recycler view and the adapter
         initializeRecyclerView();
 
@@ -41,21 +55,10 @@ public class CategoryActivity extends AppCompatActivity {
         // when a document is long clicked
         initializeDocumentLongClickListener();
 
-        Intent mainIntent = getIntent();
         String title = mainIntent.getStringExtra("category_name");
         TextView titleTxt = findViewById(R.id.tv_category_title);
         titleTxt.setText(title);
     }
-
-    //todo maybe not needed
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        Intent intent = getIntent();
-//        if ("new_document".equals(intent.getStringExtra("call_from"))) {
-//            addNewDocument(intent);
-//        }
-//    }
 
 
     /*
@@ -67,13 +70,13 @@ public class CategoryActivity extends AppCompatActivity {
         // todo check which layout
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
-        documentList = new ArrayList<>();
         documentAdapter = new DocumentAdapter(documentList);
         recyclerView.setAdapter(documentAdapter);
     }
 
     /**
      * when the add document button is clicked
+     *
      * @param view - view
      */
     public void onClickAddDocumentButton(View view) {
@@ -84,10 +87,9 @@ public class CategoryActivity extends AppCompatActivity {
 
 
     /**
-     *
      * @param requestCode - a new document or an edited documetn
      * @param resultCode
-     * @param data - the info from document activity
+     * @param data        - the info from document activity
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -101,36 +103,29 @@ public class CategoryActivity extends AppCompatActivity {
                 String expirationDate = data.getStringExtra("document_expiration_date");
 
                 Log.e(Tag, "adding new document " + title);
-                Document newDocument = new Document(title,comment, expirationDate); //todo change
+                Document newDocument = new Document(title, comment, expirationDate); //todo change
                 documentList.add(newDocument);
-                documentAdapter.notifyItemInserted(documentList.size()-1);
+                documentAdapter.notifyItemInserted(documentList.size() - 1);
             }
         }
         if (requestCode == EDIT_DOCUMENT) {
             //edit existing document
-            String title = data.getStringExtra("document_title");
-            String comment = data.getStringExtra("document_comment");
-            String expirationDate = data.getStringExtra("document_expiration_date");
-            int position = data.getIntExtra("document_position", DEFAULT_VALUE);
+            if (resultCode == RESULT_OK) {
+                String title = data.getStringExtra("document_title");
+                String comment = data.getStringExtra("document_comment");
+                String expirationDate = data.getStringExtra("document_expiration_date");
+                int position = data.getIntExtra("document_position", DEFAULT_VALUE);
 
-            Log.e(Tag, "editing document " + title);
-            Document document = documentList.get(position); //todo check how to get current document like this or from adapter?
-            document.setTitle(title);
-            document.setComment(comment);
-            document.setExpirationDate(expirationDate);
-            documentAdapter.notifyDataSetChanged();
+                Log.e(Tag, "editing document " + title);
+                Document document = documentList.get(position); //todo check how to get current document like this or from adapter?
+                document.setTitle(title);
+                document.setComment(comment);
+                document.setExpirationDate(expirationDate);
+                documentAdapter.notifyDataSetChanged();
+            }
         }
     }
 
-    //todo maybe delete
-//    private void addNewDocument(Intent intent) {
-//        String title = intent.getStringExtra("document_title");
-//        String date = intent.getStringExtra("document_date");
-//        Log.e(Tag, "adding new document " + intent.getStringExtra("document_title"));
-//        Document newDocument = new Document(title, date);
-//        documentList.add(newDocument);
-////        Toast.(CategoryActivity.this, , Toast.LENGTH_LONG);
-//    }
 
     /*
     when a document is clicked
@@ -192,7 +187,22 @@ public class CategoryActivity extends AppCompatActivity {
         });
     }
 
-    public void onBackClick(View view){
-        finish();  //todo maybe change to flags in intent
+    @Override
+    public void onBackPressed() {
+        Gson gson = new Gson();
+        String json = gson.toJson(documentList);
+        Intent intent = new Intent(CategoryActivity.this, MainActivity.class);
+        intent.putExtra("docList", json);
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+
+    public void onBackClick(View view) {
+        Gson gson = new Gson();
+        String json = gson.toJson(documentList);
+        Intent intent = new Intent(CategoryActivity.this, MainActivity.class);
+        intent.putExtra("docList", json);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 }

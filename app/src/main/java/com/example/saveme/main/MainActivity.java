@@ -14,16 +14,22 @@ import android.view.View;
 import com.example.saveme.category.CategoryActivity;
 import com.example.saveme.R;
 import com.example.saveme.User;
+import com.example.saveme.category.Document;
 import com.example.saveme.utils.FirebaseMediate;
 import com.example.saveme.utils.MyPreferences;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements AddCategoryDialog.OnInputListener {
 
+    public static final int CATEGORY_REQUEST_CODE = 333;
     private RecyclerView recyclerView;
     private ArrayList<Category> categoryList;
     private CategoryAdapter categoryAdapter;
+    private int lastCategoryPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,13 +72,39 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
             @Override
             public void onCategoryClicked(int position) {
                 Log.d("category clicked", "category was clicked");
+                lastCategoryPosition = position;
                 Category category = categoryList.get(position); //todo check how to get current category like this or from adapter?
                 Intent intent = new Intent(MainActivity.this, CategoryActivity.class);
                 intent.putExtra("category_name", category.title);
+                Gson gson = new Gson();
+                String json = gson.toJson(categoryList.get(position).docsList);
+                intent.putExtra("docList", json);
+
                 // todo add more
-                startActivity(intent);
+                startActivityForResult(intent, CATEGORY_REQUEST_CODE);
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CATEGORY_REQUEST_CODE) {
+            //add new document
+            if (resultCode == RESULT_OK) {
+                Gson gson = new Gson();
+                String json = data.getStringExtra("docList");
+                Type type = new TypeToken<ArrayList<Document>>() {
+                }.getType();
+                ArrayList<Document> updatedDocList;
+                updatedDocList = gson.fromJson(json, type);
+                if (updatedDocList == null) {
+                    updatedDocList = new ArrayList<>();
+                }
+                categoryList.get(lastCategoryPosition).docsList = updatedDocList;
+            }
+        }
     }
 
 
@@ -129,7 +161,6 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
     private void addNewCategory(Category category) {
         categoryList.add(category);
         FirebaseMediate.addCategory(category);
-        categoryAdapter.notifyItemInserted(categoryList.size()-1);
+        categoryAdapter.notifyItemInserted(categoryList.size() - 1);
     }
-
 }
