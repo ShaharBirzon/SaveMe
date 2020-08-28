@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.example.saveme.document.DocumentActivity;
 import com.example.saveme.R;
 import com.example.saveme.main.MainActivity;
+import com.example.saveme.utils.FirebaseMediate;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -30,6 +31,7 @@ public class CategoryActivity extends AppCompatActivity {
     private ArrayList<Document> documentList;
     private DocumentAdapter documentAdapter;
     private static final String Tag = "CategoryActivity";
+    private String categoryTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,9 +57,9 @@ public class CategoryActivity extends AppCompatActivity {
         // when a document is long clicked
         initializeDocumentLongClickListener();
 
-        String title = mainIntent.getStringExtra("category_name");
+        categoryTitle = mainIntent.getStringExtra("category_name");
         TextView titleTxt = findViewById(R.id.tv_category_title);
-        titleTxt.setText(title);
+        titleTxt.setText(categoryTitle);
     }
 
 
@@ -105,6 +107,7 @@ public class CategoryActivity extends AppCompatActivity {
                 Log.e(Tag, "adding new document " + title);
                 Document newDocument = new Document(title, comment, expirationDate); //todo change
                 documentList.add(newDocument);
+                FirebaseMediate.addNewDocument(categoryTitle, newDocument);
                 documentAdapter.notifyItemInserted(documentList.size() - 1);
             }
         }
@@ -118,10 +121,12 @@ public class CategoryActivity extends AppCompatActivity {
 
                 Log.e(Tag, "editing document " + title);
                 Document document = documentList.get(position); //todo check how to get current document like this or from adapter?
+                FirebaseMediate.removeDocument(categoryTitle, document); //todo change to update
                 document.setTitle(title);
                 document.setComment(comment);
                 document.setExpirationDate(expirationDate);
                 documentAdapter.notifyDataSetChanged();
+                FirebaseMediate.addNewDocument(categoryTitle, document);
             }
         }
     }
@@ -171,7 +176,7 @@ public class CategoryActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         documentAdapter.deleteDocument(document_to_delete);
-//                      FirebaseMediate.removeCategory(document_to_delete); //todo remove from firebase
+                        FirebaseMediate.removeDocument(categoryTitle, document_to_delete); //todo remove from firebase
                         documentAdapter.notifyDataSetChanged();
                         dialog.cancel();
                     }

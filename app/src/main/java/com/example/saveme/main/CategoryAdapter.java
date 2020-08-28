@@ -71,7 +71,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             @Override
             public void onClick(View v) {
                 if (categoryClickListener != null) {
-                    categoryClickListener.onCategoryClicked(position);
+                    categoryClickListener.onCategoryClicked(categories.get(position).getTitle());
                 }
             }
         });

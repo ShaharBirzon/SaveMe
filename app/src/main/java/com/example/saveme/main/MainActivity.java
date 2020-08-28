@@ -22,14 +22,15 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements AddCategoryDialog.OnInputListener {
 
     public static final int CATEGORY_REQUEST_CODE = 333;
     private RecyclerView recyclerView;
-    private ArrayList<Category> categoryList;
+    private Map<String, Category> categories;
     private CategoryAdapter categoryAdapter;
-    private int lastCategoryPosition;
+    private String lastCategoryName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,11 +39,11 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
 
         // checks if needs to sign up or log in
         if (MyPreferences.isFirstTime(getApplicationContext())) {
-            categoryList = FirebaseMediate.getDefaultCategories();
-            User user = new User(categoryList);
+            categories = FirebaseMediate.getDefaultCategories();
+            User user = new User(categories);
             FirebaseMediate.addUserToFirestoreDB(user);
         } else {
-            categoryList = FirebaseMediate.getUserCategories();
+            categories = FirebaseMediate.getUserCategories();
         }
 
         // initializes the recycler view and the adapter
@@ -59,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
         //set recycler view and category adapter
         recyclerView = findViewById(R.id.category_recycler);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-        categoryAdapter = new CategoryAdapter(categoryList);
+        categoryAdapter = new CategoryAdapter(new ArrayList<Category>(categories.values())); //todo check stay same order
         recyclerView.setAdapter(categoryAdapter);
     }
 
@@ -70,14 +71,14 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
         // click listener - to go inside a category
         categoryAdapter.setCategoryClickListener(new CategoryClickListener() {
             @Override
-            public void onCategoryClicked(int position) {
+            public void onCategoryClicked(String categoryName) {
                 Log.d("category clicked", "category was clicked");
-                lastCategoryPosition = position;
-                Category category = categoryList.get(position); //todo check how to get current category like this or from adapter?
+                lastCategoryName = categoryName;
+                Category category = categories.get(categoryName); //todo check how to get current category like this or from adapter?
                 Intent intent = new Intent(MainActivity.this, CategoryActivity.class);
                 intent.putExtra("category_name", category.title);
                 Gson gson = new Gson();
-                String json = gson.toJson(categoryList.get(position).docsList);
+                String json = gson.toJson(categories.get(categoryName).getDocsList());
                 intent.putExtra("docList", json);
 
                 // todo add more
@@ -102,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
                 if (updatedDocList == null) {
                     updatedDocList = new ArrayList<>();
                 }
-                categoryList.get(lastCategoryPosition).docsList = updatedDocList;
+                categories.get(lastCategoryName).docsList = updatedDocList;
             }
         }
     }
@@ -123,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
 
                 deleteAlertBuilder.setMessage("Are you sure you want do delete?");
                 deleteAlertBuilder.setCancelable(true);
-                final Category category_to_delete = categoryList.get(position); //todo check how to get current category like this or from adapter?
+                final Category category_to_delete = categories.get(position); //todo check how to get current category like this or from adapter?
 
                 //if wants to delete for sure
                 deleteAlertBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -159,8 +160,8 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
     }
 
     private void addNewCategory(Category category) {
-        categoryList.add(category);
+        categories.put(category.getTitle(), category);
         FirebaseMediate.addCategory(category);
-        categoryAdapter.notifyItemInserted(categoryList.size() - 1);
+        categoryAdapter.notifyItemInserted(categories.size() - 1);
     }
 }

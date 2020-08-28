@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.saveme.category.Document;
 import com.example.saveme.main.Category;
 import com.example.saveme.User;
 
@@ -23,11 +24,12 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class FirebaseMediate {
-    private static ArrayList<Category> categories = new ArrayList<Category>();
+    private static Map<String, Category> categories = new HashMap<>();
     private static final String TAG = "FirebaseMediate";
     private static FirebaseFirestore db;
     private static DocumentReference userDocumentRef;
@@ -38,6 +40,7 @@ public class FirebaseMediate {
 
     /**
      * This method initializes the firestore fields from data from the database.
+     *
      * @param context
      */
     public static void initializeDataFromDB(Context context) {
@@ -68,9 +71,10 @@ public class FirebaseMediate {
 
     /**
      * This method is a getter  for user categories list.
+     *
      * @return user categories list.
      */
-    public static ArrayList<Category> getUserCategories() {
+    public static Map<String, Category> getUserCategories() {
         Log.d(TAG, "got to getUserCategories");
         User user = userDocumentSnapshot.toObject(User.class);
         categories = user.getCategories();
@@ -79,16 +83,16 @@ public class FirebaseMediate {
 
     /**
      * This method adds a category to user categories list.
+     *
      * @param category category to add.
      */
-    public static void addCategory(final Category category){
+    public static void addCategory(final Category category) {
         userDocumentRef.update("categories", FieldValue.arrayUnion(category)).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()){
+                if (task.isSuccessful()) {
                     Log.d(TAG, "add category %s successfully" + category.title);
-                }
-                else {
+                } else {
                     Log.e(TAG, "error occurred while trying to add category %s " + category.title);
                 }
             }
@@ -97,16 +101,16 @@ public class FirebaseMediate {
 
     /**
      * This method removes a category from user categories list.
+     *
      * @param category to be removed from user categories list.
      */
-    public static void removeCategory(final Category category){
+    public static void removeCategory(final Category category) {
         userDocumentRef.update("categories", FieldValue.arrayRemove(category)).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()){
+                if (task.isSuccessful()) {
                     Log.d(TAG, "remove category %s successfully" + category.title);
-                }
-                else {
+                } else {
                     Log.e(TAG, "error occurred while trying to remove category %s " + category.title);
                 }
             }
@@ -115,6 +119,7 @@ public class FirebaseMediate {
 
     /**
      * This method adds a user to firestore database. called only once, when sign up.
+     *
      * @param userToAdd the user to add.
      */
     public static void addUserToFirestoreDB(User userToAdd) {
@@ -139,14 +144,41 @@ public class FirebaseMediate {
     }
 
     /**
+     * Add new document to firestore database.
+     * @param CategoryName The category the document is been added to.
+     * @param newDocument The new document.
+     */
+    public static void addNewDocument(String CategoryName, Document newDocument) {
+        String name = "categories." + CategoryName + ".docsList";
+        userDocumentRef.update(name, FieldValue.arrayUnion(newDocument));
+    }
+
+    /**
+     *
+     * @param CategoryName The category the document is been removed from.
+     * @param documentToDelete The document to delete.
+     */
+    public static void removeDocument(String CategoryName, Document documentToDelete) {
+        String name = "categories." + CategoryName + ".docsList";
+        userDocumentRef.update(name, FieldValue.arrayRemove(documentToDelete));
+    }
+
+    public static void updateDocument(String CategoryName, Document documentToUpdate) {
+        String name = "categories." + CategoryName + ".docsList";
+        //todo check if change in name will insert a new document instead of updating old one
+        userDocumentRef.update(name, FieldValue.arrayUnion(documentToUpdate));
+    }
+
+    /**
      * This method returns the default categories list.
+     *
      * @return default categories list.
      */
-    public static ArrayList<Category> getDefaultCategories() {
-        ArrayList<Category> defaultCategories = new ArrayList<>();
-        defaultCategories.add(new Category("Car", "car category"));
-        defaultCategories.add(new Category("Bank", "bank category"));
-        defaultCategories.add(new Category("Personal", "personal category"));
+    public static Map<String, Category> getDefaultCategories() {
+        Map<String, Category> defaultCategories = new HashMap<>();
+        defaultCategories.put("Car", new Category("Car", "car category"));
+        defaultCategories.put("Bank", new Category("Bank", "bank category"));
+        defaultCategories.put("Personal", new Category("Personal", "personal category"));
         return defaultCategories;
     }
 
