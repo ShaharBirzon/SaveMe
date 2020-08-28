@@ -42,17 +42,21 @@ public class DocumentActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * when the save button is pressed
+     *
+     * @param view - the view
+     */
     public void onClickSaveDocumentButton(View view) {
+
         Intent intentBack = new Intent(DocumentActivity.this, CategoryActivity.class);
 
-        // todo check if call_from is needed
         if (callReason.equals("edit_document")) {
-            intentBack.putExtra("call_from", "edit_document");
             intentBack.putExtra("document_position", position);
+            updateDocumentInFirebase();
         }
         if (callReason.equals("new_document")) {
             addDocumentToFirebase();
-            intentBack.putExtra("call_from", "new_document");
         }
 
         intentBack.putExtra("document_title", documentTitleET.getText().toString());
@@ -63,7 +67,12 @@ public class DocumentActivity extends AppCompatActivity {
         finish();
     }
 
+
     private void addDocumentToFirebase() {
+        // todo maybe move to CategoryActivity
+    }
+
+    private void updateDocumentInFirebase() {
         // todo maybe move to CategoryActivity
     }
 }
