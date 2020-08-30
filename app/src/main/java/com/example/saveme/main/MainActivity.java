@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
     private RecyclerView recyclerView;
     private ArrayList<Category> categories;
     private CategoryAdapter categoryAdapter;
+    private static final String TAG = "MainActivity";
     private int lastCategoryPosition;
 
     @Override
@@ -88,7 +89,6 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
                 Category category = categories.get(position); //todo check how to get current category like this or from adapter?
                 Intent intent = new Intent(MainActivity.this, CategoryActivity.class);
                 intent.putExtra("category_name", category.title);
-                intent.putExtra("category_position", Integer.toString(position));
                 Gson gson = new Gson();
                 String json = gson.toJson(categories.get(position).getDocsList());
                 intent.putExtra("docList", json);

@@ -32,7 +32,6 @@ public class CategoryActivity extends AppCompatActivity {
     private DocumentAdapter documentAdapter;
     private static final String Tag = "CategoryActivity";
     private String categoryTitle;
-    private String categoryPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +58,6 @@ public class CategoryActivity extends AppCompatActivity {
         initializeDocumentLongClickListener();
 
         categoryTitle = mainIntent.getStringExtra("category_name");
-        categoryPosition = mainIntent.getStringExtra("category_position");
         TextView titleTxt = findViewById(R.id.tv_category_title);
         titleTxt.setText(categoryTitle);
     }
@@ -109,7 +107,7 @@ public class CategoryActivity extends AppCompatActivity {
                 Log.e(Tag, "adding new document " + title);
                 Document newDocument = new Document(title, comment, expirationDate); //todo change
                 documentList.add(newDocument);
-                FirebaseMediate.addNewDocument(categoryPosition, newDocument);
+                FirebaseMediate.addNewDocument(categoryTitle, newDocument);
                 documentAdapter.notifyItemInserted(documentList.size() - 1);
             }
         }
@@ -122,7 +120,8 @@ public class CategoryActivity extends AppCompatActivity {
                 int position = data.getIntExtra("document_position", DEFAULT_VALUE);
 
                 Log.e(Tag, "editing document " + title);
-                Document document = documentList.get(position); //todo check how to get current document like this or from adapter?
+                Document document = documentList.get(position);
+                String oldDocumentTitle = document.getTitle();//todo check how to get current document like this or from adapter?
                 if (!title.equals(document.getTitle())) {
                     document.setTitle(title);
                 }
@@ -133,7 +132,7 @@ public class CategoryActivity extends AppCompatActivity {
                     document.setExpirationDate(expirationDate);
                 }
                 // todo add other fields
-                FirebaseMediate.updateDocument(categoryPosition, document);
+                FirebaseMediate.updateDocument(categoryTitle,Integer.toString(position), document);
                 documentAdapter.notifyDataSetChanged();
             }
         }
