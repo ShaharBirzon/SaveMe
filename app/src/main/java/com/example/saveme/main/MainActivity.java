@@ -19,21 +19,19 @@ import com.example.saveme.category.Document;
 import com.example.saveme.utils.FirebaseMediate;
 import com.example.saveme.utils.MyPreferences;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUserMetadata;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements AddCategoryDialog.OnInputListener {
 
     public static final int CATEGORY_REQUEST_CODE = 333;
     private RecyclerView recyclerView;
-    private Map<String, Category> categories;
+    private ArrayList<Category> categories;
     private CategoryAdapter categoryAdapter;
-    private String lastCategoryName;
+    private int lastCategoryPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,10 +58,9 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
 
         String username = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
         String welcomeString;
-        if (username == null || username.equals("")){
+        if (username == null || username.equals("")) {
             welcomeString = "Welcome!";
-        }
-        else{
+        } else {
             welcomeString = "Welcome, " + username + "!";
         }
         TextView nameTxt = findViewById(R.id.tv_welcome_name);
@@ -74,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
         //set recycler view and category adapter
         recyclerView = findViewById(R.id.category_recycler);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-        categoryAdapter = new CategoryAdapter(new ArrayList<Category>(categories.values())); //todo check stay same order
+        categoryAdapter = new CategoryAdapter(categories); //todo check stay same order
         recyclerView.setAdapter(categoryAdapter);
     }
 
@@ -85,14 +82,15 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
         // click listener - to go inside a category
         categoryAdapter.setCategoryClickListener(new CategoryClickListener() {
             @Override
-            public void onCategoryClicked(String categoryName) {
+            public void onCategoryClicked(int position) {
                 Log.d("category clicked", "category was clicked");
-                lastCategoryName = categoryName;
-                Category category = categories.get(categoryName); //todo check how to get current category like this or from adapter?
+                lastCategoryPosition = position;
+                Category category = categories.get(position); //todo check how to get current category like this or from adapter?
                 Intent intent = new Intent(MainActivity.this, CategoryActivity.class);
                 intent.putExtra("category_name", category.title);
+                intent.putExtra("category_position", Integer.toString(position));
                 Gson gson = new Gson();
-                String json = gson.toJson(categories.get(categoryName).getDocsList());
+                String json = gson.toJson(categories.get(position).getDocsList());
                 intent.putExtra("docList", json);
 
                 // todo add more
@@ -117,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
                 if (updatedDocList == null) {
                     updatedDocList = new ArrayList<>();
                 }
-                categories.get(lastCategoryName).docsList = updatedDocList;
+                categories.get(lastCategoryPosition).docsList = updatedDocList;
             }
         }
     }
@@ -174,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
     }
 
     private void addNewCategory(Category category) {
-        categories.put(category.getTitle(), category);
+        categories.add(category);
         FirebaseMediate.addCategory(category);
         categoryAdapter.notifyItemInserted(categories.size() - 1);
     }

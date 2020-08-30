@@ -32,6 +32,7 @@ public class CategoryActivity extends AppCompatActivity {
     private DocumentAdapter documentAdapter;
     private static final String Tag = "CategoryActivity";
     private String categoryTitle;
+    private String categoryPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +59,7 @@ public class CategoryActivity extends AppCompatActivity {
         initializeDocumentLongClickListener();
 
         categoryTitle = mainIntent.getStringExtra("category_name");
+        categoryPosition = mainIntent.getStringExtra("category_position");
         TextView titleTxt = findViewById(R.id.tv_category_title);
         titleTxt.setText(categoryTitle);
     }
@@ -107,7 +109,7 @@ public class CategoryActivity extends AppCompatActivity {
                 Log.e(Tag, "adding new document " + title);
                 Document newDocument = new Document(title, comment, expirationDate); //todo change
                 documentList.add(newDocument);
-                FirebaseMediate.addNewDocument(categoryTitle, newDocument);
+                FirebaseMediate.addNewDocument(categoryPosition, newDocument);
                 documentAdapter.notifyItemInserted(documentList.size() - 1);
             }
         }
@@ -131,7 +133,7 @@ public class CategoryActivity extends AppCompatActivity {
                     document.setExpirationDate(expirationDate);
                 }
                 // todo add other fields
-                FirebaseMediate.updateDocument(categoryTitle, document);
+                FirebaseMediate.updateDocument(categoryPosition, document);
                 documentAdapter.notifyDataSetChanged();
             }
         }

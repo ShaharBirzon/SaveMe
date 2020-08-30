@@ -24,12 +24,11 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
 
 
 public class FirebaseMediate {
-    private static Map<String, Category> categories = new HashMap<>();
+    private static ArrayList< Category> categories = new ArrayList<>();
     private static final String TAG = "FirebaseMediate";
     private static FirebaseFirestore db;
     private static DocumentReference userDocumentRef;
@@ -52,7 +51,6 @@ public class FirebaseMediate {
         if (userDocumentPath != null) {
             userDocumentRef = db.document(userDocumentPath);
             initializeUserDocumentSnapshotFromDB();
-            categoriesRef = userDocumentRef.collection("categories");
         }
     }
 
@@ -74,7 +72,7 @@ public class FirebaseMediate {
      *
      * @return user categories list.
      */
-    public static Map<String, Category> getUserCategories() {
+    public static ArrayList< Category> getUserCategories() {
         Log.d(TAG, "got to getUserCategories");
         User user = userDocumentSnapshot.toObject(User.class);
         categories = user.getCategories();
@@ -87,16 +85,29 @@ public class FirebaseMediate {
      * @param category category to add.
      */
     public static void addCategory(final Category category) {
-        userDocumentRef.update("categories", FieldValue.arrayUnion(category)).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    Log.d(TAG, "add category %s successfully" + category.title);
-                } else {
-                    Log.e(TAG, "error occurred while trying to add category %s " + category.title);
-                }
-            }
-        });
+        categoriesRef.add(category)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error adding document", e);
+                    }
+                });
+//        userDocumentRef.update("categories", FieldValue.arrayUnion(category)).addOnCompleteListener(new OnCompleteListener<Void>() {
+//            @Override
+//            public void onComplete(@NonNull Task<Void> task) {
+//                if (task.isSuccessful()) {
+//                    Log.d(TAG, "add category %s successfully" + category.title);
+//                } else {
+//                    Log.e(TAG, "error occurred while trying to add category %s " + category.title);
+//                }
+//            }
+//        });
     }
 
     /**
@@ -126,21 +137,16 @@ public class FirebaseMediate {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();//todo use
 
         // Add a new User document with a generated ID
-        usersCollectionRef.add(userToAdd)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        userDocumentRef = documentReference;
-                        Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
-                        MyPreferences.saveUserDocumentPathToPreferences(appContext, documentReference.getPath());
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error adding document", e);
-                    }
-                });
+        userDocumentRef = usersCollectionRef.document("amit");
+        MyPreferences.saveUserDocumentPathToPreferences(appContext, userDocumentRef.getPath());
+        categoriesRef = userDocumentRef.collection("categories");
+        addCategories(userToAdd.getCategories());
+    }
+
+    private static void addCategories(ArrayList<Category> categories){
+        for (Category category: categories){
+            addCategory(category);
+        }
     }
 
     /**
@@ -186,11 +192,11 @@ public class FirebaseMediate {
      *
      * @return default categories list.
      */
-    public static Map<String, Category> getDefaultCategories() {
-        Map<String, Category> defaultCategories = new HashMap<>();
-        defaultCategories.put("Car", new Category("Car", "car category"));
-        defaultCategories.put("Bank", new Category("Bank", "bank category"));
-        defaultCategories.put("Personal", new Category("Personal", "personal category"));
+    public static ArrayList<Category> getDefaultCategories() {
+        ArrayList<Category> defaultCategories = new ArrayList<>();
+        defaultCategories.add(new Category("Car", "car category"));
+        defaultCategories.add(new Category("Bank", "bank category"));
+        defaultCategories.add(new Category("Personal", "personal category"));
         return defaultCategories;
     }
 

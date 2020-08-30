@@ -1,5 +1,5 @@
 package com.example.saveme.main;
 
 public interface CategoryClickListener {
-    public void onCategoryClicked(String categoryName); // todo check what needs to get
+    public void onCategoryClicked(int position); // todo check what needs to get
 }
