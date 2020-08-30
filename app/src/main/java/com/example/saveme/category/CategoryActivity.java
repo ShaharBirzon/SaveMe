@@ -121,12 +121,18 @@ public class CategoryActivity extends AppCompatActivity {
 
                 Log.e(Tag, "editing document " + title);
                 Document document = documentList.get(position); //todo check how to get current document like this or from adapter?
-                FirebaseMediate.removeDocument(categoryTitle, document); //todo change to update
-                document.setTitle(title);
-                document.setComment(comment);
-                document.setExpirationDate(expirationDate);
+                if (!title.equals(document.getTitle())) {
+                    document.setTitle(title);
+                }
+                if (!comment.equals(document.getComment())) {
+                    document.setComment(comment);
+                }
+                if (!expirationDate.equals(document.getExpirationDate())) {
+                    document.setExpirationDate(expirationDate);
+                }
+                // todo add other fields
+                FirebaseMediate.updateDocument(categoryTitle, document);
                 documentAdapter.notifyDataSetChanged();
-                FirebaseMediate.addNewDocument(categoryTitle, document);
             }
         }
     }

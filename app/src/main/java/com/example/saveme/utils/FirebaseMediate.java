@@ -145,8 +145,9 @@ public class FirebaseMediate {
 
     /**
      * Add new document to firestore database.
+     *
      * @param CategoryName The category the document is been added to.
-     * @param newDocument The new document.
+     * @param newDocument  The new document.
      */
     public static void addNewDocument(String CategoryName, Document newDocument) {
         String name = "categories." + CategoryName + ".docsList";
@@ -154,8 +155,7 @@ public class FirebaseMediate {
     }
 
     /**
-     *
-     * @param CategoryName The category the document is been removed from.
+     * @param CategoryName     The category the document is been removed from.
      * @param documentToDelete The document to delete.
      */
     public static void removeDocument(String CategoryName, Document documentToDelete) {
@@ -163,10 +163,22 @@ public class FirebaseMediate {
         userDocumentRef.update(name, FieldValue.arrayRemove(documentToDelete));
     }
 
+    /**
+     * updates a field of a document
+     *
+     * @param CategoryName     the category of the document
+     * @param documentToUpdate the document to update
+     */
     public static void updateDocument(String CategoryName, Document documentToUpdate) {
-        String name = "categories." + CategoryName + ".docsList";
-        //todo check if change in name will insert a new document instead of updating old one
-        userDocumentRef.update(name, FieldValue.arrayUnion(documentToUpdate));
+        Log.d("update document: ", documentToUpdate.getTitle());
+        String title = "categories." + CategoryName + ".docsList." + "title";
+        userDocumentRef.update(title, documentToUpdate.getTitle());
+        String comment = "categories." + CategoryName + ".docsList." + "comment";
+        userDocumentRef.update(comment, documentToUpdate.getComment());
+        String expirationDate = "categories." + CategoryName + ".docsList." + "expirationDate";
+        userDocumentRef.update(expirationDate, documentToUpdate.getExpirationDate());
+
+        //todo update other fields
     }
 
     /**
