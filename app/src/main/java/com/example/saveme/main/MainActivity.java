@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import com.example.saveme.category.CategoryActivity;
 import com.example.saveme.R;
@@ -17,6 +18,8 @@ import com.example.saveme.User;
 import com.example.saveme.category.Document;
 import com.example.saveme.utils.FirebaseMediate;
 import com.example.saveme.utils.MyPreferences;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUserMetadata;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -54,6 +57,17 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
 
         // when a category is long clicked
         initializeCategoryLongClickListener();
+
+        String username = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+        String welcomeString;
+        if (username == null || username.equals("")){
+            welcomeString = "Welcome!";
+        }
+        else{
+            welcomeString = "Welcome, " + username + "!";
+        }
+        TextView nameTxt = findViewById(R.id.tv_welcome_name);
+        nameTxt.setText(welcomeString);
     }
 
     private void initializeRecyclerView() {
