@@ -2,19 +2,25 @@ package com.example.saveme.document;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.EditText;
 
 import com.example.saveme.R;
 import com.example.saveme.category.CategoryActivity;
+import com.google.android.material.textfield.TextInputLayout;
 
-public class DocumentActivity extends AppCompatActivity {
+import java.util.Calendar;
 
-    private EditText documentTitleET;
-    private EditText documentCommentET;
-    private EditText documentExpirationDateET;
+public class DocumentActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener{
+
+    private TextInputLayout documentTitleET;
+    private TextInputLayout documentCommentET;
+    private TextInputLayout documentExpirationDateET;
     private String callReason;
     private int position;
 
@@ -30,16 +36,48 @@ public class DocumentActivity extends AppCompatActivity {
         Intent intentCreatedMe = getIntent();
         callReason = intentCreatedMe.getStringExtra("call_reason");
         if (callReason.equals("edit_document")) {
-            String title = intentCreatedMe.getStringExtra("document_title");
-            documentTitleET.setText(title);
-            String comment = intentCreatedMe.getStringExtra("document_comment");
-            documentCommentET.setText(comment);
-            String expirationDate = intentCreatedMe.getStringExtra("document_expiration_date");
-            documentExpirationDateET.setText(expirationDate);
-            // todo for others
             position = intentCreatedMe.getIntExtra("position", -1);
 
         }
+
+        documentExpirationDateET.setStartIconOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDatePickerDialog();
+            }
+        });
+
+        documentExpirationDateET.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDatePickerDialog();
+            }
+        });
+
+        documentExpirationDateET.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if(b){
+                    showDatePickerDialog();
+                }
+            }
+        });
+        documentExpirationDateET.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return true;
+            }
+        });
+
+    }
+
+    private void showDatePickerDialog(){
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, this,
+                Calendar.getInstance().get(Calendar.YEAR),
+                Calendar.getInstance().get(Calendar.MONTH),
+                Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+        datePickerDialog.show();
+
     }
 
     /**
@@ -59,9 +97,9 @@ public class DocumentActivity extends AppCompatActivity {
             addDocumentToFirebase();
         }
 
-        intentBack.putExtra("document_title", documentTitleET.getText().toString());
-        intentBack.putExtra("document_comment", documentCommentET.getText().toString());
-        intentBack.putExtra("document_expiration_date", documentExpirationDateET.getText().toString());
+        intentBack.putExtra("document_title", documentTitleET.getEditText().getText().toString());
+        intentBack.putExtra("document_comment", documentCommentET.getEditText().getText().toString());
+        intentBack.putExtra("document_expiration_date", documentExpirationDateET.getEditText().getText().toString());
         //todo add others
         setResult(RESULT_OK, intentBack);
         finish();
@@ -74,5 +112,11 @@ public class DocumentActivity extends AppCompatActivity {
 
     private void updateDocumentInFirebase() {
         // todo maybe move to CategoryActivity
+    }
+
+    @Override
+    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+        String date = day +"/" + month + "/" + year;
+        documentExpirationDateET.getEditText().setText(date);
     }
 }
