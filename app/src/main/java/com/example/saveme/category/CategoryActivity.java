@@ -120,7 +120,8 @@ public class CategoryActivity extends AppCompatActivity {
                 int position = data.getIntExtra("document_position", DEFAULT_VALUE);
 
                 Log.e(Tag, "editing document " + title);
-                Document document = documentList.get(position); //todo check how to get current document like this or from adapter?
+                Document document = documentList.get(position);
+                String oldDocumentTitle = document.getTitle();//todo check how to get current document like this or from adapter?
                 if (!title.equals(document.getTitle())) {
                     document.setTitle(title);
                 }
@@ -131,7 +132,7 @@ public class CategoryActivity extends AppCompatActivity {
                     document.setExpirationDate(expirationDate);
                 }
                 // todo add other fields
-                FirebaseMediate.updateDocument(categoryTitle, document);
+                FirebaseMediate.updateDocument(categoryTitle,Integer.toString(position), document);
                 documentAdapter.notifyDataSetChanged();
             }
         }

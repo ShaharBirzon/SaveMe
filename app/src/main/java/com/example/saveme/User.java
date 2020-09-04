@@ -3,22 +3,23 @@ package com.example.saveme;
 import com.example.saveme.main.Category;
 
 
+import java.util.ArrayList;
 import java.util.Map;
 
 public class User {
-    Map<String, Category> categories;
+    ArrayList< Category> categories;
 
     public User() {
     }
 
-    public User(Map<String, Category> categories) {
+    public User(ArrayList< Category> categories) {
         this.categories = categories;
     }
-    public Map<String, Category> getCategories() {
+    public ArrayList< Category> getCategories() {
         return categories;
     }
 
-    public void setCategories(Map<String, Category> categories) {
+    public void setCategories(ArrayList< Category> categories) {
         this.categories = categories;
     }
 }

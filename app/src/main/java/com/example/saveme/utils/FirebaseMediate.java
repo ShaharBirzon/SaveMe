@@ -23,20 +23,21 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class FirebaseMediate {
-    private static Map<String, Category> categories = new HashMap<>();
+    private static ArrayList<Category> categories = new ArrayList<>();
     private static final String TAG = "FirebaseMediate";
     private static FirebaseFirestore db;
     private static DocumentReference userDocumentRef;
     private static CollectionReference usersCollectionRef;
     private static Context appContext;
     private static CollectionReference categoriesRef;
-    private static DocumentSnapshot userDocumentSnapshot;
+    private static DocumentSnapshot userDocumentSnapshot; //todo needed?
 
     /**
      * This method initializes the firestore fields from data from the database.
@@ -51,9 +52,40 @@ public class FirebaseMediate {
         String userDocumentPath = MyPreferences.getUserDocumentPathFromPreferences(appContext);
         if (userDocumentPath != null) {
             userDocumentRef = db.document(userDocumentPath);
-            initializeUserDocumentSnapshotFromDB();
             categoriesRef = userDocumentRef.collection("categories");
+            initializeUserDocumentSnapshotFromDB();
+            initializeUserCategoriesSnapshotFromDB();
         }
+    }
+
+    private static void initializeUserCategoriesSnapshotFromDB() {
+        categoriesRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot documentSnapshots) {
+                if (documentSnapshots.isEmpty()) {
+                    Log.d(TAG, "onSuccess: LIST EMPTY");
+                    return;
+                } else {
+                    // Convert the whole Query Snapshot to a list
+                    // of objects directly! No need to fetch each
+                    // document.
+                    List<Category> categoriesList = documentSnapshots.toObjects(Category.class);
+
+                    // Add all to your list
+                    categories.clear();
+                    categories.addAll(categoriesList);
+                    Log.d(TAG, "onSuccess: " + categories);
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e(TAG, "Error getting data!!!");
+            }
+        });
+
+        Log.d(TAG, "successful userCategoriesSnapshot from db");
+
     }
 
     /**
@@ -74,10 +106,8 @@ public class FirebaseMediate {
      *
      * @return user categories list.
      */
-    public static Map<String, Category> getUserCategories() {
+    public static ArrayList<Category> getUserCategories() {
         Log.d(TAG, "got to getUserCategories");
-        User user = userDocumentSnapshot.toObject(User.class);
-        categories = user.getCategories();
         return categories;
     }
 
@@ -87,13 +117,13 @@ public class FirebaseMediate {
      * @param category category to add.
      */
     public static void addCategory(final Category category) {
-        userDocumentRef.update("categories", FieldValue.arrayUnion(category)).addOnCompleteListener(new OnCompleteListener<Void>() {
+        categoriesRef.document(category.getTitle()).set(category).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
-                    Log.d(TAG, "add category %s successfully" + category.title);
+                    Log.d(TAG, "category added successfully: " + category.getTitle());
                 } else {
-                    Log.e(TAG, "error occurred while trying to add category %s " + category.title);
+                    Log.w(TAG, "Error adding document");
                 }
             }
         });
@@ -105,7 +135,7 @@ public class FirebaseMediate {
      * @param category to be removed from user categories list.
      */
     public static void removeCategory(final Category category) {
-        userDocumentRef.update("categories", FieldValue.arrayRemove(category)).addOnCompleteListener(new OnCompleteListener<Void>() {
+        db.document(categoriesRef.getPath() + "/" + category.getTitle()).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
@@ -126,57 +156,50 @@ public class FirebaseMediate {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();//todo use
 
         // Add a new User document with a generated ID
-        usersCollectionRef.add(userToAdd)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        userDocumentRef = documentReference;
-                        Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
-                        MyPreferences.saveUserDocumentPathToPreferences(appContext, documentReference.getPath());
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error adding document", e);
-                    }
-                });
+        userDocumentRef = usersCollectionRef.document(firebaseUser.getUid());
+        MyPreferences.saveUserDocumentPathToPreferences(appContext, userDocumentRef.getPath());
+        categoriesRef = userDocumentRef.collection("categories");
+        addCategories(userToAdd.getCategories());
+    }
+
+    private static void addCategories(ArrayList<Category> categories) {
+        for (Category category : categories) {
+            addCategory(category);
+        }
     }
 
     /**
      * Add new document to firestore database.
      *
-     * @param CategoryName The category the document is been added to.
+     * @param categoryName The category name the document is been added to.
      * @param newDocument  The new document.
      */
-    public static void addNewDocument(String CategoryName, Document newDocument) {
-        String name = "categories." + CategoryName + ".docsList";
-        userDocumentRef.update(name, FieldValue.arrayUnion(newDocument));
+    public static void addNewDocument(String categoryName, Document newDocument) {
+        db.document(categoriesRef.getPath() + "/" + categoryName).update("docsList", FieldValue.arrayUnion(newDocument));
     }
 
     /**
-     * @param CategoryName     The category the document is been removed from.
+     * @param categoryName     The category name the document is been removed from.
      * @param documentToDelete The document to delete.
      */
-    public static void removeDocument(String CategoryName, Document documentToDelete) {
-        String name = "categories." + CategoryName + ".docsList";
-        userDocumentRef.update(name, FieldValue.arrayRemove(documentToDelete));
+    public static void removeDocument(String categoryName, Document documentToDelete) {
+        db.document(categoriesRef.getPath() + "/" + categoryName).update("docsList", FieldValue.arrayRemove(documentToDelete));
     }
 
     /**
      * updates a field of a document
      *
-     * @param CategoryName     the category of the document
+     * @param categoryName     the category of the document
      * @param documentToUpdate the document to update
      */
-    public static void updateDocument(String CategoryName, Document documentToUpdate) {
+    public static void updateDocument(String categoryName, String prevDocumentTitle, Document documentToUpdate) {
         Log.d("update document: ", documentToUpdate.getTitle());
-        String title = "categories." + CategoryName + ".docsList." + "title";
-        userDocumentRef.update(title, documentToUpdate.getTitle());
-        String comment = "categories." + CategoryName + ".docsList." + "comment";
-        userDocumentRef.update(comment, documentToUpdate.getComment());
-        String expirationDate = "categories." + CategoryName + ".docsList." + "expirationDate";
-        userDocumentRef.update(expirationDate, documentToUpdate.getExpirationDate());
+        String title = "docsList."+prevDocumentTitle+"." + "title";
+        db.document(categoriesRef.getPath() + "/" + categoryName).update(title, documentToUpdate.getTitle());
+        String comment = "docsList."+prevDocumentTitle+"." + "comment";
+        db.document(categoriesRef.getPath() + "/" + categoryName).update(comment, documentToUpdate.getComment());
+        String expirationDate = "docsList."+prevDocumentTitle+"." + "expirationDate";
+        db.document(categoriesRef.getPath() + "/" + categoryName).update(expirationDate, documentToUpdate.getExpirationDate());
 
         //todo update other fields
     }
@@ -186,11 +209,11 @@ public class FirebaseMediate {
      *
      * @return default categories list.
      */
-    public static Map<String, Category> getDefaultCategories() {
-        Map<String, Category> defaultCategories = new HashMap<>();
-        defaultCategories.put("Car", new Category("Car", "car category"));
-        defaultCategories.put("Bank", new Category("Bank", "bank category"));
-        defaultCategories.put("Personal", new Category("Personal", "personal category"));
+    public static ArrayList<Category> getDefaultCategories() {
+        ArrayList<Category> defaultCategories = new ArrayList<>();
+        defaultCategories.add(new Category("Car", "car category"));
+        defaultCategories.add(new Category("Bank", "bank category"));
+        defaultCategories.add(new Category("Personal", "personal category"));
         return defaultCategories;
     }
 
