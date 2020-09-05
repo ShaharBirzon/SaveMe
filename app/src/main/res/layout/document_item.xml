@@ -15,8 +15,8 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:layout_height="match_parent"
+            android:background="@drawable/custom_ripple"
             android:padding="16dp">
 
             <!-- Title, secondary and supporting text -->
