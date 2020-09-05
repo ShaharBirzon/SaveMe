@@ -33,21 +33,25 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_welcome_name" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/btn_add_category"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_margin="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
-        android:clickable="true"
         android:onClick="onClickAddCategoryButton"
-        android:src="@drawable/ic_create_new_folde"
+        android:text="add category"
         app:backgroundTint="@color/colorPrimaryDark"
+        app:icon="@drawable/ic_add_black_24dp"
+        android:textColor="@android:color/white"
+        app:iconTint="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:rippleColor="@color/softBlue"
-        app:tint="@android:color/white" />
+        app:rippleColor="@color/softBlue" />
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
