@@ -5,24 +5,29 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.DatePicker;
-import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.saveme.R;
 import com.example.saveme.category.CategoryActivity;
+import com.example.saveme.category.Document;
 import com.google.android.material.textfield.TextInputLayout;
-
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import java.util.Calendar;
 
 public class DocumentActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener{
 
+    private static final String TAG = "DocumentActivity";
     private TextInputLayout documentTitleET;
     private TextInputLayout documentCommentET;
     private TextInputLayout documentExpirationDateET;
     private String callReason;
     private int position;
+    private Document curDocument = new Document();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +41,11 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         Intent intentCreatedMe = getIntent();
         callReason = intentCreatedMe.getStringExtra("call_reason");
         if (callReason.equals("edit_document")) {
+            curDocument.setTitle(intentCreatedMe.getStringExtra("document_title"));
+            curDocument.setComment(intentCreatedMe.getStringExtra("document_comment"));
+            curDocument.setExpirationDate(intentCreatedMe.getStringExtra("document_expiration_date"));
             position = intentCreatedMe.getIntExtra("position", -1);
-
+            initializeActivityFieldsWithDocumentDataFromDB();
         }
 
         documentExpirationDateET.setStartIconOnClickListener(new View.OnClickListener() {
@@ -71,6 +79,16 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
 
     }
 
+    /**
+     * This method initializes Activity Fields With Document Data From DB
+     */
+    private void initializeActivityFieldsWithDocumentDataFromDB() {
+        Log.d(TAG, "got to initializeActivityFieldsWithDocumentDataFromDB");
+        documentTitleET.getEditText().setText(curDocument.getTitle());
+        documentCommentET.getEditText().setText(curDocument.getComment());
+        documentExpirationDateET.getEditText().setText(curDocument.getExpirationDate());
+    }
+
     private void showDatePickerDialog(){
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, this,
                 Calendar.getInstance().get(Calendar.YEAR),
@@ -86,6 +104,10 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
      * @param view - the view
      */
     public void onClickSaveDocumentButton(View view) {
+        if (!isInputValid()){
+            Toast.makeText(getApplicationContext(), "invalid input data", Toast.LENGTH_LONG).show();
+            return;
+        }
 
         Intent intentBack = new Intent(DocumentActivity.this, CategoryActivity.class);
 
@@ -103,6 +125,17 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         //todo add others
         setResult(RESULT_OK, intentBack);
         finish();
+    }
+
+    /**
+     * This method verifies user input is valid.
+     * @return true if user input is valid, false otherwise.
+     */
+    private boolean isInputValid() {
+        if (documentTitleET.getEditText().getText().length()==0){
+            return false;
+        }
+        return true;
     }
 
 
