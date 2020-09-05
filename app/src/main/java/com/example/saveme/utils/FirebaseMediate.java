@@ -1,5 +1,6 @@
 package com.example.saveme.utils;
 
+import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
@@ -29,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class FirebaseMediate {
+public class FirebaseMediate extends Application {
     private static ArrayList<Category> categories = new ArrayList<>();
     private static final String TAG = "FirebaseMediate";
     private static FirebaseFirestore db;
@@ -38,6 +39,12 @@ public class FirebaseMediate {
     private static Context appContext;
     private static CollectionReference categoriesRef;
     private static DocumentSnapshot userDocumentSnapshot; //todo needed?
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        initializeDataFromDB(getApplicationContext());
+    }
 
     /**
      * This method initializes the firestore fields from data from the database.
