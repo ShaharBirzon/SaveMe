@@ -11,6 +11,7 @@
     <string name="twitter_consumer_secret" translatable="false">YOUR_CONSUMER_SECRET</string>
 
     <string-array name="categories">
+        <item>Choose Name…</item>
         <item>Bank</item>
         <item>Personal</item>
         <item>Car</item>
@@ -19,4 +20,15 @@
         <item>Work</item>
         <item>Other</item>
     </string-array>
+
+    <string-array name="times">
+        <item>this time</item>
+        <item>1 day before</item>
+        <item>2 days before</item>
+        <item>5 days before</item>
+        <item>1 week before</item>
+        <item>5 weeks before</item>
+    </string-array>
+
+
 </resources>

@@ -7,11 +7,20 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
+import android.widget.Spinner;
+import android.widget.Switch;
 
 import com.example.saveme.R;
 import com.example.saveme.category.CategoryActivity;
+import com.example.saveme.main.AddCategoryDialog;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Calendar;
@@ -23,6 +32,8 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     private TextInputLayout documentExpirationDateET;
     private String callReason;
     private int position;
+    private Spinner reminderSpinner;
+    SwitchMaterial reminderSwitch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +41,9 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         setContentView(R.layout.activity_document);
         documentTitleET = findViewById(R.id.et_document_title);
         documentCommentET = findViewById(R.id.et_comment);
+        reminderSwitch = findViewById(R.id.add_alarm);
+        reminderSpinner = findViewById(R.id.spinner_times);
+        setReminderTime();
         documentExpirationDateET = findViewById(R.id.et_expiration_date);
         // todo add other
 
@@ -47,27 +61,33 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             }
         });
 
-        documentExpirationDateET.setOnClickListener(new View.OnClickListener() {
+        reminderSwitch.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
             @Override
-            public void onClick(View view) {
-                showDatePickerDialog();
-            }
-        });
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                View v1 = findViewById(R.id.et_time);
+                View v2 = findViewById(R.id.tv_reminder);
+                View v3 = findViewById(R.id.spinner_times);
+                View v4 = findViewById(R.id.tv_add_to_calendar);
+                View v5 = findViewById(R.id.checkbox_calendar);
 
-        documentExpirationDateET.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
                 if(b){
-                    showDatePickerDialog();
+                    v1.setVisibility(View.VISIBLE);
+                    v2.setVisibility(View.VISIBLE);
+                    v3.setVisibility(View.VISIBLE);
+                    v4.setVisibility(View.VISIBLE);
+                    v5.setVisibility(View.VISIBLE);
+                }
+                else{
+                    v1.setVisibility(View.GONE);
+                    v2.setVisibility(View.GONE);
+                    v3.setVisibility(View.GONE);
+                    v4.setVisibility(View.GONE);
+                    v5.setVisibility(View.GONE);
                 }
             }
         });
-        documentExpirationDateET.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                return true;
-            }
-        });
+
+
 
     }
 
@@ -118,5 +138,22 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
         String date = day +"/" + month + "/" + year;
         documentExpirationDateET.getEditText().setText(date);
+    }
+
+    private void setReminderTime() {
+        final ArrayAdapter<String> titlesAdapter = new ArrayAdapter<>(DocumentActivity.this, android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.times));
+        titlesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        reminderSpinner.setAdapter(titlesAdapter);
+        reminderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                reminderSpinner.setSelection(position);
+                String title = titlesAdapter.getItem(position);
+                //todo implement
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+            }
+        });
     }
 }

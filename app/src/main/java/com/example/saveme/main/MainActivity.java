@@ -1,5 +1,7 @@
 package com.example.saveme.main;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -7,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,6 +21,7 @@ import com.example.saveme.User;
 import com.example.saveme.category.Document;
 import com.example.saveme.utils.FirebaseMediate;
 import com.example.saveme.utils.MyPreferences;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -74,6 +78,19 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         categoryAdapter = new CategoryAdapter(categories); //todo check stay same order
         recyclerView.setAdapter(categoryAdapter);
+
+        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                ExtendedFloatingActionButton mainFab = findViewById(R.id.btn_add_category);
+                if (dy > 0) {
+                    mainFab.shrink();
+                } else if (dy < 0) {
+                    mainFab.extend();
+                }
+            }
+        });
+
     }
 
     /*
