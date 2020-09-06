@@ -167,6 +167,7 @@ public class CategoryActivity extends AppCompatActivity {
                 intent.putExtra("call_reason", "edit_document");
                 intent.putExtra("position", position);
                 intent.putExtra("document_title", document.getTitle());
+                intent.putExtra("category_title", categoryTitle);
                 intent.putExtra("document_comment", document.getComment());
                 intent.putExtra("document_expiration_date", document.getExpirationDate());
                 // todo add more into intent

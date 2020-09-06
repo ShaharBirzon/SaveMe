@@ -31,7 +31,6 @@ public class WelcomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(this);
-        FirebaseMediate.initializeDataFromDB(getApplicationContext());
 
         //todo maybe use for facebook login
 //        AccessToken accessToken = AccessToken.getCurrentAccessToken();
