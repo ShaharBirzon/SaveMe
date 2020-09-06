@@ -1,5 +1,6 @@
 package com.example.saveme.category;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -16,6 +17,7 @@ import com.example.saveme.document.DocumentActivity;
 import com.example.saveme.R;
 import com.example.saveme.main.MainActivity;
 import com.example.saveme.utils.FirebaseMediate;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -74,6 +76,18 @@ public class CategoryActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         documentAdapter = new DocumentAdapter(documentList);
         recyclerView.setAdapter(documentAdapter);
+
+        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                ExtendedFloatingActionButton categoryFab = findViewById(R.id.btn_add_doc);
+                if (dy > 0) {
+                    categoryFab.shrink();
+                } else if (dy < 0) {
+                    categoryFab.extend();
+                }
+            }
+        });
     }
 
     /**
