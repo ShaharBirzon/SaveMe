@@ -23,7 +23,7 @@ public class Document {
         this.hasPicture = hasPicture;
     }
 
-    public Document(String title, String comment, String expirationDate) {
+    public Document(String title, String comment, String expirationDate, Boolean hasPicture) {
         this.title = title;
         this.comment = comment;
         this.expirationDate = expirationDate;
