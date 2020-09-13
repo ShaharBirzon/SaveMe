@@ -193,23 +193,6 @@ public class FirebaseMediate extends Application {
         db.document(categoriesRef.getPath() + "/" + categoryName).update("docsList", FieldValue.arrayRemove(documentToDelete));
     }
 
-    /**
-     * updates a field of a document
-     *
-     * @param categoryName     the category of the document
-     * @param documentToUpdate the document to update
-     */
-    public static void updateDocument(String categoryName, String prevDocumentTitle, Document documentToUpdate) {
-        Log.d("update document: ", documentToUpdate.getTitle());
-        String title = "docsList."+prevDocumentTitle+"." + "title";
-        db.document(categoriesRef.getPath() + "/" + categoryName).update(title, documentToUpdate.getTitle());
-        String comment = "docsList."+prevDocumentTitle+"." + "comment";
-        db.document(categoriesRef.getPath() + "/" + categoryName).update(comment, documentToUpdate.getComment());
-        String expirationDate = "docsList."+prevDocumentTitle+"." + "expirationDate";
-        db.document(categoriesRef.getPath() + "/" + categoryName).update(expirationDate, documentToUpdate.getExpirationDate());
-
-        //todo update other fields
-    }
 
     /**
      * This method returns the default categories list.
