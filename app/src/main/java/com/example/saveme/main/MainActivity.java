@@ -28,6 +28,8 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements AddCategoryDialog.OnInputListener {
 
@@ -178,7 +180,15 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
     }
 
     public void onClickAddCategoryButton(View view) {
-        AddCategoryDialog addCategoryDialog = new AddCategoryDialog();
+        String [] categoriesTitles = this.getResources().getStringArray(R.array.categories);
+        List<String> categoriesTitlesList = new ArrayList<>(Arrays.asList(categoriesTitles));
+        for (Category category: categories){
+            if (categoriesTitlesList.contains(category.getTitle())){
+                categoriesTitlesList.remove(category.getTitle());
+            }
+        }
+        categoriesTitles = categoriesTitlesList.toArray(new String[0]);
+        AddCategoryDialog addCategoryDialog = new AddCategoryDialog(categoriesTitles);
         addCategoryDialog.show(getSupportFragmentManager(), "AddCategoryDialogFragment");
     }
 
