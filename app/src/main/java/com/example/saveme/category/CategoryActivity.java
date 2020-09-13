@@ -128,28 +128,34 @@ public class CategoryActivity extends AppCompatActivity {
         if (requestCode == EDIT_DOCUMENT) {
             //edit existing document
             if (resultCode == RESULT_OK) {
-                String title = data.getStringExtra("document_title");
-                String comment = data.getStringExtra("document_comment");
-                String expirationDate = data.getStringExtra("document_expiration_date");
-                int position = data.getIntExtra("document_position", DEFAULT_VALUE);
-
-                Log.e(Tag, "editing document " + title);
-                Document document = documentList.get(position);
-                String oldDocumentTitle = document.getTitle();//todo check how to get current document like this or from adapter?
-                if (!title.equals(document.getTitle())) {
-                    document.setTitle(title);
-                }
-                if (!comment.equals(document.getComment())) {
-                    document.setComment(comment);
-                }
-                if (!expirationDate.equals(document.getExpirationDate())) {
-                    document.setExpirationDate(expirationDate);
-                }
-                // todo add other fields
-                FirebaseMediate.updateDocument(categoryTitle,Integer.toString(position), document);
-                documentAdapter.notifyDataSetChanged();
+                updateDocument(data);
             }
         }
+    }
+
+    /*
+    the method updates the document fields (also in the fireStore)
+     */
+    private void updateDocument(Intent data) {
+        String title = data.getStringExtra("document_title");
+        String comment = data.getStringExtra("document_comment");
+        String expirationDate = data.getStringExtra("document_expiration_date");
+        int position = data.getIntExtra("document_position", DEFAULT_VALUE);
+        Log.e(Tag, "editing document " + title);
+        Document document = documentList.get(position);
+        FirebaseMediate.removeDocument(categoryTitle, document);
+        if (!title.equals(document.getTitle())) {
+            document.setTitle(title);
+        }
+        if (!comment.equals(document.getComment())) {
+            document.setComment(comment);
+        }
+        if (!expirationDate.equals(document.getExpirationDate())) {
+            document.setExpirationDate(expirationDate);
+        }
+        // todo add other fields
+        FirebaseMediate.addNewDocument(categoryTitle, document);
+        documentAdapter.notifyDataSetChanged();
     }
 
 
