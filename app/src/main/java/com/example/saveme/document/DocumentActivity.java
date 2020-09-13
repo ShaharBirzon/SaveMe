@@ -2,31 +2,48 @@ package com.example.saveme.document;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Switch;
 
+import com.example.saveme.main.AddCategoryDialog;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import android.widget.TimePicker;
+
 import android.widget.Toast;
+
 import com.example.saveme.R;
 import com.example.saveme.category.CategoryActivity;
 import com.example.saveme.category.Document;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.io.IOException;
 import java.util.Calendar;
 
-public class DocumentActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener{
+public class DocumentActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
 
     private static final String TAG = "DocumentActivity";
     private TextInputLayout documentTitleET;
@@ -40,6 +57,10 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     private Spinner reminderSpinner2;
     SwitchMaterial reminderSwitch;
     private Document curDocument = new Document();
+    private Button addPhotoBtn;
+    private Uri selectedImage;
+    ImageView documentImageView;
+    private boolean changedPhoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,15 +110,14 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
                 View v11 = findViewById(R.id.spinner_times2);
 
 
-                if(b){
+                if (b) {
                     v1.setVisibility(View.VISIBLE);
                     v2.setVisibility(View.VISIBLE);
                     v3.setVisibility(View.VISIBLE);
                     v4.setVisibility(View.VISIBLE);
                     v5.setVisibility(View.VISIBLE);
                     v6.setVisibility(View.VISIBLE);
-                }
-                else{
+                } else {
                     v1.setVisibility(View.GONE);
                     v2.setVisibility(View.GONE);
                     v3.setVisibility(View.GONE);
@@ -127,7 +147,15 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             }
         });
 
-
+        changedPhoto = false;
+        addPhotoBtn = findViewById(R.id.btn_add_doc_photo);
+        documentImageView = findViewById(R.id.iv_doc);
+        addPhotoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                uploadPhotoOnClickAS();
+            }
+        });
 
     }
 
@@ -141,7 +169,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         documentExpirationDateET.getEditText().setText(curDocument.getExpirationDate());
     }
 
-    private void showDatePickerDialog(){
+    private void showDatePickerDialog() {
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, this,
                 Calendar.getInstance().get(Calendar.YEAR),
                 Calendar.getInstance().get(Calendar.MONTH),
@@ -186,7 +214,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
      * @param view - the view
      */
     public void onClickSaveDocumentButton(View view) {
-        if (!isInputValid()){
+        if (!isInputValid()) {
             Toast.makeText(getApplicationContext(), "invalid input data", Toast.LENGTH_LONG).show();
             return;
         }
@@ -195,11 +223,9 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
 
         if (callReason.equals("edit_document")) {
             intentBack.putExtra("document_position", position);
-            updateDocumentInFirebase();
         }
-        if (callReason.equals("new_document")) {
-            addDocumentToFirebase();
-        }
+
+        intentBack.putExtra("has_photo", changedPhoto);
 
         intentBack.putExtra("document_title", documentTitleET.getEditText().getText().toString());
         intentBack.putExtra("document_comment", documentCommentET.getEditText().getText().toString());
@@ -211,23 +237,16 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
 
     /**
      * This method verifies user input is valid.
+     *
      * @return true if user input is valid, false otherwise.
      */
     private boolean isInputValid() {
-        if (documentTitleET.getEditText().getText().length()==0){
+        if (documentTitleET.getEditText().getText().length() == 0) {
             return false;
         }
         return true;
     }
 
-
-    private void addDocumentToFirebase() {
-        // todo maybe move to CategoryActivity
-    }
-
-    private void updateDocumentInFirebase() {
-        // todo maybe move to CategoryActivity
-    }
 
     @Override
     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
@@ -260,6 +279,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
                 String title = titlesAdapter.getItem(position);
                 //todo implement
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
             }
@@ -294,4 +314,46 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
 
 
     }
+
+    /**
+     * this method opens the gallery to choose image. Activates when user clicks on an upload photo
+     * button.
+     */
+    public void uploadPhotoOnClickAS() {
+        CropImage.activity()
+                .setCropMenuCropButtonTitle("finish cropping")
+                .setCropShape(CropImageView.CropShape.OVAL)
+                .setAspectRatio(1, 1)
+                .start(this);
+    }
+
+    /**
+     * updates the activity view after choosing an image from gallery
+     */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Result code is RESULT_OK only if the user selects an Image
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK)
+            if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+                CropImage.ActivityResult result = CropImage.getActivityResult(data);
+                selectedImage = result.getUri();
+                saveNewProfileImage();
+            }
+    }
+
+    private void saveNewProfileImage() {
+        try {
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver()
+                    , selectedImage);
+            documentImageView.setImageBitmap(bitmap);
+            curDocument.setBitmap(bitmap);
+            curDocument.setHasPicture(true);
+            changedPhoto = true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }
