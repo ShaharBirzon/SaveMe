@@ -20,7 +20,12 @@ import com.google.android.material.textfield.TextInputLayout;
 
 public class AddCategoryDialog extends DialogFragment {
     private static final String TAG = "AddCategoryFragment";
+    private String[] categoriesTitles; //categories titles not used for spinner
     public AddCategoryDialog(){
+    }
+
+    public AddCategoryDialog(String[] categoriesTitles) {
+        this.categoriesTitles = categoriesTitles;
     }
 
 
@@ -91,7 +96,7 @@ public class AddCategoryDialog extends DialogFragment {
      * Handles the event where the user chooses a neighborhood
      */
     private void setCategoryTitle() {
-        final ArrayAdapter<String> titlesAdapter = new ArrayAdapter<>(AddCategoryDialog.this.getActivity(), android.R.layout.simple_list_item_1, getActivity().getResources().getStringArray(R.array.categories));
+        final ArrayAdapter<String> titlesAdapter = new ArrayAdapter<>(AddCategoryDialog.this.getActivity(), android.R.layout.simple_list_item_1,categoriesTitles );
         titlesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         titleSpinner.setAdapter(titlesAdapter);
         titleSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
