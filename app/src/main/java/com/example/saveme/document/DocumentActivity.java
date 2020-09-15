@@ -18,14 +18,10 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Switch;
 
-import com.example.saveme.main.AddCategoryDialog;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import android.widget.TimePicker;
@@ -36,8 +32,6 @@ import com.example.saveme.R;
 import com.example.saveme.category.CategoryActivity;
 import com.example.saveme.category.Document;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -93,6 +87,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             curDocument.setComment(intentCreatedMe.getStringExtra("document_comment"));
             curDocument.setExpirationDate(intentCreatedMe.getStringExtra("document_expiration_date"));
             position = intentCreatedMe.getIntExtra("position", -1);
+            // todo add preview of image
             initializeActivityFieldsWithDocumentDataFromDB();
         }
 
@@ -211,6 +206,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
 
     }
 
+
     private void showTimePickerDialog1(){
         final TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
             @Override
@@ -227,7 +223,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
 
     }
 
-    private void showTimePickerDialog2(){
+    private void showTimePickerDialog2() {
         TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int hour, int min) {
@@ -259,9 +255,11 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         if (callReason.equals("edit_document")) {
             intentBack.putExtra("document_position", position);
         }
-
-        intentBack.putExtra("has_photo", changedPhoto);
-
+        if (changedPhoto) {
+            intentBack.putExtra("has_photo", true);
+            intentBack.putExtra("imageUri", selectedImage.toString());
+            Log.d(TAG, "adding photo");
+        }
         intentBack.putExtra("document_title", documentTitleET.getEditText().getText().toString());
         intentBack.putExtra("document_comment", documentCommentET.getEditText().getText().toString());
         intentBack.putExtra("document_expiration_date", documentExpirationDateET.getEditText().getText().toString());
@@ -288,7 +286,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     public void onDateSet(DatePicker datePicker1, int year, int month, int day) {
         datePicker = datePicker1;
         month = month + 1;
-        String date = day +"/" + month+ "/" + year;
+        String date = day + "/" + month + "/" + year;
         documentExpirationDateET.getEditText().setText(date);
 
         // todo check the correct dates
@@ -305,6 +303,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
                 String title = titlesAdapter.getItem(position);
                 //todo implement
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
             }
@@ -325,7 +324,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         });
     }
 
-    public void onAddAlarmButtonClick(View view){
+    public void onAddAlarmButtonClick(View view) {
         View v7 = findViewById(R.id.et_time2);
         View v8 = findViewById(R.id.tv_reminder2);
         View v9 = findViewById(R.id.tv_add_to_calendar2);
@@ -352,6 +351,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         intent.putExtra("rrule", "FREQ=YEARLY");
 //        intent.putExtra("endTime", reminderTime1+60*60*1000);
         intent.putExtra("title", "Reminder! your document: " + docTitle +" is expired");
+
         startActivity(intent);
 
 
@@ -369,7 +369,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     }
 
     /**
-     * updates the activity view after choosing an image from gallery
+     * updates the activity view after adding an image
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -379,16 +379,21 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
                 CropImage.ActivityResult result = CropImage.getActivityResult(data);
                 selectedImage = result.getUri();
-                saveNewProfileImage();
+                addImageToDoc();
             }
     }
 
-    private void saveNewProfileImage() {
+    /*
+    the method adds an image to document
+     */
+    private void addImageToDoc() {
         try {
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver()
                     , selectedImage);
-            documentImageView.setImageBitmap(bitmap);
-            curDocument.setBitmap(bitmap);
+            Bitmap previewBitmap = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * 0.1), (int) (bitmap.getHeight() * 0.1), true);
+            Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * 0.1), (int) (bitmap.getHeight() * 0.1), true);
+            documentImageView.setImageBitmap(previewBitmap);
+            curDocument.setBitmap(resizedBitmap);
             curDocument.setHasPicture(true);
             changedPhoto = true;
         } catch (IOException e) {

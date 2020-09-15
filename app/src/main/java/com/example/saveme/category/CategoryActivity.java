@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -32,7 +33,7 @@ public class CategoryActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ArrayList<Document> documentList;
     private DocumentAdapter documentAdapter;
-    private static final String Tag = "CategoryActivity";
+    private static final String TAG = "CategoryActivity";
     private String categoryTitle;
 
     @Override
@@ -125,6 +126,8 @@ public class CategoryActivity extends AppCompatActivity {
                 documentList.add(newDocument);
                 FirebaseMediate.addNewDocument(categoryTitle, newDocument);
                 documentAdapter.notifyItemInserted(documentList.size() - 1);
+                addDocument(data);
+
             }
         }
         if (requestCode == EDIT_DOCUMENT) {
@@ -136,6 +139,26 @@ public class CategoryActivity extends AppCompatActivity {
     }
 
     /*
+    the method adds a document to a category
+     */
+    private void addDocument(Intent data) {
+        String title = data.getStringExtra("document_title");
+        String comment = data.getStringExtra("document_comment");
+        String expirationDate = data.getStringExtra("document_expiration_date");
+        Boolean addedPhoto = data.getBooleanExtra("has_photo", false);
+        if (addedPhoto) {
+            String imageString = data.getStringExtra("imageUri");
+            Uri imageUri = Uri.parse(imageString);
+            FirebaseMediate.uploadPhotoToStorage(imageUri, this, getApplicationContext(), categoryTitle, title, "image");
+        }
+        Log.e(TAG, "adding new document " + title);
+        Document newDocument = new Document(title, comment, expirationDate, addedPhoto); //todo change
+        documentList.add(newDocument);
+        FirebaseMediate.addNewDocument(categoryTitle, newDocument);
+        documentAdapter.notifyItemInserted(documentList.size() - 1);
+    }
+
+    /*
     the method updates the document fields (also in the fireStore)
      */
     private void updateDocument(Intent data) {
@@ -143,7 +166,13 @@ public class CategoryActivity extends AppCompatActivity {
         String comment = data.getStringExtra("document_comment");
         String expirationDate = data.getStringExtra("document_expiration_date");
         int position = data.getIntExtra("document_position", DEFAULT_VALUE);
-        Log.e(Tag, "editing document " + title);
+        Boolean addedPhoto = data.getBooleanExtra("has_photo", false);
+        if (addedPhoto) {
+            String imageString = data.getStringExtra("imageUri");
+            Uri imageUri = Uri.parse(imageString);
+            FirebaseMediate.uploadPhotoToStorage(imageUri, this, getApplicationContext(), categoryTitle, title, "image");
+        }
+        Log.e(TAG, "editing document " + title);
         Document document = documentList.get(position);
         FirebaseMediate.removeDocument(categoryTitle, document);
         if (!title.equals(document.getTitle())) {
@@ -239,5 +268,9 @@ public class CategoryActivity extends AppCompatActivity {
         intent.putExtra("docList", json);
         setResult(RESULT_OK, intent);
         finish();
+    }
+
+    public void onClickChooseIcon(View view) {
+
     }
 }
