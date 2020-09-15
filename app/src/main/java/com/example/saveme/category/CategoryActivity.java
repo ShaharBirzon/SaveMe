@@ -115,7 +115,19 @@ public class CategoryActivity extends AppCompatActivity {
         if (requestCode == NEW_DOCUMENT) {
             //add new document
             if (resultCode == RESULT_OK) {
+                String title = data.getStringExtra("document_title");
+                String comment = data.getStringExtra("document_comment");
+                String expirationDate = data.getStringExtra("document_expiration_date");
+                boolean hasAlarm = data.getBooleanExtra("is_alarm", false);
+                boolean hasPhoto = data.getBooleanExtra("document_expiration_date", false);
+                Log.e(Tag, "adding new document " + title);
+
+                Document newDocument = new Document(title, comment, expirationDate, hasPhoto, hasAlarm); //todo change
+                documentList.add(newDocument);
+                FirebaseMediate.addNewDocument(categoryTitle, newDocument);
+                documentAdapter.notifyItemInserted(documentList.size() - 1);
                 addDocument(data);
+
             }
         }
         if (requestCode == EDIT_DOCUMENT) {
