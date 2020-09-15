@@ -1,6 +1,7 @@
 package com.example.saveme.main;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,10 +19,14 @@ import androidx.fragment.app.DialogFragment;
 import com.example.saveme.R;
 import com.google.android.material.textfield.TextInputLayout;
 
+import static android.app.Activity.RESULT_OK;
+
 public class AddCategoryDialog extends DialogFragment {
     private static final String TAG = "AddCategoryFragment";
+    private static final int CATEGORY_ICON_REQUEST_CODE = 111;
     private String[] categoriesTitles; //categories titles not used for spinner
-    public AddCategoryDialog(){
+
+    public AddCategoryDialog() {
     }
 
     public AddCategoryDialog(String[] categoriesTitles) {
@@ -29,9 +34,10 @@ public class AddCategoryDialog extends DialogFragment {
     }
 
 
-    public interface OnInputListener{
-        void sendInput(String title, String description);
+    public interface OnInputListener {
+        void sendInput(String title, String description, int image);
     }
+
     public OnInputListener mOnInputListener;
 
     //widgets
@@ -39,6 +45,8 @@ public class AddCategoryDialog extends DialogFragment {
     private TextInputLayout descriptionInput;
     private Button actionOkButton, actionCancelButton, chooseIconButton;
     private Spinner titleSpinner;
+
+    private int imageValue = 0;
 
 
     @Nullable
@@ -68,13 +76,13 @@ public class AddCategoryDialog extends DialogFragment {
                 Log.d(TAG, "onClick: capturing input");
 
                 String title = titleInput.getEditText().getText().toString();
-                if (title == null || title.equals("")){
+                if (title == null || title.equals("")) {
                     title = titleSpinner.getSelectedItem().toString();
                 }
                 String description = descriptionInput.getEditText().getText().toString();
 
                 //TODO  add image
-                mOnInputListener.sendInput(title, description);
+                mOnInputListener.sendInput(title, description, imageValue);
 
                 getDialog().dismiss();
             }
@@ -85,7 +93,8 @@ public class AddCategoryDialog extends DialogFragment {
             public void onClick(View v) {
                 Log.d(TAG, "onClick: chooseIconButton");
                 ChooseIconFragment chooseIconFragment = new ChooseIconFragment();
-                chooseIconFragment.show(getActivity().getSupportFragmentManager(), "AddCategoryDialogFragment");
+                chooseIconFragment.setTargetFragment(AddCategoryDialog.this, 111);
+                chooseIconFragment.show(getFragmentManager(), "dialog");
             }
         });
 
@@ -95,10 +104,10 @@ public class AddCategoryDialog extends DialogFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        try{
+        try {
             mOnInputListener = (OnInputListener) getActivity();
-        }catch (ClassCastException e){
-            Log.e(TAG, "onAttach: ClassCastException: " + e.getMessage() );
+        } catch (ClassCastException e) {
+            Log.e(TAG, "onAttach: ClassCastException: " + e.getMessage());
         }
     }
 
@@ -106,7 +115,7 @@ public class AddCategoryDialog extends DialogFragment {
      * Handles the event where the user chooses a neighborhood
      */
     private void setCategoryTitle() {
-        final ArrayAdapter<String> titlesAdapter = new ArrayAdapter<>(AddCategoryDialog.this.getActivity(), android.R.layout.simple_list_item_1,categoriesTitles );
+        final ArrayAdapter<String> titlesAdapter = new ArrayAdapter<>(AddCategoryDialog.this.getActivity(), android.R.layout.simple_list_item_1, categoriesTitles);
         titlesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         titleSpinner.setAdapter(titlesAdapter);
         titleSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -114,18 +123,29 @@ public class AddCategoryDialog extends DialogFragment {
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 titleSpinner.setSelection(position);
                 String title = titlesAdapter.getItem(position);
-                if (title.equals("Other")){
+                if (title.equals("Other")) {
                     titleInput.setVisibility(View.VISIBLE);
-                    ((RelativeLayout.LayoutParams)chooseIconButton.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.et_title);
-                }
-                else {
+                    ((RelativeLayout.LayoutParams) chooseIconButton.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.et_title);
+                } else {
                     titleInput.setVisibility(View.INVISIBLE);
                     ((RelativeLayout.LayoutParams) chooseIconButton.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.spinner_title);
                 }
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
             }
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CATEGORY_ICON_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                imageValue = data.getIntExtra("iconIntValue", 0);
+                Log.d(TAG, "set icon image to value: " + Integer.toString(imageValue));
+            }
+        }
     }
 }
