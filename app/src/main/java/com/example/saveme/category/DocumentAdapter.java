@@ -3,6 +3,7 @@ package com.example.saveme.category;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,6 +38,12 @@ public class DocumentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         DocumentItemHolder docHolder = ((DocumentItemHolder) holder);
         docHolder.title.setText(docItem.getTitle());
         docHolder.expirationDate.setText(docItem.getExpirationDate());
+        if (docItem.getHasAlarm()){
+            docHolder.alarmImg.setImageResource(R.drawable.ic_alarm_on);
+        }
+        else {
+            docHolder.alarmImg.setImageResource(R.drawable.ic_alarm_off);
+        }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,6 +90,7 @@ public class DocumentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 class DocumentItemHolder extends RecyclerView.ViewHolder {
     TextView title;
     TextView expirationDate;
+    ImageView alarmImg;
 
     // todo check if need to add more
 
@@ -91,6 +99,6 @@ class DocumentItemHolder extends RecyclerView.ViewHolder {
         //todo check what needs to hold
         title = itemView.findViewById(R.id.document_title);
         expirationDate = itemView.findViewById(R.id.tv_expiry_date);
-
+        alarmImg = itemView.findViewById(R.id.iv_alarm);
     }
 }

@@ -9,13 +9,14 @@ public class Document {
     private String comment;
     private String expirationDate;
     private Bitmap bitmap;
-    private Boolean hasPicture;
+    private boolean hasPicture;
+    private boolean hasAlarm;
 
     // todo add attr for images
     public Document() {
     }
 
-    public Document(String title, String comment, String expirationDate, Bitmap bitmap, Boolean hasPicture) {
+    public Document(String title, String comment, String expirationDate, Bitmap bitmap, boolean hasPicture) {
         this.title = title;
         this.comment = comment;
         this.expirationDate = expirationDate;
@@ -23,10 +24,12 @@ public class Document {
         this.hasPicture = hasPicture;
     }
 
-    public Document(String title, String comment, String expirationDate, Boolean hasPicture) {
+    public Document(String title, String comment, String expirationDate, boolean hasPicture, boolean hasAlarm) {
         this.title = title;
         this.comment = comment;
         this.expirationDate = expirationDate;
+        this.hasPicture = hasPicture;
+        this.hasAlarm = hasAlarm;
     }
 
 
@@ -55,6 +58,8 @@ public class Document {
         this.expirationDate = expirationDate;
     }
 
+    public void setHasAlarm(boolean hasAlarm){ this.hasAlarm = hasAlarm; }
+
     public Bitmap getBitmap() {
         return bitmap;
     }
@@ -63,9 +68,11 @@ public class Document {
         this.bitmap = bitmap;
     }
 
-    public Boolean getHasPicture() {
+    public boolean getHasPicture() {
         return hasPicture;
     }
+
+    public boolean getHasAlarm() {return hasAlarm;}
 
     public void setHasPicture(Boolean hasPicture) {
         this.hasPicture = hasPicture;

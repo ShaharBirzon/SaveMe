@@ -117,10 +117,11 @@ public class CategoryActivity extends AppCompatActivity {
                 String title = data.getStringExtra("document_title");
                 String comment = data.getStringExtra("document_comment");
                 String expirationDate = data.getStringExtra("document_expiration_date");
-                Boolean addedPhoto = data.getBooleanExtra("document_expiration_date", false);
+                boolean hasAlarm = data.getBooleanExtra("is_alarm", false);
+                boolean hasPhoto = data.getBooleanExtra("document_expiration_date", false);
                 Log.e(Tag, "adding new document " + title);
 
-                Document newDocument = new Document(title, comment, expirationDate, addedPhoto); //todo change
+                Document newDocument = new Document(title, comment, expirationDate, hasPhoto, hasAlarm); //todo change
                 documentList.add(newDocument);
                 FirebaseMediate.addNewDocument(categoryTitle, newDocument);
                 documentAdapter.notifyItemInserted(documentList.size() - 1);

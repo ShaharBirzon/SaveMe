@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -61,6 +62,12 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     private Uri selectedImage;
     ImageView documentImageView;
     private boolean changedPhoto;
+    private boolean isAlarm = false;
+    CheckBox check1;
+    CheckBox check2;
+    TimePicker alarmTimePicker1;
+    TimePicker alarmTimePicker2;
+    DatePicker datePicker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +80,8 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         reminderSwitch = findViewById(R.id.add_alarm);
         reminderSpinner1 = findViewById(R.id.spinner_times1);
         reminderSpinner2 = findViewById(R.id.spinner_times2);
+        check1 = findViewById(R.id.checkbox_calendar1);
+        check2 = findViewById(R.id.checkbox_calendar2);
         setReminderTime();
         documentExpirationDateET = findViewById(R.id.et_expiration_date);
         // todo add other
@@ -111,6 +120,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
 
 
                 if (b) {
+                    isAlarm = true;
                     v1.setVisibility(View.VISIBLE);
                     v2.setVisibility(View.VISIBLE);
                     v3.setVisibility(View.VISIBLE);
@@ -118,6 +128,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
                     v5.setVisibility(View.VISIBLE);
                     v6.setVisibility(View.VISIBLE);
                 } else {
+                    isAlarm = false;
                     v1.setVisibility(View.GONE);
                     v2.setVisibility(View.GONE);
                     v3.setVisibility(View.GONE);
@@ -157,6 +168,28 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             }
         });
 
+        check1.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b)
+                {
+                    addToCalendar(documentTitleET.getEditText().getText().toString(), alarmTimePicker1);
+                }
+            }
+        });
+
+        check2.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b)
+                {
+                    addToCalendar(documentTitleET.getEditText().getText().toString(), alarmTimePicker2);
+                }
+            }
+        });
+
     }
 
     /**
@@ -179,9 +212,10 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     }
 
     private void showTimePickerDialog1(){
-        TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+        final TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int hour, int min) {
+                alarmTimePicker1 = timePicker;
                 String time = hour +":" + min;
                 reminderTimeET1.getEditText().setText(time);
 
@@ -197,6 +231,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int hour, int min) {
+                alarmTimePicker2 = timePicker;
                 String time = hour +":" + min;
                 reminderTimeET2.getEditText().setText(time);
 
@@ -230,6 +265,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         intentBack.putExtra("document_title", documentTitleET.getEditText().getText().toString());
         intentBack.putExtra("document_comment", documentCommentET.getEditText().getText().toString());
         intentBack.putExtra("document_expiration_date", documentExpirationDateET.getEditText().getText().toString());
+        intentBack.putExtra("is_alarm", isAlarm);
         //todo add others
         setResult(RESULT_OK, intentBack);
         finish();
@@ -249,10 +285,13 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
 
 
     @Override
-    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+    public void onDateSet(DatePicker datePicker1, int year, int month, int day) {
+        datePicker = datePicker1;
         month = month + 1;
         String date = day +"/" + month+ "/" + year;
         documentExpirationDateET.getEditText().setText(date);
+
+        // todo check the correct dates
     }
 
     private void setReminderTime() {
@@ -301,15 +340,18 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     }
 
     //todo check!!
-    private void addToCalendar(String reminderTime, String docTitle) {
+    private void addToCalendar(String docTitle, TimePicker timePicker) {
         Calendar cal = Calendar.getInstance();
+        cal.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth(),
+                timePicker.getCurrentHour(), timePicker.getCurrentMinute(), 0);
+        long startTime = cal.getTimeInMillis();
         Intent intent = new Intent(Intent.ACTION_EDIT);
         intent.setType("vnd.android.cursor.item/event");
-        intent.putExtra("beginTime", reminderTime);
+        intent.putExtra("beginTime", startTime);
         intent.putExtra("allDay", false);
         intent.putExtra("rrule", "FREQ=YEARLY");
-        //intent.putExtra("endTime", reminderTime+60*60*1000);
-        intent.putExtra("title", "Reminder! your document: " + docTitle +"is expired");
+//        intent.putExtra("endTime", reminderTime1+60*60*1000);
+        intent.putExtra("title", "Reminder! your document: " + docTitle +" is expired");
         startActivity(intent);
 
 
