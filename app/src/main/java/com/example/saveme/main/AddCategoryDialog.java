@@ -37,7 +37,7 @@ public class AddCategoryDialog extends DialogFragment {
     //widgets
     private TextInputLayout titleInput;
     private TextInputLayout descriptionInput;
-    private Button actionOkButton, actionCancelButton;
+    private Button actionOkButton, actionCancelButton, chooseIconButton;
     private Spinner titleSpinner;
 
 
@@ -47,6 +47,7 @@ public class AddCategoryDialog extends DialogFragment {
         View view = inflater.inflate(R.layout.add_category_dialog_fragment, container, false);
         actionCancelButton = view.findViewById(R.id.btn_action_cancel);
         actionOkButton = view.findViewById(R.id.btn_action_ok);
+        chooseIconButton = view.findViewById(R.id.btn_choose_icon);
         titleInput = view.findViewById(R.id.et_title);
         titleInput.setVisibility(View.INVISIBLE);
         titleSpinner = view.findViewById(R.id.spinner_title);
@@ -79,6 +80,15 @@ public class AddCategoryDialog extends DialogFragment {
             }
         });
 
+        chooseIconButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: chooseIconButton");
+                ChooseIconFragment chooseIconFragment = new ChooseIconFragment();
+                chooseIconFragment.show(getActivity().getSupportFragmentManager(), "AddCategoryDialogFragment");
+            }
+        });
+
         return view;
     }
 
@@ -106,11 +116,11 @@ public class AddCategoryDialog extends DialogFragment {
                 String title = titlesAdapter.getItem(position);
                 if (title.equals("Other")){
                     titleInput.setVisibility(View.VISIBLE);
-                    ((RelativeLayout.LayoutParams) descriptionInput.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.et_title);
+                    ((RelativeLayout.LayoutParams)chooseIconButton.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.et_title);
                 }
                 else {
                     titleInput.setVisibility(View.INVISIBLE);
-                    ((RelativeLayout.LayoutParams) descriptionInput.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.spinner_title);
+                    ((RelativeLayout.LayoutParams) chooseIconButton.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.spinner_title);
                 }
             }
             @Override

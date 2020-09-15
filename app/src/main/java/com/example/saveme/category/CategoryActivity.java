@@ -239,4 +239,8 @@ public class CategoryActivity extends AppCompatActivity {
         setResult(RESULT_OK, intent);
         finish();
     }
+
+    public void onClickChooseIcon(View view) {
+
+    }
 }
