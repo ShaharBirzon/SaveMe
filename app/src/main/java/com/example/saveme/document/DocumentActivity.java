@@ -178,11 +178,11 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
 
     }
 
-    private void showTimePickerDialog1(){
+    private void showTimePickerDialog1() {
         TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int hour, int min) {
-                String time = hour +":" + min;
+                String time = hour + ":" + min;
                 reminderTimeET1.getEditText().setText(time);
 
             }
@@ -193,11 +193,11 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
 
     }
 
-    private void showTimePickerDialog2(){
+    private void showTimePickerDialog2() {
         TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int hour, int min) {
-                String time = hour +":" + min;
+                String time = hour + ":" + min;
                 reminderTimeET2.getEditText().setText(time);
 
             }
@@ -251,7 +251,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     @Override
     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
         month = month + 1;
-        String date = day +"/" + month+ "/" + year;
+        String date = day + "/" + month + "/" + year;
         documentExpirationDateET.getEditText().setText(date);
     }
 
@@ -266,6 +266,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
                 String title = titlesAdapter.getItem(position);
                 //todo implement
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
             }
@@ -286,7 +287,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         });
     }
 
-    public void onAddAlarmButtonClick(View view){
+    public void onAddAlarmButtonClick(View view) {
         View v7 = findViewById(R.id.et_time2);
         View v8 = findViewById(R.id.tv_reminder2);
         View v9 = findViewById(R.id.tv_add_to_calendar2);
@@ -309,7 +310,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         intent.putExtra("allDay", false);
         intent.putExtra("rrule", "FREQ=YEARLY");
         //intent.putExtra("endTime", reminderTime+60*60*1000);
-        intent.putExtra("title", "Reminder! your document: " + docTitle +"is expired");
+        intent.putExtra("title", "Reminder! your document: " + docTitle + "is expired");
         startActivity(intent);
 
 
@@ -345,8 +346,10 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         try {
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver()
                     , selectedImage);
-            documentImageView.setImageBitmap(bitmap);
-            curDocument.setBitmap(bitmap);
+            Bitmap previewBitmap = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * 0.1), (int) (bitmap.getHeight() * 0.1), true);
+            Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * 0.1), (int) (bitmap.getHeight() * 0.1), true);
+            documentImageView.setImageBitmap(previewBitmap);
+            curDocument.setBitmap(resizedBitmap);
             curDocument.setHasPicture(true);
             changedPhoto = true;
         } catch (IOException e) {
