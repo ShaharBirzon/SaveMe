@@ -322,8 +322,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     public void uploadPhotoOnClickAS() {
         CropImage.activity()
                 .setCropMenuCropButtonTitle("finish cropping")
-                .setCropShape(CropImageView.CropShape.OVAL)
-                .setAspectRatio(1, 1)
+                .setCropShape(CropImageView.CropShape.RECTANGLE)
                 .start(this);
     }
 

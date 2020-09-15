@@ -86,7 +86,7 @@
     </LinearLayout>
 
     <ImageView
-        android:id="@+id/iv_doc_preview"
+        android:id="@+id/iv_doc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -102,7 +102,7 @@
         android:background="@color/gray"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/iv_doc_preview" />
+        app:layout_constraintTop_toBottomOf="@id/iv_doc" />
 
 
     <com.google.android.material.textfield.TextInputLayout
@@ -330,16 +330,6 @@
             android:text="add reminder"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/checkbox_calendar2" />
-
-        <ImageView
-            android:id="@+id/iv_doc"
-            android:layout_width="153dp"
-            android:layout_height="159dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/btn_add_another_alarm"
-            app:srcCompat="@drawable/cake" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>
