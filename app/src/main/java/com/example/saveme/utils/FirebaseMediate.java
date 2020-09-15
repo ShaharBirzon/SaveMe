@@ -1,8 +1,12 @@
 package com.example.saveme.utils;
 
+import android.app.Activity;
 import android.app.Application;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,6 +29,10 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,11 +47,17 @@ public class FirebaseMediate extends Application {
     private static Context appContext;
     private static CollectionReference categoriesRef;
     private static DocumentSnapshot userDocumentSnapshot; //todo needed?
+    private static StorageReference storageReference;
+    private FirebaseStorage storage;
+
 
     @Override
     public void onCreate() {
         super.onCreate();
         initializeDataFromDB(getApplicationContext());
+
+        storage = FirebaseStorage.getInstance();
+        storageReference = storage.getReference();
     }
 
     /**
@@ -205,6 +219,49 @@ public class FirebaseMediate extends Application {
         defaultCategories.add(new Category("Bank", "bank category"));
         defaultCategories.add(new Category("Personal", "personal category"));
         return defaultCategories;
+    }
+
+
+    /**
+     * This method uploads an image to firebase storage.
+     *  @param selectedImage - the uri of the image to upload.
+     * @param activity      - the activity calling this method.
+     * @param context       - the activity context.
+     * @param categoryTitle
+     * @param photoType     - the photo type (profilePic/apartmentPic).
+     */
+    public static void uploadPhotoToStorage(Uri selectedImage, final Activity activity, Context context, String categoryTitle,String documentTitle, String photoType) {
+        if (selectedImage != null) {
+            final ProgressDialog progressDialog = new ProgressDialog(activity);
+            progressDialog.setTitle("Uploading the document to the cloud");
+            progressDialog.show();
+            progressDialog.setCancelable(false);
+            StorageReference ref = storageReference.child("Files").
+                    child(MyPreferences.getUserDocumentPathFromPreferences(context)).child(categoryTitle).child(documentTitle).child(photoType);
+            ref.putFile(selectedImage)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            progressDialog.dismiss();
+                            Toast.makeText(activity, "Uploaded", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            progressDialog.dismiss();
+                            Toast.makeText(activity, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
+                                    .getTotalByteCount());
+                            progressDialog.setMessage("Uploaded " + (int) progress + "%");
+                        }
+                    });
+        }
     }
 
 }

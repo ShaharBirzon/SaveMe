@@ -17,14 +17,10 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Switch;
 
-import com.example.saveme.main.AddCategoryDialog;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import android.widget.TimePicker;
@@ -35,8 +31,6 @@ import com.example.saveme.R;
 import com.example.saveme.category.CategoryActivity;
 import com.example.saveme.category.Document;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -84,6 +78,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             curDocument.setComment(intentCreatedMe.getStringExtra("document_comment"));
             curDocument.setExpirationDate(intentCreatedMe.getStringExtra("document_expiration_date"));
             position = intentCreatedMe.getIntExtra("position", -1);
+            // todo add preview of image
             initializeActivityFieldsWithDocumentDataFromDB();
         }
 
@@ -224,9 +219,11 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         if (callReason.equals("edit_document")) {
             intentBack.putExtra("document_position", position);
         }
-
-        intentBack.putExtra("has_photo", changedPhoto);
-
+        if (changedPhoto) {
+            intentBack.putExtra("has_photo", true);
+            intentBack.putExtra("imageUri", selectedImage.toString());
+            Log.d(TAG, "adding photo");
+        }
         intentBack.putExtra("document_title", documentTitleET.getEditText().getText().toString());
         intentBack.putExtra("document_comment", documentCommentET.getEditText().getText().toString());
         intentBack.putExtra("document_expiration_date", documentExpirationDateET.getEditText().getText().toString());
@@ -328,7 +325,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     }
 
     /**
-     * updates the activity view after choosing an image from gallery
+     * updates the activity view after adding an image
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -338,11 +335,14 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
                 CropImage.ActivityResult result = CropImage.getActivityResult(data);
                 selectedImage = result.getUri();
-                saveNewProfileImage();
+                addImageToDoc();
             }
     }
 
-    private void saveNewProfileImage() {
+    /*
+    the method adds an image to document
+     */
+    private void addImageToDoc() {
         try {
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver()
                     , selectedImage);
