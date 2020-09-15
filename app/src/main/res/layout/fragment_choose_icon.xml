@@ -53,7 +53,6 @@
         android:layout_height="70dp"
         android:layout_columnWeight="1"
         android:padding="5dp"
-
         android:src="@drawable/garden" />
 
     <ImageView
@@ -62,7 +61,6 @@
         android:layout_height="70dp"
         android:layout_columnWeight="1"
         android:padding="5dp"
-
         android:src="@drawable/fish" />
 
     <ImageView
@@ -80,7 +78,6 @@
         android:layout_height="70dp"
         android:layout_columnWeight="1"
         android:padding="5dp"
-
         android:src="@drawable/email" />
 
     <ImageView
@@ -89,7 +86,6 @@
         android:layout_height="70dp"
         android:layout_columnWeight="1"
         android:padding="5dp"
-
         android:src="@drawable/dog" />
 
     <ImageView
@@ -98,7 +94,6 @@
         android:layout_height="70dp"
         android:layout_columnWeight="1"
         android:padding="5dp"
-
         android:src="@drawable/car" />
 
     <ImageView
@@ -107,7 +102,6 @@
         android:layout_height="70dp"
         android:layout_columnWeight="1"
         android:padding="5dp"
-
         android:src="@drawable/cake" />
 
     <ImageView
@@ -116,7 +110,6 @@
         android:layout_height="70dp"
         android:layout_columnWeight="1"
         android:padding="5dp"
-
         android:src="@drawable/buy" />
 
     <ImageView
