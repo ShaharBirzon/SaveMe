@@ -10,6 +10,8 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -63,21 +65,14 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     TimePicker alarmTimePicker2;
     DatePicker datePicker;
 
+    private boolean isDocumentTitleValid = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_document);
-        documentTitleET = findViewById(R.id.et_document_title);
-        documentCommentET = findViewById(R.id.et_comment);
-        reminderTimeET1 = findViewById(R.id.et_time1);
-        reminderTimeET2 = findViewById(R.id.et_time2);
-        reminderSwitch = findViewById(R.id.add_alarm);
-        reminderSpinner1 = findViewById(R.id.spinner_times1);
-        reminderSpinner2 = findViewById(R.id.spinner_times2);
-        check1 = findViewById(R.id.checkbox_calendar1);
-        check2 = findViewById(R.id.checkbox_calendar2);
+        initializeActivityFields();
         setReminderTime();
-        documentExpirationDateET = findViewById(R.id.et_expiration_date);
         // todo add other
 
         Intent intentCreatedMe = getIntent();
@@ -155,7 +150,6 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
 
         changedPhoto = false;
         addPhotoBtn = findViewById(R.id.btn_add_doc_photo);
-        documentImageView = findViewById(R.id.iv_doc);
         addPhotoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -167,8 +161,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
 
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b)
-                {
+                if (b) {
                     addToCalendar(documentTitleET.getEditText().getText().toString(), alarmTimePicker1);
                 }
             }
@@ -178,13 +171,35 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
 
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b)
-                {
+                if (b) {
                     addToCalendar(documentTitleET.getEditText().getText().toString(), alarmTimePicker2);
                 }
             }
         });
 
+        addFieldsValidation();
+
+    }
+
+    private void addFieldsValidation() {
+        validateDocumentTitle();
+    }
+
+    /**
+    This method initializes Activity view Fields.
+     */
+    private void initializeActivityFields() {
+        documentTitleET = findViewById(R.id.et_document_title);
+        documentCommentET = findViewById(R.id.et_comment);
+        reminderTimeET1 = findViewById(R.id.et_time1);
+        reminderTimeET2 = findViewById(R.id.et_time2);
+        reminderSwitch = findViewById(R.id.add_alarm);
+        reminderSpinner1 = findViewById(R.id.spinner_times1);
+        reminderSpinner2 = findViewById(R.id.spinner_times2);
+        check1 = findViewById(R.id.checkbox_calendar1);
+        check2 = findViewById(R.id.checkbox_calendar2);
+        documentExpirationDateET = findViewById(R.id.et_expiration_date);
+        documentImageView = findViewById(R.id.iv_doc);
     }
 
     /**
@@ -207,12 +222,12 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     }
 
 
-    private void showTimePickerDialog1(){
+    private void showTimePickerDialog1() {
         final TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int hour, int min) {
                 alarmTimePicker1 = timePicker;
-                String time = hour +":" + min;
+                String time = hour + ":" + min;
                 reminderTimeET1.getEditText().setText(time);
 
             }
@@ -228,7 +243,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             @Override
             public void onTimeSet(TimePicker timePicker, int hour, int min) {
                 alarmTimePicker2 = timePicker;
-                String time = hour +":" + min;
+                String time = hour + ":" + min;
                 reminderTimeET2.getEditText().setText(time);
 
             }
@@ -275,10 +290,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
      * @return true if user input is valid, false otherwise.
      */
     private boolean isInputValid() {
-        if (documentTitleET.getEditText().getText().length() == 0) {
-            return false;
-        }
-        return true;
+        return isDocumentTitleValid;
     }
 
 
@@ -350,7 +362,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         intent.putExtra("allDay", false);
         intent.putExtra("rrule", "FREQ=YEARLY");
 //        intent.putExtra("endTime", reminderTime1+60*60*1000);
-        intent.putExtra("title", "Reminder! your document: " + docTitle +" is expired");
+        intent.putExtra("title", "Reminder! your document: " + docTitle + " is expired");
 
         startActivity(intent);
 
@@ -398,6 +410,47 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             changedPhoto = true;
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * validate the entered name.
+     */
+    private void validateDocumentTitle() {
+        setIsDocumentTitleValidToTrueIfValid();
+        documentTitleET.getEditText().addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                isDocumentTitleValid = false;
+                int inputLength = documentTitleET.getEditText().getText().toString().length();
+                if (inputLength >= 16) {//todo check number
+                    documentTitleET.setError("Maximum Limit Reached!");
+                } else if (inputLength == 0) {
+                    documentTitleET.setError("Document title is required!");
+                } else {
+                    documentTitleET.setError(null);
+                    curDocument.setTitle(documentTitleET.getEditText().getText().toString());
+                    isDocumentTitleValid = true;
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+    }
+
+    /**
+     * set isDocumentTitleValid to true if document title is valid
+     */
+    private void setIsDocumentTitleValidToTrueIfValid() {
+        int inputLength = documentTitleET.getEditText().getText().toString().length();
+        if (inputLength < 16 && inputLength > 0) {
+            isDocumentTitleValid = true;
         }
     }
 
