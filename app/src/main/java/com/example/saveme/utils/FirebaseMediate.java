@@ -217,7 +217,7 @@ public class FirebaseMediate extends Application {
     public static ArrayList<Category> getDefaultCategories() {
         ArrayList<Category> defaultCategories = new ArrayList<>();
         defaultCategories.add(new Category("Car", "car category", R.drawable.car));
-        defaultCategories.add(new Category("Bank", "bank category" , R.drawable.money));
+        defaultCategories.add(new Category("Bank", "bank category", R.drawable.money));
         defaultCategories.add(new Category("Personal", "personal category", R.drawable.id));
         return defaultCategories;
     }
@@ -225,13 +225,14 @@ public class FirebaseMediate extends Application {
 
     /**
      * This method uploads an image to firebase storage.
-     *  @param selectedImage - the uri of the image to upload.
+     *
+     * @param selectedImage - the uri of the image to upload.
      * @param activity      - the activity calling this method.
      * @param context       - the activity context.
      * @param categoryTitle
      * @param photoType     - the photo type (profilePic/apartmentPic).
      */
-    public static void uploadPhotoToStorage(Uri selectedImage, final Activity activity, Context context, String categoryTitle,String documentTitle, String photoType) {
+    public static void uploadPhotoToStorage(Uri selectedImage, final Activity activity, Context context, String categoryTitle, String documentTitle, String photoType) {
         if (selectedImage != null) {
             final ProgressDialog progressDialog = new ProgressDialog(activity);
             progressDialog.setTitle("Uploading the document to the cloud");
@@ -263,6 +264,27 @@ public class FirebaseMediate extends Application {
                         }
                     });
         }
+    }
+
+    public Uri getImageFromFirebaseStorage(Context context, String categoryTitle, String documentTitle, String photoType) {
+        final Uri[] imageUri = {null};
+        StorageReference ref = storageReference.child("Files").
+                child(MyPreferences.getUserDocumentPathFromPreferences(context)).child(categoryTitle).child(documentTitle).child(photoType);
+        ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                // Got the download URL for 'users/me/profile.png'
+                imageUri[0] = uri;
+                Log.d(TAG,"got image from firebase storage successfully");
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Log.e(TAG,"Error getting image from firebase storage");
+            }
+        });
+        return imageUri[0];
     }
 
 }
