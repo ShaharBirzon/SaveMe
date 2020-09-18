@@ -115,19 +115,7 @@ public class CategoryActivity extends AppCompatActivity {
         if (requestCode == NEW_DOCUMENT) {
             //add new document
             if (resultCode == RESULT_OK) {
-                String title = data.getStringExtra("document_title");
-                String comment = data.getStringExtra("document_comment");
-                String expirationDate = data.getStringExtra("document_expiration_date");
-                boolean hasAlarm = data.getBooleanExtra("is_alarm", false);
-                boolean hasPhoto = data.getBooleanExtra("document_expiration_date", false);
-                Log.e(Tag, "adding new document " + title);
-
-                Document newDocument = new Document(title, comment, expirationDate, hasPhoto, hasAlarm); //todo change
-                documentList.add(newDocument);
-                FirebaseMediate.addNewDocument(categoryTitle, newDocument);
-                documentAdapter.notifyItemInserted(documentList.size() - 1);
                 addDocument(data);
-
             }
         }
         if (requestCode == EDIT_DOCUMENT) {
@@ -145,14 +133,15 @@ public class CategoryActivity extends AppCompatActivity {
         String title = data.getStringExtra("document_title");
         String comment = data.getStringExtra("document_comment");
         String expirationDate = data.getStringExtra("document_expiration_date");
-        Boolean addedPhoto = data.getBooleanExtra("has_photo", false);
+        boolean hasAlarm = data.getBooleanExtra("is_alarm", false);
+        boolean addedPhoto = data.getBooleanExtra("has_photo", false);
         if (addedPhoto) {
             String imageString = data.getStringExtra("imageUri");
             Uri imageUri = Uri.parse(imageString);
             FirebaseMediate.uploadPhotoToStorage(imageUri, this, getApplicationContext(), categoryTitle, title, "image");
         }
         Log.e(TAG, "adding new document " + title);
-        Document newDocument = new Document(title, comment, expirationDate, addedPhoto); //todo change
+        Document newDocument = new Document(title, comment, expirationDate, addedPhoto, hasAlarm); //todo change
         documentList.add(newDocument);
         FirebaseMediate.addNewDocument(categoryTitle, newDocument);
         documentAdapter.notifyItemInserted(documentList.size() - 1);
@@ -166,7 +155,7 @@ public class CategoryActivity extends AppCompatActivity {
         String comment = data.getStringExtra("document_comment");
         String expirationDate = data.getStringExtra("document_expiration_date");
         int position = data.getIntExtra("document_position", DEFAULT_VALUE);
-        Boolean addedPhoto = data.getBooleanExtra("has_photo", false);
+        boolean addedPhoto = data.getBooleanExtra("has_photo", false);
         if (addedPhoto) {
             String imageString = data.getStringExtra("imageUri");
             Uri imageUri = Uri.parse(imageString);
