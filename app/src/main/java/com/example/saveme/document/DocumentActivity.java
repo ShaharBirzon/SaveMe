@@ -2,7 +2,10 @@ package com.example.saveme.document;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.DatePickerDialog;
@@ -10,6 +13,8 @@ import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -30,6 +35,8 @@ import android.widget.Spinner;
 import android.widget.Switch;
 
 import com.example.saveme.utils.MyPreferences;
+import com.github.barteksc.pdfviewer.PDFView;
+import com.github.barteksc.pdfviewer.scroll.DefaultScrollHandle;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.example.saveme.utils.AlarmReceiver;
@@ -48,7 +55,10 @@ import com.google.firebase.storage.StorageReference;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -56,21 +66,23 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
 
     private static final String TAG = "DocumentActivity";
     private static final long ONE_MEGABYTE = 1024 * 1024;
+    public static final int FILE_REQUEST_CODE = 10;
     private TextInputLayout documentTitleET;
     private TextInputLayout documentCommentET;
     private TextInputLayout documentExpirationDateET;
     private TextInputLayout reminderTimeET1;
     private TextInputLayout reminderTimeET2;
     private String callReason;
+    private String pathToFile;
     private int position;
     private Spinner reminderSpinner1;
     private Spinner reminderSpinner2;
     SwitchMaterial reminderSwitch;
     private Document curDocument = new Document();
-    private Button addPhotoBtn;
-    private Uri selectedImage;
-    ImageView documentImageView;
-    private boolean changedPhoto;
+    private Button addPhotoBtn, addFileBtn;
+    private Uri selectedImage, fileUri;
+    ImageView documentImageView, fileImageView;
+    private boolean changedPhoto, addedFile = false;
     private boolean isAlarm = false;
     CheckBox check1;
     CheckBox check2;
@@ -82,6 +94,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
 
     private static StorageReference storageReference;
     private FirebaseStorage storage;
+    private PDFView pdfView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -187,10 +200,26 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
 
         changedPhoto = false;
         addPhotoBtn = findViewById(R.id.btn_add_doc_photo);
+        addFileBtn = findViewById(R.id.btn_add_doc_file);
         addPhotoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 uploadPhotoOnClickAS();
+            }
+        });
+        addFileBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectFile();
+                    //todo change to this
+//                if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+//                    selectFile();
+//                } else {
+//                    Log.e(TAG, "missing permission");
+//
+//                    ActivityCompat.requestPermissions(DocumentActivity.this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 225);
+//                }
+
             }
         });
 
@@ -218,12 +247,29 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
 
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 225 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            selectFile();
+        } else {
+            Toast.makeText(DocumentActivity.this, "please provide permission", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void selectFile() {
+        Intent fileIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        fileIntent.setType("*/*");
+        fileIntent.addCategory(Intent.CATEGORY_OPENABLE);
+        startActivityForResult(Intent.createChooser(fileIntent, "Select Your .pdf File"), FILE_REQUEST_CODE);
+    }
+
     private void addFieldsValidation() {
         validateDocumentTitle();
     }
 
     /**
-    This method initializes Activity view Fields.
+     * This method initializes Activity view Fields.
      */
     private void initializeActivityFields() {
         documentTitleET = findViewById(R.id.et_document_title);
@@ -237,6 +283,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         check2 = findViewById(R.id.checkbox_calendar2);
         documentExpirationDateET = findViewById(R.id.et_expiration_date);
         documentImageView = findViewById(R.id.iv_doc);
+        fileImageView = findViewById(R.id.iv_doc_file);
     }
 
     /**
@@ -311,6 +358,9 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             intentBack.putExtra("has_photo", true);
             intentBack.putExtra("imageUri", selectedImage.toString());
             Log.d(TAG, "adding photo");
+        }
+        if (addedFile) {
+            intentBack.putExtra("file_uri", fileUri.toString());
         }
         intentBack.putExtra("document_title", documentTitleET.getEditText().getText().toString());
         intentBack.putExtra("document_comment", documentCommentET.getEditText().getText().toString());
@@ -429,7 +479,47 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
                 CropImage.ActivityResult result = CropImage.getActivityResult(data);
                 selectedImage = result.getUri();
                 addImageToDoc();
+            } else if (requestCode == FILE_REQUEST_CODE && data != null) {
+                Log.d(TAG, "got to FILE_REQUEST_CODE");
+                fileUri = data.getData(); //uri of selected file
+
+                pathToFile = getFileNameByUri(this, fileUri);
+//                addFileToDoc();
+                addedFile = true;
+            } else {
+                Log.e(TAG, "got to????");
+
             }
+    }
+
+    private String getFileNameByUri(Context context, Uri uri) {
+        String filepath = "";//default fileName
+        //Uri filePathUri = uri;
+        File file;
+        if (uri.getScheme().toString().compareTo("content") == 0) {
+            Cursor cursor = context.getContentResolver().query(uri, new String[]{android.provider.MediaStore.Images.ImageColumns.DATA, MediaStore.Images.Media.ORIENTATION}, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+
+            cursor.moveToFirst();
+
+            String mImagePath = cursor.getString(column_index);
+            cursor.close();
+            filepath = mImagePath;
+
+        } else if (uri.getScheme().compareTo("file") == 0) {
+            try {
+                file = new File(new URI(uri.toString()));
+                if (file.exists())
+                    filepath = file.getAbsolutePath();
+
+            } catch (URISyntaxException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        } else {
+            filepath = uri.getPath();
+        }
+        return filepath;
     }
 
     /*
@@ -439,8 +529,8 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         try {
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver()
                     , selectedImage);
-            Bitmap previewBitmap = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * 0.1), (int) (bitmap.getHeight() * 0.1), true);
-            Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * 0.1), (int) (bitmap.getHeight() * 0.1), true);
+            Bitmap previewBitmap = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * 0.5), (int) (bitmap.getHeight() * 0.5), true);
+            Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * 0.5), (int) (bitmap.getHeight() * 0.5), true);
             documentImageView.setImageBitmap(previewBitmap);
             curDocument.setBitmap(resizedBitmap);
             curDocument.setHasPicture(true);
@@ -448,6 +538,40 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /*
+    the method adds an image to document
+     */
+    private void addFileToDoc() {
+        //            Bitmap bitmap = MediaStore.Files.Media.getBitmap(getApplicationContext().getContentResolver()
+//                    , fileUri);
+//            Bitmap previewBitmap = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * 0.5), (int) (bitmap.getHeight() * 0.5), true);
+//            fileImageView.setImageBitmap(previewBitmap);
+
+
+
+//   <com.github.barteksc.pdfviewer.PDFView
+//        android:id="@+id/pdfView"
+//        android:layout_below="@+id/btn_add_another_alarm"
+//        android:layout_width="match_parent"
+//        android:layout_height="match_parent"/>
+//        pdfView = (PDFView) findViewById(R.id.pdfView);
+        displayFromAsset();
+//            curDocument.setBitmap(resizedBitmap);
+//            curDocument.setHasPicture(true);
+    }
+
+    private void displayFromAsset() {
+
+
+        pdfView.fromAsset(pathToFile)
+                .defaultPage(0)
+                .enableSwipe(true)
+                .swipeHorizontal(false)
+                .enableAnnotationRendering(true)
+                .scrollHandle(new DefaultScrollHandle(this))
+                .load();
     }
 
     public int setAlarm(int time) {
