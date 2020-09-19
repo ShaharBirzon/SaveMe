@@ -140,6 +140,11 @@ public class CategoryActivity extends AppCompatActivity {
             Uri imageUri = Uri.parse(imageString);
             FirebaseMediate.uploadPhotoToStorage(imageUri, this, getApplicationContext(), categoryTitle, title, "image");
         }
+        String fileStr = data.getStringExtra("file_uri");
+        if (fileStr !=null){
+            Uri fileUri = Uri.parse(fileStr);
+            FirebaseMediate.uploadDocumentFileToDB( getApplicationContext(), categoryTitle, title, fileUri);
+        }
         Log.e(TAG, "adding new document " + title);
         Document newDocument = new Document(title, comment, expirationDate, addedPhoto, hasAlarm); //todo change
         documentList.add(newDocument);
@@ -160,6 +165,11 @@ public class CategoryActivity extends AppCompatActivity {
             String imageString = data.getStringExtra("imageUri");
             Uri imageUri = Uri.parse(imageString);
             FirebaseMediate.uploadPhotoToStorage(imageUri, this, getApplicationContext(), categoryTitle, title, "image");
+        }
+        String fileStr = data.getStringExtra("file_uri");
+        if (fileStr !=null){
+            Uri fileUri = Uri.parse(fileStr);
+            FirebaseMediate.uploadDocumentFileToDB( getApplicationContext(), categoryTitle, title, fileUri);
         }
         Log.e(TAG, "editing document " + title);
         Document document = documentList.get(position);

@@ -287,4 +287,23 @@ public class FirebaseMediate extends Application {
         return imageUri[0];
     }
 
+    public static void uploadDocumentFileToDB(Context context, String categoryTitle, String documentTitle, final Uri fileUri) {
+        StorageReference ref = storageReference.child("Files").
+                child(MyPreferences.getUserDocumentPathFromPreferences(context)).child(categoryTitle).child(documentTitle).child("file");
+
+        // Register observers to listen for when the download is done or if it fails
+        ref.putFile(fileUri).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+                Log.e(TAG, "unsuccessful file upload");
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Log.d(TAG, "successful file upload");
+            }
+        });
+    }
+
 }
