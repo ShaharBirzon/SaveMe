@@ -179,10 +179,10 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
     }
 
     public void onClickAddCategoryButton(View view) {
-        String [] categoriesTitles = this.getResources().getStringArray(R.array.categories);
+        String[] categoriesTitles = this.getResources().getStringArray(R.array.categories);
         List<String> categoriesTitlesList = new ArrayList<>(Arrays.asList(categoriesTitles));
-        for (Category category: categories){
-            if (categoriesTitlesList.contains(category.getTitle())){
+        for (Category category : categories) {
+            if (categoriesTitlesList.contains(category.getTitle())) {
                 categoriesTitlesList.remove(category.getTitle());
             }
         }
@@ -192,8 +192,8 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
     }
 
     @Override
-    public void sendInput(String title, String description) {
-        Category category = new Category(title, description);
+    public void sendInput(String title, String description, int image) {
+        Category category = new Category(title, description, image);
         addNewCategory(category);
     }
 

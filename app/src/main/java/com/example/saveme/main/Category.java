@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class Category {
     public String title;
     public String description;
-    public Drawable image;
+    public int image;
     public ArrayList<Document> docsList;
 
     public Category(){
@@ -18,6 +18,12 @@ public class Category {
     public Category(String title, String desc){
         this.title = title;
         this.description = desc;
+    }
+
+    public Category(String title, String desc, int image){
+        this.title = title;
+        this.description = desc;
+        this.image = image;
     }
 
     //getters and setters
@@ -37,11 +43,11 @@ public class Category {
         this.description = description;
     }
 
-    public Drawable getImage() {
+    public int getImage() {
         return image;
     }
 
-    public void setImage(Drawable image) {
+    public void setImage(int image) {
         this.image = image;
     }
 
