@@ -1,5 +1,6 @@
 package com.example.saveme.document;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
@@ -7,6 +8,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -24,6 +26,9 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Switch;
 
+import com.example.saveme.utils.MyPreferences;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import android.widget.TimePicker;
@@ -34,6 +39,8 @@ import com.example.saveme.R;
 import com.example.saveme.category.CategoryActivity;
 import com.example.saveme.category.Document;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -43,6 +50,7 @@ import java.util.Calendar;
 public class DocumentActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
 
     private static final String TAG = "DocumentActivity";
+    private static final long ONE_MEGABYTE = 1024 * 1024;
     private TextInputLayout documentTitleET;
     private TextInputLayout documentCommentET;
     private TextInputLayout documentExpirationDateET;
@@ -67,10 +75,15 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
 
     private boolean isDocumentTitleValid = false;
 
+    private static StorageReference storageReference;
+    private FirebaseStorage storage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_document);
+        storage = FirebaseStorage.getInstance();
+        storageReference = storage.getReference();
         initializeActivityFields();
         setReminderTime();
         // todo add other
@@ -82,6 +95,24 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             curDocument.setComment(intentCreatedMe.getStringExtra("document_comment"));
             curDocument.setExpirationDate(intentCreatedMe.getStringExtra("document_expiration_date"));
             position = intentCreatedMe.getIntExtra("position", -1);
+            String categoryTitle = intentCreatedMe.getStringExtra("category_title");
+            boolean hasPhoto = intentCreatedMe.getBooleanExtra("has_photo", false);
+            if (hasPhoto) {
+                //upload document's image from storage
+                storageReference.child("Files").
+                        child(MyPreferences.getUserDocumentPathFromPreferences(getApplicationContext())).child(categoryTitle).child(curDocument.getTitle()).child("image").getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                    @Override
+                    public void onSuccess(byte[] bytes) {
+                        Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        documentImageView.setImageBitmap(bmp);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        Log.d(TAG, "failed to fetch image from firebase storage");
+                    }
+                });
+            }
             // todo add preview of image
             initializeActivityFieldsWithDocumentDataFromDB();
         }
