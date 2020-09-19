@@ -12,6 +12,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.saveme.document.DocumentActivity;
@@ -35,6 +37,8 @@ public class CategoryActivity extends AppCompatActivity {
     private DocumentAdapter documentAdapter;
     private static final String TAG = "CategoryActivity";
     private String categoryTitle;
+    ImageView docImg;
+    TextView noDocTxt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +67,15 @@ public class CategoryActivity extends AppCompatActivity {
         categoryTitle = mainIntent.getStringExtra("category_name");
         TextView titleTxt = findViewById(R.id.tv_category_title);
         titleTxt.setText(categoryTitle);
+        docImg = findViewById(R.id.iv_doc_img);
+        noDocTxt = findViewById(R.id.tv_no_docs);
+        if (documentList.size() > 0){
+            docImg.setVisibility(View.GONE);
+            noDocTxt.setVisibility(View.GONE);
+        }
+
+
+
     }
 
 
@@ -117,6 +130,11 @@ public class CategoryActivity extends AppCompatActivity {
             //add new document
             if (resultCode == RESULT_OK) {
                 addDocument(data);
+                if (documentList.size() > 0){
+                    docImg.setVisibility(View.GONE);
+                    noDocTxt.setVisibility(View.GONE);
+                }
+
             }
         }
         if (requestCode == EDIT_DOCUMENT) {

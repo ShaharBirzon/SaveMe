@@ -8,6 +8,7 @@
     android:background="@color/softBlue">
 
     <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/appCompatImageView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:src="@drawable/splash_back"
@@ -86,6 +87,29 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:rippleColor="@color/softBlue" />
+
+    <ImageView
+        android:id="@+id/iv_doc_img"
+        android:layout_width="137dp"
+        android:layout_height="81dp"
+        android:alpha="0.25"
+        app:layout_constraintBottom_toTopOf="@+id/btn_add_doc"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appCompatImageView"
+        app:srcCompat="@drawable/doc" />
+
+    <TextView
+        android:id="@+id/tv_no_docs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:alpha="0.5"
+        android:text="You have no uploaded documents yet"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_doc_img" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
