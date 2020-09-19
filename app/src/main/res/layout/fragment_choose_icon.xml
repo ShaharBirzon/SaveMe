@@ -1,130 +1,166 @@
-<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/gl_choose_icon"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:columnCount="3"
-    android:rowCount="6"
-    android:useDefaultMargins="true">
+    android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/imageView27"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_columnWeight="1"
-        android:padding="5dp"
-        android:src="@drawable/money" />
+    <GridLayout
+        android:id="@+id/gl_choose_icon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="3"
+        android:rowCount="6"
+        android:listSelector="@drawable/icon_selection"
+        android:useDefaultMargins="true">
 
-    <ImageView
-        android:id="@+id/imageView26"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_columnWeight="1"
-        android:padding="5dp"
-        android:src="@drawable/tax" />
+        <ImageView
+            android:id="@+id/imageView27"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_columnWeight="1"
+            android:padding="5dp"
+            android:src="@drawable/money" />
 
-    <ImageView
-        android:id="@+id/imageView25"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_columnWeight="1"
-        android:padding="5dp"
-        android:src="@drawable/lipstick" />
+        <ImageView
+            android:id="@+id/imageView26"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_columnWeight="1"
+            android:padding="5dp"
+            android:src="@drawable/tax" />
 
-    <ImageView
-        android:id="@+id/imageView24"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_columnWeight="1"
-        android:padding="5dp"
-        android:src="@drawable/id" />
+        <ImageView
+            android:id="@+id/imageView25"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_columnWeight="1"
+            android:padding="5dp"
+            android:src="@drawable/lipstick" />
 
-    <ImageView
-        android:id="@+id/imageView23"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_columnWeight="1"
-        android:padding="5dp"
-        android:src="@drawable/house" />
+        <ImageView
+            android:id="@+id/imageView24"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_columnWeight="1"
+            android:padding="5dp"
+            android:src="@drawable/id" />
 
-    <ImageView
-        android:id="@+id/imageView22"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_columnWeight="1"
-        android:padding="5dp"
-        android:src="@drawable/garden" />
+        <ImageView
+            android:id="@+id/imageView23"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_columnWeight="1"
+            android:padding="5dp"
+            android:src="@drawable/house" />
 
-    <ImageView
-        android:id="@+id/imageView20"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_columnWeight="1"
-        android:padding="5dp"
-        android:src="@drawable/fish" />
+        <ImageView
+            android:id="@+id/imageView22"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_columnWeight="1"
+            android:padding="5dp"
+            android:src="@drawable/garden" />
 
-    <ImageView
-        android:id="@+id/imageView19"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_columnWeight="1"
-        android:padding="5dp"
+        <ImageView
+            android:id="@+id/imageView20"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_columnWeight="1"
+            android:padding="5dp"
+            android:src="@drawable/fish" />
 
-        android:src="@drawable/fan" />
+        <ImageView
+            android:id="@+id/imageView19"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_columnWeight="1"
+            android:padding="5dp"
 
-    <ImageView
-        android:id="@+id/imageView18"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_columnWeight="1"
-        android:padding="5dp"
-        android:src="@drawable/email" />
+            android:src="@drawable/fan" />
 
-    <ImageView
-        android:id="@+id/imageView17"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_columnWeight="1"
-        android:padding="5dp"
-        android:src="@drawable/dog" />
+        <ImageView
+            android:id="@+id/imageView18"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_columnWeight="1"
+            android:padding="5dp"
+            android:src="@drawable/email" />
 
-    <ImageView
-        android:id="@+id/imageView13"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_columnWeight="1"
-        android:padding="5dp"
-        android:src="@drawable/car" />
+        <ImageView
+            android:id="@+id/imageView17"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_columnWeight="1"
+            android:padding="5dp"
+            android:src="@drawable/dog" />
 
-    <ImageView
-        android:id="@+id/imageView12"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_columnWeight="1"
-        android:padding="5dp"
-        android:src="@drawable/cake" />
+        <ImageView
+            android:id="@+id/imageView13"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_columnWeight="1"
+            android:padding="5dp"
+            android:src="@drawable/car" />
 
-    <ImageView
-        android:id="@+id/imageView11"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_columnWeight="1"
-        android:padding="5dp"
-        android:src="@drawable/buy" />
+        <ImageView
+            android:id="@+id/imageView12"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_columnWeight="1"
+            android:padding="5dp"
+            android:src="@drawable/cake" />
 
-    <ImageView
-        android:id="@+id/imageView15"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_columnWeight="1"
-        android:padding="5dp"
-        android:src="@drawable/cat" />
+        <ImageView
+            android:id="@+id/imageView11"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_columnWeight="1"
+            android:padding="5dp"
+            android:src="@drawable/buy" />
 
-    <ImageView
-        android:id="@+id/imageView16"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_columnWeight="1"
-        android:padding="5dp"
-        android:src="@drawable/company" />
-</GridLayout>
+        <ImageView
+            android:id="@+id/imageView15"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_columnWeight="1"
+            android:padding="5dp"
+            android:src="@drawable/cat" />
+
+        <ImageView
+            android:id="@+id/imageView16"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_columnWeight="1"
+            android:padding="5dp"
+            android:src="@drawable/company" />
+    </GridLayout>
+
+    <Button
+        android:id="@+id/btn_save_category_icon"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/gl_choose_icon"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="100dp"
+
+        android:layout_marginTop="20dp"
+        android:text="@string/save" />
+
+    <Button
+        android:id="@+id/btn_action_cancel_icon_selection"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/gl_choose_icon"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginStart="100dp"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_toStartOf="@+id/btn_save_category_icon"
+        android:layout_toLeftOf="@+id/btn_save_category_icon"
+        android:text="@string/cancel" />
+
+</RelativeLayout>
