@@ -196,6 +196,7 @@ public class CategoryActivity extends AppCompatActivity {
                 intent.putExtra("category_title", categoryTitle);
                 intent.putExtra("document_comment", document.getComment());
                 intent.putExtra("document_expiration_date", document.getExpirationDate());
+                intent.putExtra("has_photo", document.getHasPicture());
                 // todo add more into intent
                 startActivityForResult(intent, EDIT_DOCUMENT);
             }
