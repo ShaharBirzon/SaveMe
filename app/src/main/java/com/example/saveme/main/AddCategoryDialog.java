@@ -53,7 +53,7 @@ public class AddCategoryDialog extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.add_category_dialog_fragment, container, false);
-        actionCancelButton = view.findViewById(R.id.btn_action_cancel);
+        actionCancelButton = view.findViewById(R.id.btn_action_cancel_icon_selection);
         actionOkButton = view.findViewById(R.id.btn_action_ok);
         chooseIconButton = view.findViewById(R.id.btn_choose_icon);
         titleInput = view.findViewById(R.id.et_title);
