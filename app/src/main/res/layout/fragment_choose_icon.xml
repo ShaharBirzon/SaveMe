@@ -134,33 +134,33 @@
             android:src="@drawable/company" />
     </GridLayout>
 
-    <Button
-        android:id="@+id/btn_save_category_icon"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/gl_choose_icon"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="100dp"
+        android:orientation="horizontal"
+        android:layout_below="@id/gl_choose_icon"
+        android:gravity="center">
 
-        android:layout_marginTop="20dp"
-        android:text="@string/save" />
+        <Button
+            android:id="@+id/btn_action_cancel_icon_selection"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel" />
 
-    <Button
-        android:id="@+id/btn_action_cancel_icon_selection"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/gl_choose_icon"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginStart="100dp"
-        android:layout_marginLeft="100dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_toStartOf="@+id/btn_save_category_icon"
-        android:layout_toLeftOf="@+id/btn_save_category_icon"
-        android:text="@string/cancel" />
+        <Button
+            android:id="@+id/btn_save_category_icon"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/save" />
+
+
+
+
+    </LinearLayout>
+
+
+
 
 </RelativeLayout>

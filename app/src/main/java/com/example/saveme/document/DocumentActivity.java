@@ -4,8 +4,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -29,6 +32,7 @@ import android.widget.Switch;
 import com.example.saveme.utils.MyPreferences;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.example.saveme.utils.AlarmReceiver;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import android.widget.TimePicker;
@@ -46,6 +50,7 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.Date;
 
 public class DocumentActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
 
@@ -104,7 +109,8 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
                     @Override
                     public void onSuccess(byte[] bytes) {
                         Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                        documentImageView.setImageBitmap(bmp);
+                        Bitmap previewBitmap = Bitmap.createScaledBitmap(bmp, (int) (bmp.getWidth() * 0.1), (int) (bmp.getHeight() * 0.1), true);
+                        documentImageView.setImageBitmap(previewBitmap);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -442,6 +448,25 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public int setAlarm(int time) {
+        AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Date date = new Date();
+        Calendar cal_alarm = Calendar.getInstance();
+        Calendar cal_now = Calendar.getInstance();
+        cal_now.setTime(date);
+        cal_alarm.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth(),
+                alarmTimePicker1.getCurrentHour(), alarmTimePicker1.getCurrentMinute(), 0);
+        if (cal_alarm.before(cal_now)) {
+            return -1;
+        }
+
+        Intent myIntent = new Intent(getBaseContext(), AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getBaseContext(), 0, myIntent, 0);
+
+        manager.set(AlarmManager.RTC_WAKEUP, cal_alarm.getTimeInMillis(), pendingIntent);
+        return 0;
     }
 
     /**
