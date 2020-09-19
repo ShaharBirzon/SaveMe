@@ -55,13 +55,13 @@
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginRight="16dp"
-        android:text="Choose icon" />
+        android:text="@string/choose_icon" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/et_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Description"
+        android:hint="@string/description"
         app:helperTextEnabled="true"
         app:helperText="optional"
         android:layout_below="@id/btn_choose_icon"
@@ -85,10 +85,10 @@
         android:layout_below="@+id/et_description"
         android:layout_alignParentRight="true"
         android:layout_marginTop="20dp"
-        android:text="SAVE" />
+        android:text="@string/save" />
 
     <Button
-        android:id="@+id/btn_action_cancel"
+        android:id="@+id/btn_action_cancel_icon_selection"
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -96,6 +96,6 @@
         android:layout_marginTop="20dp"
         android:layout_toStartOf="@+id/btn_action_ok"
         android:layout_toLeftOf="@+id/btn_action_ok"
-        android:text="CANCEL" />
+        android:text="@string/cancel" />
 
 </RelativeLayout>
