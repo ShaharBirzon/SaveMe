@@ -2,10 +2,7 @@ package com.example.saveme.document;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.DatePickerDialog;
@@ -14,7 +11,6 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -89,6 +85,18 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     TimePicker alarmTimePicker2;
     DatePicker datePicker;
 
+    private View v1;
+    private View v2;
+    private View v3;
+    private View v4;
+    private View v5;
+    private View v6;
+    private View v7;
+    private View v8;
+    private View v9;
+    private View v10;
+    private View v11;
+
     private boolean isDocumentTitleValid = false;
 
     private static StorageReference storageReference;
@@ -127,34 +135,13 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         reminderSwitch.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                View v1 = findViewById(R.id.et_time1);
-                View v2 = findViewById(R.id.btn_add_another_alarm);
-                View v3 = findViewById(R.id.tv_reminder1);
-                View v4 = findViewById(R.id.tv_add_to_calendar1);
-                View v5 = findViewById(R.id.checkbox_calendar1);
-                View v6 = findViewById(R.id.spinner_times1);
-                View v7 = findViewById(R.id.et_time2);
-                View v8 = findViewById(R.id.tv_reminder2);
-                View v9 = findViewById(R.id.tv_add_to_calendar2);
-                View v10 = findViewById(R.id.checkbox_calendar2);
-                View v11 = findViewById(R.id.spinner_times2);
-
 
                 if (b) {
                     isAlarm = true;
-                    v1.setVisibility(View.VISIBLE);
-                    v2.setVisibility(View.VISIBLE);
-                    v3.setVisibility(View.VISIBLE);
-                    v4.setVisibility(View.VISIBLE);
-                    v5.setVisibility(View.VISIBLE);
-                    v6.setVisibility(View.VISIBLE);
+                    setFirstRemainderFieldsVisibility(View.VISIBLE);
                 } else {
                     isAlarm = false;
-                    v1.setVisibility(View.GONE);
-                    v2.setVisibility(View.GONE);
-                    v3.setVisibility(View.GONE);
-                    v4.setVisibility(View.GONE);
-                    v5.setVisibility(View.GONE);
+                    setFirstRemainderFieldsVisibility(View.GONE);
                     v6.setVisibility(View.GONE);
                     v7.setVisibility(View.GONE);
                     v8.setVisibility(View.GONE);
@@ -226,6 +213,15 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
 
     }
 
+    private void setFirstRemainderFieldsVisibility(int visibility) {
+        v1.setVisibility(visibility);
+        v2.setVisibility(visibility);
+        v3.setVisibility(visibility);
+        v4.setVisibility(visibility);
+        v5.setVisibility(visibility);
+        v6.setVisibility(visibility);
+    }
+
     private void handleEditDocument(Intent intentCreatedMe) {
         curDocument.setTitle(intentCreatedMe.getStringExtra("document_title"));
         curDocument.setComment(intentCreatedMe.getStringExtra("document_comment"));
@@ -254,6 +250,11 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             fileImageView.setVisibility(View.VISIBLE);
             curDocument.setFileDownloadUri(intentCreatedMe.getStringExtra("file_download_uri"));
             fileDownloadUri = Uri.parse(curDocument.getFileDownloadUri());
+        }
+        curDocument.setHasAlarm(intentCreatedMe.getBooleanExtra("has_alarm", false));
+        if (curDocument.getHasAlarm()) {
+            reminderSwitch.setChecked(true);
+            setFirstRemainderFieldsVisibility(View.VISIBLE);
         }
         // todo add preview of image
         initializeActivityFieldsWithDocumentDataFromDB();
@@ -298,6 +299,18 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         fileImageView = findViewById(R.id.iv_doc_file);
         addPhotoBtn = findViewById(R.id.btn_add_doc_photo);
         addFileBtn = findViewById(R.id.btn_add_doc_file);
+
+        v1 = findViewById(R.id.et_time1);
+        v2 = findViewById(R.id.btn_add_another_alarm);
+        v3 = findViewById(R.id.tv_reminder1);
+        v4 = findViewById(R.id.tv_add_to_calendar1);
+        v5 = findViewById(R.id.checkbox_calendar1);
+        v6 = findViewById(R.id.spinner_times1);
+        v7 = findViewById(R.id.et_time2);
+        v8 = findViewById(R.id.tv_reminder2);
+        v9 = findViewById(R.id.tv_add_to_calendar2);
+        v10 = findViewById(R.id.checkbox_calendar2);
+        v11 = findViewById(R.id.spinner_times2);
     }
 
     /**
@@ -363,10 +376,10 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             Toast.makeText(getApplicationContext(), "invalid input data", Toast.LENGTH_LONG).show();
             return;
         }
-        if (!reminderTimeET1.getEditText().getText().toString().equals("") && !documentExpirationDateET.getEditText().getText().toString().equals("")){
+        if (!reminderTimeET1.getEditText().getText().toString().equals("") && !documentExpirationDateET.getEditText().getText().toString().equals("")) {
             Log.i("document activity", "valid for alarm");
             if (setAlarm(alarmTimePicker1) != 0) {
-                Toast toast= Toast.makeText(getApplicationContext(),"This time has passed!", Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(getApplicationContext(), "This time has passed!", Toast.LENGTH_SHORT);
                 toast.show();
                 return;
             }
@@ -537,7 +550,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
      */
     private void addFileToDoc() {
         Log.d(TAG, "adding file to document activity");
-        uploadDocumentFileToDB(getApplicationContext(),categoryTitle, curDocument.getTitle(),fileUri);
+        uploadDocumentFileToDB(getApplicationContext(), categoryTitle, curDocument.getTitle(), fileUri);
         curDocument.setHasFile(true);
         fileImageView.setVisibility(View.VISIBLE);
         addedFile = true;
@@ -608,7 +621,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
 
 
     public void onClickOpenFile(View view) {
-        if(fileDownloadUri!=null) {
+        if (fileDownloadUri != null) {
             Intent intent = new Intent(DocumentActivity.this, DisplayFileActivity.class);
             Log.d(TAG, "file_url " + fileDownloadUri.toString());
             intent.putExtra("file_url", fileDownloadUri.toString());
