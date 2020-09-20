@@ -225,6 +225,7 @@ public class CategoryActivity extends AppCompatActivity {
                 intent.putExtra("has_photo", document.getHasPicture());
                 intent.putExtra("has_file", document.isHasFile());
                 intent.putExtra("file_download_uri", document.getFileDownloadUri());
+                intent.putExtra("has_alarm", document.getHasAlarm());
                 // todo add more into intent
                 startActivityForResult(intent, EDIT_DOCUMENT);
             }

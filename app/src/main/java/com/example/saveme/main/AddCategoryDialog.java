@@ -27,6 +27,7 @@ import static android.app.Activity.RESULT_OK;
 public class AddCategoryDialog extends DialogFragment {
     private static final String TAG = "AddCategoryFragment";
     private static final int CATEGORY_ICON_REQUEST_CODE = 111;
+    public static final int DEFAULT_ICON = R.drawable.buy;
     private String[] categoriesTitles; //categories titles not used for spinner
     private boolean isCategoryTitleValid = false;
 
@@ -50,7 +51,7 @@ public class AddCategoryDialog extends DialogFragment {
     private Button actionOkButton, actionCancelButton, chooseIconButton;
     private Spinner titleSpinner;
 
-    private int imageValue = R.drawable.buy; //initialized to default icon
+    private int iconImageValue = DEFAULT_ICON; //initialized to default icon
 
 
     @Nullable
@@ -125,7 +126,7 @@ public class AddCategoryDialog extends DialogFragment {
         String description = descriptionInput.getEditText().getText().toString();
 
         //TODO  add image
-        mOnInputListener.sendInput(title, description, imageValue);
+        mOnInputListener.sendInput(title, description, iconImageValue);
 
         getDialog().dismiss();
     }
@@ -173,8 +174,8 @@ public class AddCategoryDialog extends DialogFragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CATEGORY_ICON_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                imageValue = data.getIntExtra("iconIntValue", R.drawable.buy);
-                Log.d(TAG, "set icon image to value: " + Integer.toString(imageValue));
+                iconImageValue = data.getIntExtra("iconIntValue", DEFAULT_ICON);
+                Log.d(TAG, "set icon image to value: " + Integer.toString(iconImageValue));
             }
         }
     }
