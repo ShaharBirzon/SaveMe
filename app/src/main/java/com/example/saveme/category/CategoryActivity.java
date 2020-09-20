@@ -99,6 +99,7 @@ public class CategoryActivity extends AppCompatActivity {
     public void onClickAddDocumentButton(View view) {
         Intent intent = new Intent(CategoryActivity.this, DocumentActivity.class);
         intent.putExtra("call_reason", "new_document");
+        intent.putExtra("category_title", categoryTitle);
         startActivityForResult(intent, NEW_DOCUMENT);
     }
 
@@ -140,13 +141,11 @@ public class CategoryActivity extends AppCompatActivity {
             Uri imageUri = Uri.parse(imageString);
             FirebaseMediate.uploadPhotoToStorage(imageUri, this, getApplicationContext(), categoryTitle, title, "image");
         }
-        String fileStr = data.getStringExtra("file_uri");
-        if (fileStr !=null){
-            Uri fileUri = Uri.parse(fileStr);
-            FirebaseMediate.uploadDocumentFileToDB( getApplicationContext(), categoryTitle, title, fileUri);
-        }
+        //todo delete?
+        String fileDownloadUriStr = data.getStringExtra("file_download_uri");
+        boolean hasFile = data.getBooleanExtra("has_file", false);
         Log.e(TAG, "adding new document " + title);
-        Document newDocument = new Document(title, comment, expirationDate, addedPhoto, hasAlarm); //todo change
+        Document newDocument = new Document(title, comment, expirationDate, null, addedPhoto, hasAlarm, hasFile, fileDownloadUriStr); //todo change
         documentList.add(newDocument);
         FirebaseMediate.addNewDocument(categoryTitle, newDocument);
         documentAdapter.notifyItemInserted(documentList.size() - 1);
@@ -166,11 +165,8 @@ public class CategoryActivity extends AppCompatActivity {
             Uri imageUri = Uri.parse(imageString);
             FirebaseMediate.uploadPhotoToStorage(imageUri, this, getApplicationContext(), categoryTitle, title, "image");
         }
-        String fileStr = data.getStringExtra("file_uri");
-        if (fileStr !=null){
-            Uri fileUri = Uri.parse(fileStr);
-            FirebaseMediate.uploadDocumentFileToDB( getApplicationContext(), categoryTitle, title, fileUri);
-        }
+        String fileDownloadUriStr = data.getStringExtra("file_download_uri");
+        boolean hasFile = data.getBooleanExtra("has_file", false);
         Log.e(TAG, "editing document " + title);
         Document document = documentList.get(position);
         FirebaseMediate.removeDocument(categoryTitle, document);
@@ -183,6 +179,8 @@ public class CategoryActivity extends AppCompatActivity {
         if (!expirationDate.equals(document.getExpirationDate())) {
             document.setExpirationDate(expirationDate);
         }
+        document.setHasFile(hasFile);
+        document.setFileDownloadUri(fileDownloadUriStr);
         // todo add other fields
         FirebaseMediate.addNewDocument(categoryTitle, document);
         documentAdapter.notifyDataSetChanged();
@@ -207,6 +205,8 @@ public class CategoryActivity extends AppCompatActivity {
                 intent.putExtra("document_comment", document.getComment());
                 intent.putExtra("document_expiration_date", document.getExpirationDate());
                 intent.putExtra("has_photo", document.getHasPicture());
+                intent.putExtra("has_file", document.isHasFile());
+                intent.putExtra("file_download_uri", document.getFileDownloadUri());
                 // todo add more into intent
                 startActivityForResult(intent, EDIT_DOCUMENT);
             }
