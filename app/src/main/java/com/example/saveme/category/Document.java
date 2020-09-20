@@ -2,14 +2,14 @@ package com.example.saveme.category;
 
 import android.graphics.Bitmap;
 
-import java.util.Date;
-
 public class Document {
     private String title;
     private String comment;
     private String expirationDate;
     private Bitmap bitmap;
+    private String fileDownloadUri;
     private boolean hasPicture;
+    private boolean hasFile;
     private boolean hasAlarm;
 
     // todo add attr for images
@@ -24,12 +24,15 @@ public class Document {
         this.hasPicture = hasPicture;
     }
 
-    public Document(String title, String comment, String expirationDate, boolean hasPicture, boolean hasAlarm) {
+    public Document(String title, String comment, String expirationDate, Bitmap bitmap, boolean hasPicture, boolean hasAlarm, boolean hasFile, String fileDownloadUri) {
         this.title = title;
         this.comment = comment;
         this.expirationDate = expirationDate;
+        this.bitmap = bitmap;
         this.hasPicture = hasPicture;
+        this.hasFile = hasFile;
         this.hasAlarm = hasAlarm;
+        this.fileDownloadUri = fileDownloadUri;
     }
 
 
@@ -58,7 +61,9 @@ public class Document {
         this.expirationDate = expirationDate;
     }
 
-    public void setHasAlarm(boolean hasAlarm){ this.hasAlarm = hasAlarm; }
+    public void setHasAlarm(boolean hasAlarm) {
+        this.hasAlarm = hasAlarm;
+    }
 
     public Bitmap getBitmap() {
         return bitmap;
@@ -72,9 +77,27 @@ public class Document {
         return hasPicture;
     }
 
-    public boolean getHasAlarm() {return hasAlarm;}
+    public boolean getHasAlarm() {
+        return hasAlarm;
+    }
 
     public void setHasPicture(Boolean hasPicture) {
         this.hasPicture = hasPicture;
+    }
+
+    public boolean isHasFile() {
+        return hasFile;
+    }
+
+    public void setHasFile(boolean hasFile) {
+        this.hasFile = hasFile;
+    }
+
+    public String getFileDownloadUri() {
+        return fileDownloadUri;
+    }
+
+    public void setFileDownloadUri(String fileDownloadUri) {
+        this.fileDownloadUri = fileDownloadUri;
     }
 }

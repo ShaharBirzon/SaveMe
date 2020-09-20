@@ -35,11 +35,11 @@ import android.widget.Spinner;
 import android.widget.Switch;
 
 import com.example.saveme.utils.MyPreferences;
-import com.github.barteksc.pdfviewer.PDFView;
-import com.github.barteksc.pdfviewer.scroll.DefaultScrollHandle;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.example.saveme.utils.AlarmReceiver;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import android.widget.TimePicker;
@@ -52,13 +52,12 @@ import com.example.saveme.category.Document;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
-import java.io.File;
+
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -73,14 +72,14 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     private TextInputLayout reminderTimeET1;
     private TextInputLayout reminderTimeET2;
     private String callReason;
-    private String pathToFile;
+    private String categoryTitle;
     private int position;
     private Spinner reminderSpinner1;
     private Spinner reminderSpinner2;
     SwitchMaterial reminderSwitch;
     private Document curDocument = new Document();
     private Button addPhotoBtn, addFileBtn;
-    private Uri selectedImage, fileUri;
+    private Uri selectedImage, fileUri, fileDownloadUri;
     ImageView documentImageView, fileImageView;
     private boolean changedPhoto, addedFile = false;
     private boolean isAlarm = false;
@@ -94,7 +93,6 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
 
     private static StorageReference storageReference;
     private FirebaseStorage storage;
-    private PDFView pdfView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,37 +101,20 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
         initializeActivityFields();
+        fileImageView.setVisibility(View.INVISIBLE);
         setReminderTime();
         // todo add other
 
         Intent intentCreatedMe = getIntent();
+        categoryTitle = intentCreatedMe.getStringExtra("category_title");
         callReason = intentCreatedMe.getStringExtra("call_reason");
         if (callReason.equals("edit_document")) {
-            curDocument.setTitle(intentCreatedMe.getStringExtra("document_title"));
-            curDocument.setComment(intentCreatedMe.getStringExtra("document_comment"));
-            curDocument.setExpirationDate(intentCreatedMe.getStringExtra("document_expiration_date"));
-            position = intentCreatedMe.getIntExtra("position", -1);
-            String categoryTitle = intentCreatedMe.getStringExtra("category_title");
-            boolean hasPhoto = intentCreatedMe.getBooleanExtra("has_photo", false);
-            if (hasPhoto) {
-                //upload document's image from storage
-                storageReference.child("Files").
-                        child(MyPreferences.getUserDocumentPathFromPreferences(getApplicationContext())).child(categoryTitle).child(curDocument.getTitle()).child("image").getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                    @Override
-                    public void onSuccess(byte[] bytes) {
-                        Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                        Bitmap previewBitmap = Bitmap.createScaledBitmap(bmp, (int) (bmp.getWidth() * 0.1), (int) (bmp.getHeight() * 0.1), true);
-                        documentImageView.setImageBitmap(previewBitmap);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        Log.d(TAG, "failed to fetch image from firebase storage");
-                    }
-                });
-            }
-            // todo add preview of image
-            initializeActivityFieldsWithDocumentDataFromDB();
+            handleEditDocument(intentCreatedMe);
+        }
+        boolean hasFile = intentCreatedMe.getBooleanExtra("has_file", false);
+        curDocument.setHasFile(hasFile);
+        if (hasFile) {
+            fileImageView.setVisibility(View.VISIBLE);
         }
 
         documentExpirationDateET.setStartIconOnClickListener(new View.OnClickListener() {
@@ -199,8 +180,6 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         });
 
         changedPhoto = false;
-        addPhotoBtn = findViewById(R.id.btn_add_doc_photo);
-        addFileBtn = findViewById(R.id.btn_add_doc_file);
         addPhotoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -211,7 +190,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             @Override
             public void onClick(View v) {
                 selectFile();
-                    //todo change to this
+                //todo change to this
 //                if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
 //                    selectFile();
 //                } else {
@@ -247,6 +226,39 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
 
     }
 
+    private void handleEditDocument(Intent intentCreatedMe) {
+        curDocument.setTitle(intentCreatedMe.getStringExtra("document_title"));
+        curDocument.setComment(intentCreatedMe.getStringExtra("document_comment"));
+        curDocument.setExpirationDate(intentCreatedMe.getStringExtra("document_expiration_date"));
+        position = intentCreatedMe.getIntExtra("position", -1);
+        boolean hasPicture = intentCreatedMe.getBooleanExtra("has_photo", false);
+        if (hasPicture) {
+            //upload document's image from storage
+            storageReference.child("Files").
+                    child(MyPreferences.getUserDocumentPathFromPreferences(getApplicationContext())).child(categoryTitle).child(curDocument.getTitle()).child("image").getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    Bitmap previewBitmap = Bitmap.createScaledBitmap(bmp, (int) (bmp.getWidth() * 0.1), (int) (bmp.getHeight() * 0.1), true);
+                    documentImageView.setImageBitmap(previewBitmap);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    Log.d(TAG, "failed to fetch image from firebase storage");
+                }
+            });
+        }
+        curDocument.setHasFile(intentCreatedMe.getBooleanExtra("has_file", false));
+        if (curDocument.isHasFile()) {
+            fileImageView.setVisibility(View.VISIBLE);
+            curDocument.setFileDownloadUri(intentCreatedMe.getStringExtra("file_download_uri"));
+            fileDownloadUri = Uri.parse(curDocument.getFileDownloadUri());
+        }
+        // todo add preview of image
+        initializeActivityFieldsWithDocumentDataFromDB();
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -261,7 +273,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         Intent fileIntent = new Intent(Intent.ACTION_GET_CONTENT);
         fileIntent.setType("*/*");
         fileIntent.addCategory(Intent.CATEGORY_OPENABLE);
-        startActivityForResult(Intent.createChooser(fileIntent, "Select Your .pdf File"), FILE_REQUEST_CODE);
+        startActivityForResult(Intent.createChooser(fileIntent, "Select Your File"), FILE_REQUEST_CODE);
     }
 
     private void addFieldsValidation() {
@@ -284,6 +296,8 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         documentExpirationDateET = findViewById(R.id.et_expiration_date);
         documentImageView = findViewById(R.id.iv_doc);
         fileImageView = findViewById(R.id.iv_doc_file);
+        addPhotoBtn = findViewById(R.id.btn_add_doc_photo);
+        addFileBtn = findViewById(R.id.btn_add_doc_file);
     }
 
     /**
@@ -294,6 +308,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         documentTitleET.getEditText().setText(curDocument.getTitle());
         documentCommentET.getEditText().setText(curDocument.getComment());
         documentExpirationDateET.getEditText().setText(curDocument.getExpirationDate());
+
     }
 
     private void showDatePickerDialog() {
@@ -360,7 +375,8 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             Log.d(TAG, "adding photo");
         }
         if (addedFile) {
-            intentBack.putExtra("file_uri", fileUri.toString());
+            intentBack.putExtra("file_download_uri", fileDownloadUri.toString());
+            intentBack.putExtra("has_file", true);
         }
         intentBack.putExtra("document_title", documentTitleET.getEditText().getText().toString());
         intentBack.putExtra("document_comment", documentCommentET.getEditText().getText().toString());
@@ -483,43 +499,11 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
                 Log.d(TAG, "got to FILE_REQUEST_CODE");
                 fileUri = data.getData(); //uri of selected file
 
-                pathToFile = getFileNameByUri(this, fileUri);
-//                addFileToDoc();
-                addedFile = true;
+                addFileToDoc();
             } else {
                 Log.e(TAG, "got to????");
 
             }
-    }
-
-    private String getFileNameByUri(Context context, Uri uri) {
-        String filepath = "";//default fileName
-        //Uri filePathUri = uri;
-        File file;
-        if (uri.getScheme().toString().compareTo("content") == 0) {
-            Cursor cursor = context.getContentResolver().query(uri, new String[]{android.provider.MediaStore.Images.ImageColumns.DATA, MediaStore.Images.Media.ORIENTATION}, null, null, null);
-            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-
-            cursor.moveToFirst();
-
-            String mImagePath = cursor.getString(column_index);
-            cursor.close();
-            filepath = mImagePath;
-
-        } else if (uri.getScheme().compareTo("file") == 0) {
-            try {
-                file = new File(new URI(uri.toString()));
-                if (file.exists())
-                    filepath = file.getAbsolutePath();
-
-            } catch (URISyntaxException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        } else {
-            filepath = uri.getPath();
-        }
-        return filepath;
     }
 
     /*
@@ -530,9 +514,8 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver()
                     , selectedImage);
             Bitmap previewBitmap = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * 0.5), (int) (bitmap.getHeight() * 0.5), true);
-            Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * 0.5), (int) (bitmap.getHeight() * 0.5), true);
             documentImageView.setImageBitmap(previewBitmap);
-            curDocument.setBitmap(resizedBitmap);
+            curDocument.setBitmap(previewBitmap);
             curDocument.setHasPicture(true);
             changedPhoto = true;
         } catch (IOException e) {
@@ -544,35 +527,13 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     the method adds an image to document
      */
     private void addFileToDoc() {
-        //            Bitmap bitmap = MediaStore.Files.Media.getBitmap(getApplicationContext().getContentResolver()
-//                    , fileUri);
-//            Bitmap previewBitmap = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * 0.5), (int) (bitmap.getHeight() * 0.5), true);
-//            fileImageView.setImageBitmap(previewBitmap);
-
-
-
-//   <com.github.barteksc.pdfviewer.PDFView
-//        android:id="@+id/pdfView"
-//        android:layout_below="@+id/btn_add_another_alarm"
-//        android:layout_width="match_parent"
-//        android:layout_height="match_parent"/>
-//        pdfView = (PDFView) findViewById(R.id.pdfView);
-        displayFromAsset();
-//            curDocument.setBitmap(resizedBitmap);
-//            curDocument.setHasPicture(true);
+        Log.d(TAG, "adding file to document activity");
+        uploadDocumentFileToDB(getApplicationContext(),categoryTitle, curDocument.getTitle(),fileUri);
+        curDocument.setHasFile(true);
+        fileImageView.setVisibility(View.VISIBLE);
+        addedFile = true;
     }
 
-    private void displayFromAsset() {
-
-
-        pdfView.fromAsset(pathToFile)
-                .defaultPage(0)
-                .enableSwipe(true)
-                .swipeHorizontal(false)
-                .enableAnnotationRendering(true)
-                .scrollHandle(new DefaultScrollHandle(this))
-                .load();
-    }
 
     public int setAlarm(int time) {
         AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
@@ -635,4 +596,42 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     }
 
 
+    public void onClickOpenFile(View view) {
+        if(fileDownloadUri!=null) {
+            Intent intent = new Intent(DocumentActivity.this, DisplayFileActivity.class);
+            Log.d(TAG, "file_url " + fileDownloadUri.toString());
+            intent.putExtra("file_url", fileDownloadUri.toString());
+            startActivity(intent);
+        }
+    }
+
+    private void uploadDocumentFileToDB(Context context, String categoryTitle, String documentTitle, final Uri fileUri) {
+        final StorageReference ref = storageReference.child("Files").
+                child(MyPreferences.getUserDocumentPathFromPreferences(context)).child(categoryTitle).child(documentTitle).child("file");
+
+        // Register observers to listen for when the download is done or if it fails
+        ref.putFile(fileUri).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+                Log.e(TAG, "unsuccessful file upload");
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Log.d(TAG, "successful file upload");
+                ref.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        if (task.isSuccessful()) {
+                            fileDownloadUri = task.getResult();
+                        } else {
+                            // Handle failures
+                            // ...
+                        }
+                    }
+                });
+            }
+        });
+    }
 }

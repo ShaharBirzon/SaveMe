@@ -204,8 +204,18 @@ public class FirebaseMediate extends Application {
      * @param categoryName     The category name the document is been removed from.
      * @param documentToDelete The document to delete.
      */
-    public static void removeDocument(String categoryName, Document documentToDelete) {
-        db.document(categoriesRef.getPath() + "/" + categoryName).update("docsList", FieldValue.arrayRemove(documentToDelete));
+    public static void removeDocument(final String categoryName, final Document documentToDelete) {
+
+        db.document(categoriesRef.getPath() + "/" + categoryName).update("docsList", FieldValue.arrayRemove(documentToDelete)).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "successfully deleted document: " + documentToDelete.getTitle() + " from category " + categoryName);
+                } else {
+                    Log.e(TAG, "Error while deleting document " + documentToDelete.getTitle() + " from category" + categoryName);
+                }
+            }
+        });
     }
 
 
@@ -275,13 +285,13 @@ public class FirebaseMediate extends Application {
             public void onSuccess(Uri uri) {
                 // Got the download URL for 'users/me/profile.png'
                 imageUri[0] = uri;
-                Log.d(TAG,"got image from firebase storage successfully");
+                Log.d(TAG, "got image from firebase storage successfully");
 
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                Log.e(TAG,"Error getting image from firebase storage");
+                Log.e(TAG, "Error getting image from firebase storage");
             }
         });
         return imageUri[0];

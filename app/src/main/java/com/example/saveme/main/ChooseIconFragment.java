@@ -24,7 +24,6 @@ public class ChooseIconFragment extends DialogFragment {
     private static final int[] iconImages = {R.drawable.money, R.drawable.tax, R.drawable.lipstick, R.drawable.id, R.drawable.house, R.drawable.garden, R.drawable.fish, R.drawable.fan, R.drawable.email, R.drawable.dog, R.drawable.car, R.drawable.cake, R.drawable.buy, R.drawable.cat, R.drawable.company};
     private int lastImageToBeSelected = 0; //todo default image number
     private ImageView lastImage = null;
-    private Button actionSaveButton, actionCancelButton;
     private static final String TAG = "ChooseIconFragment";
     private Drawable highlight;
     @Nullable
@@ -58,8 +57,8 @@ public class ChooseIconFragment extends DialogFragment {
     }
 
     private void setButtonsOnClickMethods(View view) {
-        actionSaveButton = view.findViewById(R.id.btn_save_category_icon);
-        actionCancelButton = view.findViewById(R.id.btn_action_cancel_icon_selection);
+        Button actionSaveButton = view.findViewById(R.id.btn_save_category_icon);
+        Button actionCancelButton = view.findViewById(R.id.btn_action_cancel_icon_selection);
         actionCancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
