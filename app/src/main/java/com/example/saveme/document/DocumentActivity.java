@@ -544,7 +544,6 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     }
 
 
-    public int setAlarm(int time) {
     public int setAlarm(TimePicker time) {
         Log.i("document activity", "entered setAlarm");
         AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
