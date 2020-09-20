@@ -12,7 +12,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -31,7 +30,7 @@ public class CategoryActivity extends AppCompatActivity {
 
     public static final int NEW_DOCUMENT = 111;
     public static final int EDIT_DOCUMENT = 222;
-    public static final int DEFAULT_VALUE = -1;
+    public static final int DEFAULT_POSITION_VALUE = -1;
     private RecyclerView recyclerView;
     private ArrayList<Document> documentList;
     private DocumentAdapter documentAdapter;
@@ -176,7 +175,8 @@ public class CategoryActivity extends AppCompatActivity {
         String title = data.getStringExtra("document_title");
         String comment = data.getStringExtra("document_comment");
         String expirationDate = data.getStringExtra("document_expiration_date");
-        int position = data.getIntExtra("document_position", DEFAULT_VALUE);
+        int position = data.getIntExtra("document_position", DEFAULT_POSITION_VALUE);
+        boolean hasAlarm = data.getBooleanExtra("is_alarm", false);
         boolean addedPhoto = data.getBooleanExtra("has_photo", false);
         if (addedPhoto) {
             String imageString = data.getStringExtra("imageUri");
@@ -198,6 +198,7 @@ public class CategoryActivity extends AppCompatActivity {
             document.setExpirationDate(expirationDate);
         }
         document.setHasFile(hasFile);
+        document.setHasAlarm(hasAlarm);
         document.setFileDownloadUri(fileDownloadUriStr);
         // todo add other fields
         FirebaseMediate.addNewDocument(categoryTitle, document);
