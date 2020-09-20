@@ -363,6 +363,16 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             Toast.makeText(getApplicationContext(), "invalid input data", Toast.LENGTH_LONG).show();
             return;
         }
+        if (!reminderTimeET1.getEditText().getText().toString().equals("") && !documentExpirationDateET.getEditText().getText().toString().equals("")){
+            Log.i("document activity", "valid for alarm");
+            if (setAlarm(alarmTimePicker1) != 0) {
+                Toast toast= Toast.makeText(getApplicationContext(),"This time has passed!", Toast.LENGTH_SHORT);
+                toast.show();
+                return;
+            }
+        }
+        Log.i("document activity", "after if");
+
 
         Intent intentBack = new Intent(DocumentActivity.this, CategoryActivity.class);
 
@@ -464,7 +474,6 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         intent.putExtra("beginTime", startTime);
         intent.putExtra("allDay", false);
         intent.putExtra("rrule", "FREQ=YEARLY");
-//        intent.putExtra("endTime", reminderTime1+60*60*1000);
         intent.putExtra("title", "Reminder! your document: " + docTitle + " is expired");
 
         startActivity(intent);
@@ -536,13 +545,16 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
 
 
     public int setAlarm(int time) {
+    public int setAlarm(TimePicker time) {
+        Log.i("document activity", "entered setAlarm");
         AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Date date = new Date();
         Calendar cal_alarm = Calendar.getInstance();
         Calendar cal_now = Calendar.getInstance();
         cal_now.setTime(date);
         cal_alarm.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth(),
-                alarmTimePicker1.getCurrentHour(), alarmTimePicker1.getCurrentMinute(), 0);
+                time.getCurrentHour(), time.getCurrentMinute(), 0);
+
         if (cal_alarm.before(cal_now)) {
             return -1;
         }
