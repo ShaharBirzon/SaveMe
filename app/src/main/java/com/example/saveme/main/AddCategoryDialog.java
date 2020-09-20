@@ -3,6 +3,8 @@ package com.example.saveme.main;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
@@ -25,6 +28,7 @@ public class AddCategoryDialog extends DialogFragment {
     private static final String TAG = "AddCategoryFragment";
     private static final int CATEGORY_ICON_REQUEST_CODE = 111;
     private String[] categoriesTitles; //categories titles not used for spinner
+    private boolean isCategoryTitleValid = false;
 
     public AddCategoryDialog() {
     }
@@ -46,7 +50,7 @@ public class AddCategoryDialog extends DialogFragment {
     private Button actionOkButton, actionCancelButton, chooseIconButton;
     private Spinner titleSpinner;
 
-    private int imageValue = 0;
+    private int imageValue = R.drawable.buy; //initialized to default icon
 
 
     @Nullable
@@ -74,17 +78,13 @@ public class AddCategoryDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: capturing input");
-
-                String title = titleInput.getEditText().getText().toString();
-                if (title == null || title.equals("")) {
-                    title = titleSpinner.getSelectedItem().toString();
+                if(userInputValid()){
+                    addNewCategory();
                 }
-                String description = descriptionInput.getEditText().getText().toString();
-
-                //TODO  add image
-                mOnInputListener.sendInput(title, description, imageValue);
-
-                getDialog().dismiss();
+                else {
+                    //todo change message
+                    Toast.makeText(getContext(), "invalid input", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -99,6 +99,35 @@ public class AddCategoryDialog extends DialogFragment {
         });
 
         return view;
+    }
+
+    private boolean userInputValid() {
+        return isCategoryTitleValid();
+    }
+
+    private boolean isCategoryTitleValid() {
+        String title = titleInput.getEditText().getText().toString();
+        boolean isTitleChosen=false;
+        if (title.equals("")) {
+            title = titleSpinner.getSelectedItem().toString();
+            if (!title.equals("Choose Name…") && !title.equals("Other")){
+                isTitleChosen =true;
+            }
+        }
+        return isCategoryTitleValid || isTitleChosen;
+    }
+
+    private void addNewCategory() {
+        String title = titleInput.getEditText().getText().toString();
+        if (title == null || title.equals("")) {
+            title = titleSpinner.getSelectedItem().toString();
+        }
+        String description = descriptionInput.getEditText().getText().toString();
+
+        //TODO  add image
+        mOnInputListener.sendInput(title, description, imageValue);
+
+        getDialog().dismiss();
     }
 
     @Override
@@ -125,6 +154,7 @@ public class AddCategoryDialog extends DialogFragment {
                 String title = titlesAdapter.getItem(position);
                 if (title.equals("Other")) {
                     titleInput.setVisibility(View.VISIBLE);
+                    validateCategoryTitle();
                     ((RelativeLayout.LayoutParams) chooseIconButton.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.et_title);
                 } else {
                     titleInput.setVisibility(View.INVISIBLE);
@@ -143,9 +173,50 @@ public class AddCategoryDialog extends DialogFragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CATEGORY_ICON_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                imageValue = data.getIntExtra("iconIntValue", 0);
+                imageValue = data.getIntExtra("iconIntValue", R.drawable.buy);
                 Log.d(TAG, "set icon image to value: " + Integer.toString(imageValue));
             }
+        }
+    }
+
+    /**
+     * validate the entered category title.
+     */
+    private void validateCategoryTitle() {
+        setIsDocumentTitleValidToTrueIfValid();
+        titleInput.getEditText().addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                isCategoryTitleValid = false;
+                int inputLength = titleInput.getEditText().getText().toString().length();
+                if (inputLength >= 16) {//todo check number
+                    titleInput.setError("Maximum Limit Reached!");
+                } else if (inputLength == 0) {
+                    titleInput.setError("Category title is required!");
+                } else {
+                    titleInput.setError(null);
+//                    curDocument.setTitle(documentTitleET.getEditText().getText().toString());
+                    isCategoryTitleValid = true;
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+    }
+
+    /**
+     * set isDocumentTitleValid to true if document title is valid
+     */
+    private void setIsDocumentTitleValidToTrueIfValid() {
+        int inputLength = titleInput.getEditText().getText().toString().length();
+        if (inputLength < 16 && inputLength > 0) {
+            isCategoryTitleValid = true;
         }
     }
 }
