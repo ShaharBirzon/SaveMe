@@ -40,7 +40,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         CategoryItemHolder catHolder = ((CategoryItemHolder) holder);
         // Picasso.get().load(catItem.image).into(catHolder.image); todo check
         catHolder.title.setText(catItem.title);
-        catHolder.desc.setText(catItem.description);
         catHolder.image.setImageResource(catItem.getImage());
 
         // set click listener
@@ -90,12 +89,10 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 class CategoryItemHolder extends RecyclerView.ViewHolder {
     ImageView image;
     TextView title;
-    TextView desc;
 
     public CategoryItemHolder(@NonNull View itemView) {
         super(itemView);
         image = itemView.findViewById(R.id.category_img);
         title = itemView.findViewById(R.id.category_title);
-        desc = itemView.findViewById(R.id.category_desc);
     }
 }

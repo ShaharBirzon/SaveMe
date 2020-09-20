@@ -139,7 +139,8 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_below="@id/gl_choose_icon"
-        android:gravity="center">
+        android:gravity="center"
+        android:paddingTop="8dp">
 
         <Button
             android:id="@+id/btn_action_cancel_icon_selection"
