@@ -192,8 +192,8 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
     }
 
     @Override
-    public void sendInput(String title, String description, int image) {
-        Category category = new Category(title, description, image);
+    public void sendInput(String title, int image) {
+        Category category = new Category(title, image);
         addNewCategory(category);
     }
 

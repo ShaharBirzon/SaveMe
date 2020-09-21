@@ -2,6 +2,7 @@ package com.example.saveme.utils;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.example.saveme.R;
+import com.example.saveme.document.DocumentActivity;
 
 public class AlarmReceiver extends BroadcastReceiver {
 
@@ -31,14 +33,34 @@ public class AlarmReceiver extends BroadcastReceiver {
             NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
+        Intent documentIntent = new Intent(context, DocumentActivity.class);
+        documentIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        //todo maybe can use calling intent from args and change destination.
+        documentIntent.putExtra("call_reason", "edit_document");
+        documentIntent.putExtra("position", intent.getIntExtra("position", -1));
+        documentIntent.putExtra("document_title", intent.getStringExtra("document_title"));
+        documentIntent.putExtra("category_title",  intent.getStringExtra("category_title"));
+        documentIntent.putExtra("document_comment", intent.getStringExtra("document_comment"));
+        documentIntent.putExtra("document_expiration_date", intent.getStringExtra("document_expiration_date"));
+        documentIntent.putExtra("document_reminder_time", intent.getStringExtra("document_reminder_time"));
+        documentIntent.putExtra("has_photo", intent.getBooleanExtra("has_photo", false));
+        documentIntent.putExtra("has_file", intent.getBooleanExtra("has_file", false));
+        documentIntent.putExtra("file_download_uri", intent.getStringExtra("file_download_uri"));
+        documentIntent.putExtra("has_alarm", intent.getBooleanExtra("has_alarm", false));
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, documentIntent, 0);
+
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_event_busy)
                 .setContentTitle(TEXT_TITLE)
                 .setContentText(CONTENT_TITLE)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(pendingIntent)
+        ;
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(1, builder.build());
+
     }
 
 }

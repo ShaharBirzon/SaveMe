@@ -54,6 +54,7 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
@@ -79,13 +80,25 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     private Uri selectedImage, fileUri, fileDownloadUri;
     ImageView documentImageView;
     LinearLayout filePreviewLayout;
-    private boolean changedPhoto, addedFile = false;
+    private boolean changedPhoto, changedReminderTime = false, addedFile = false;
     private boolean isAlarm = false;
     CheckBox check1;
     CheckBox check2;
     TimePicker alarmTimePicker1;
     TimePicker alarmTimePicker2;
     DatePicker datePicker;
+
+    private View v1;
+    private View v2;
+    private View v3;
+    private View v4;
+    private View v5;
+    private View v6;
+    private View v7;
+    private View v8;
+    private View v9;
+    private View v10;
+    private View v11;
 
     private boolean isDocumentTitleValid = false;
 
@@ -125,34 +138,13 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         reminderSwitch.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                View v1 = findViewById(R.id.et_time1);
-                View v2 = findViewById(R.id.btn_add_another_alarm);
-                View v3 = findViewById(R.id.tv_reminder1);
-                View v4 = findViewById(R.id.tv_add_to_calendar1);
-                View v5 = findViewById(R.id.checkbox_calendar1);
-                View v6 = findViewById(R.id.spinner_times1);
-                View v7 = findViewById(R.id.et_time2);
-                View v8 = findViewById(R.id.tv_reminder2);
-                View v9 = findViewById(R.id.tv_add_to_calendar2);
-                View v10 = findViewById(R.id.checkbox_calendar2);
-                View v11 = findViewById(R.id.spinner_times2);
-
 
                 if (b) {
                     isAlarm = true;
-                    v1.setVisibility(View.VISIBLE);
-                    v2.setVisibility(View.VISIBLE);
-                    v3.setVisibility(View.VISIBLE);
-                    v4.setVisibility(View.VISIBLE);
-                    v5.setVisibility(View.VISIBLE);
-                    v6.setVisibility(View.VISIBLE);
+                    setFirstRemainderFieldsVisibility(View.VISIBLE);
                 } else {
                     isAlarm = false;
-                    v1.setVisibility(View.GONE);
-                    v2.setVisibility(View.GONE);
-                    v3.setVisibility(View.GONE);
-                    v4.setVisibility(View.GONE);
-                    v5.setVisibility(View.GONE);
+                    setFirstRemainderFieldsVisibility(View.GONE);
                     v6.setVisibility(View.GONE);
                     v7.setVisibility(View.GONE);
                     v8.setVisibility(View.GONE);
@@ -224,6 +216,15 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
 
     }
 
+    private void setFirstRemainderFieldsVisibility(int visibility) {
+        v1.setVisibility(visibility);
+        v2.setVisibility(visibility);
+        v3.setVisibility(visibility);
+        v4.setVisibility(visibility);
+        v5.setVisibility(visibility);
+        v6.setVisibility(visibility);
+    }
+
     private void handleEditDocument(Intent intentCreatedMe) {
         curDocument.setTitle(intentCreatedMe.getStringExtra("document_title"));
         curDocument.setComment(intentCreatedMe.getStringExtra("document_comment"));
@@ -237,8 +238,9 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
                 @Override
                 public void onSuccess(byte[] bytes) {
                     Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                    Bitmap previewBitmap = Bitmap.createScaledBitmap(bmp, (int) (bmp.getWidth() * 0.1), (int) (bmp.getHeight() * 0.1), true);
+                    Bitmap previewBitmap = Bitmap.createScaledBitmap(bmp, (int) (bmp.getWidth() * 0.5), (int) (bmp.getHeight() * 0.5), true);
                     documentImageView.setImageBitmap(previewBitmap);
+                    curDocument.setBitmap(previewBitmap);
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -252,6 +254,13 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             filePreviewLayout.setVisibility(View.VISIBLE);
             curDocument.setFileDownloadUri(intentCreatedMe.getStringExtra("file_download_uri"));
             fileDownloadUri = Uri.parse(curDocument.getFileDownloadUri());
+        }
+        curDocument.setHasAlarm(intentCreatedMe.getBooleanExtra("has_alarm", false));
+        if (curDocument.getHasAlarm()) {
+            isAlarm = true;
+            reminderSwitch.setChecked(true);
+            setFirstRemainderFieldsVisibility(View.VISIBLE);
+            reminderTimeET1.getEditText().setText(intentCreatedMe.getStringExtra("document_reminder_time"));
         }
         // todo add preview of image
         initializeActivityFieldsWithDocumentDataFromDB();
@@ -296,6 +305,18 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         filePreviewLayout = findViewById(R.id.ll_doc_file_prev);
         addPhotoBtn = findViewById(R.id.btn_add_doc_photo);
         addFileBtn = findViewById(R.id.btn_add_doc_file);
+
+        v1 = findViewById(R.id.et_time1);
+        v2 = findViewById(R.id.btn_add_another_alarm);
+        v3 = findViewById(R.id.tv_reminder1);
+        v4 = findViewById(R.id.tv_add_to_calendar1);
+        v5 = findViewById(R.id.checkbox_calendar1);
+        v6 = findViewById(R.id.spinner_times1);
+        v7 = findViewById(R.id.et_time2);
+        v8 = findViewById(R.id.tv_reminder2);
+        v9 = findViewById(R.id.tv_add_to_calendar2);
+        v10 = findViewById(R.id.checkbox_calendar2);
+        v11 = findViewById(R.id.spinner_times2);
     }
 
     /**
@@ -326,7 +347,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
                 alarmTimePicker1 = timePicker;
                 String time = hour + ":" + min;
                 reminderTimeET1.getEditText().setText(time);
-
+                changedReminderTime = true;
             }
         },
                 Calendar.getInstance().get(Calendar.HOUR_OF_DAY),
@@ -361,10 +382,10 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             Toast.makeText(getApplicationContext(), "invalid input data", Toast.LENGTH_LONG).show();
             return;
         }
-        if (!reminderTimeET1.getEditText().getText().toString().equals("") && !documentExpirationDateET.getEditText().getText().toString().equals("")){
+        if (changedReminderTime && !reminderTimeET1.getEditText().getText().toString().equals("") && !documentExpirationDateET.getEditText().getText().toString().equals("")) {
             Log.i("document activity", "valid for alarm");
             if (setAlarm(alarmTimePicker1) != 0) {
-                Toast toast= Toast.makeText(getApplicationContext(),"This time has passed!", Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(getApplicationContext(), "This time has passed!", Toast.LENGTH_SHORT);
                 toast.show();
                 return;
             }
@@ -389,7 +410,9 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         intentBack.putExtra("document_title", documentTitleET.getEditText().getText().toString());
         intentBack.putExtra("document_comment", documentCommentET.getEditText().getText().toString());
         intentBack.putExtra("document_expiration_date", documentExpirationDateET.getEditText().getText().toString());
+        intentBack.putExtra("document_reminder_time", reminderTimeET1.getEditText().getText().toString());
         intentBack.putExtra("is_alarm", isAlarm);
+
         //todo add others
         setResult(RESULT_OK, intentBack);
         finish();
@@ -411,7 +434,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         month = month + 1;
         String date = day + "/" + month + "/" + year;
         documentExpirationDateET.getEditText().setText(date);
-
+        curDocument.setExpirationDate(date);
         // todo check the correct dates
     }
 
@@ -535,7 +558,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
      */
     private void addFileToDoc() {
         Log.d(TAG, "adding file to document activity");
-        uploadDocumentFileToDB(getApplicationContext(),categoryTitle, curDocument.getTitle(),fileUri);
+        uploadDocumentFileToDB(getApplicationContext(), categoryTitle, curDocument.getTitle(), fileUri);
         curDocument.setHasFile(true);
         filePreviewLayout.setVisibility(View.VISIBLE);
         addedFile = true;
@@ -549,7 +572,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         Calendar cal_alarm = Calendar.getInstance();
         Calendar cal_now = Calendar.getInstance();
         cal_now.setTime(date);
-        cal_alarm.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth(),
+        cal_alarm.set(getExpirationDateYear(), getExpirationDateMonth(), getExpirationDateDay(),
                 time.getCurrentHour(), time.getCurrentMinute(), 0);
 
         if (cal_alarm.before(cal_now)) {
@@ -557,10 +580,45 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         }
 
         Intent myIntent = new Intent(getBaseContext(), AlarmReceiver.class);
+        myIntent.putExtra("call_reason", "edit_document");
+        myIntent.putExtra("position", position);
+        myIntent.putExtra("document_title", curDocument.getTitle());
+        myIntent.putExtra("category_title", categoryTitle);
+        myIntent.putExtra("document_comment", curDocument.getComment());
+        myIntent.putExtra("document_expiration_date", curDocument.getExpirationDate());
+        myIntent.putExtra("document_reminder_time", curDocument.getReminderTime());
+        myIntent.putExtra("has_photo", curDocument.getHasPicture());
+        myIntent.putExtra("has_file", curDocument.isHasFile());
+        myIntent.putExtra("file_download_uri", curDocument.getFileDownloadUri());
+        myIntent.putExtra("has_alarm", curDocument.getHasAlarm());
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getBaseContext(), 0, myIntent, 0);
 
         manager.set(AlarmManager.RTC_WAKEUP, cal_alarm.getTimeInMillis(), pendingIntent);
         return 0;
+    }
+
+    private int getExpirationDateYear() {
+        if (datePicker != null) {
+            return datePicker.getYear();
+        } else {
+            return Integer.parseInt(documentExpirationDateET.getEditText().getText().toString().split("/")[2]);
+        }
+    }
+
+    private int getExpirationDateMonth() {
+        if (datePicker != null) {
+            return datePicker.getMonth();
+        } else {
+            return Integer.parseInt(documentExpirationDateET.getEditText().getText().toString().split("/")[1]);
+        }
+    }
+
+    private int getExpirationDateDay() {
+        if (datePicker != null) {
+            return datePicker.getDayOfMonth();
+        } else {
+            return Integer.parseInt(documentExpirationDateET.getEditText().getText().toString().split("/")[0]);
+        }
     }
 
     /**
@@ -606,7 +664,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
 
 
     public void onClickOpenFile(View view) {
-        if(fileDownloadUri!=null) {
+        if (fileDownloadUri != null) {
             Intent intent = new Intent(DocumentActivity.this, DisplayFileActivity.class);
             Log.d(TAG, "file_url " + fileDownloadUri.toString());
             intent.putExtra("file_url", fileDownloadUri.toString());
@@ -642,5 +700,19 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
                 });
             }
         });
+    }
+
+    /**
+     * the method moves to a full screen of the image when image is clicked
+     *
+     * @param view - view
+     */
+    public void onImageClick(View view) {
+        final Intent fullScreenIntent = new Intent(this, DisplayImageActivity.class);
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        curDocument.getBitmap().compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+        fullScreenIntent.putExtra("image", byteArray);
+        startActivity(fullScreenIntent);
     }
 }

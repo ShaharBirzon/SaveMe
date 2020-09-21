@@ -27,6 +27,7 @@ import static android.app.Activity.RESULT_OK;
 public class AddCategoryDialog extends DialogFragment {
     private static final String TAG = "AddCategoryFragment";
     private static final int CATEGORY_ICON_REQUEST_CODE = 111;
+    public static final int DEFAULT_ICON = R.drawable.buy;
     private String[] categoriesTitles; //categories titles not used for spinner
     private boolean isCategoryTitleValid = false;
 
@@ -39,18 +40,17 @@ public class AddCategoryDialog extends DialogFragment {
 
 
     public interface OnInputListener {
-        void sendInput(String title, String description, int image);
+        void sendInput(String title, int image);
     }
 
     public OnInputListener mOnInputListener;
 
     //widgets
     private TextInputLayout titleInput;
-    private TextInputLayout descriptionInput;
     private Button actionOkButton, actionCancelButton, chooseIconButton;
     private Spinner titleSpinner;
 
-    private int imageValue = R.drawable.buy; //initialized to default icon
+    private int iconImageValue = DEFAULT_ICON; //initialized to default icon
 
 
     @Nullable
@@ -64,7 +64,6 @@ public class AddCategoryDialog extends DialogFragment {
         titleInput.setVisibility(View.INVISIBLE);
         titleSpinner = view.findViewById(R.id.spinner_title);
         setCategoryTitle();
-        descriptionInput = view.findViewById(R.id.et_description);
 
         actionCancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,10 +121,9 @@ public class AddCategoryDialog extends DialogFragment {
         if (title == null || title.equals("")) {
             title = titleSpinner.getSelectedItem().toString();
         }
-        String description = descriptionInput.getEditText().getText().toString();
 
         //TODO  add image
-        mOnInputListener.sendInput(title, description, imageValue);
+        mOnInputListener.sendInput(title, iconImageValue);
 
         getDialog().dismiss();
     }
@@ -173,8 +171,8 @@ public class AddCategoryDialog extends DialogFragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CATEGORY_ICON_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                imageValue = data.getIntExtra("iconIntValue", R.drawable.buy);
-                Log.d(TAG, "set icon image to value: " + Integer.toString(imageValue));
+                iconImageValue = data.getIntExtra("iconIntValue", DEFAULT_ICON);
+                Log.d(TAG, "set icon image to value: " + Integer.toString(iconImageValue));
             }
         }
     }

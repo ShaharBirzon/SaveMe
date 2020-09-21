@@ -6,6 +6,7 @@ public class Document {
     private String title;
     private String comment;
     private String expirationDate;
+    private String reminderTime;
     private Bitmap bitmap;
     private String fileDownloadUri;
     private boolean hasPicture;
@@ -24,7 +25,7 @@ public class Document {
         this.hasPicture = hasPicture;
     }
 
-    public Document(String title, String comment, String expirationDate, Bitmap bitmap, boolean hasPicture, boolean hasAlarm, boolean hasFile, String fileDownloadUri) {
+    public Document(String title, String comment, String expirationDate, Bitmap bitmap, boolean hasPicture, boolean hasAlarm, boolean hasFile, String fileDownloadUri, String reminderTime) {
         this.title = title;
         this.comment = comment;
         this.expirationDate = expirationDate;
@@ -99,5 +100,13 @@ public class Document {
 
     public void setFileDownloadUri(String fileDownloadUri) {
         this.fileDownloadUri = fileDownloadUri;
+    }
+
+    public String getReminderTime() {
+        return reminderTime;
+    }
+
+    public void setReminderTime(String reminderTime) {
+        this.reminderTime = reminderTime;
     }
 }

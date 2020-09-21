@@ -8,21 +8,18 @@ import java.util.ArrayList;
 
 public class Category {
     public String title;
-    public String description;
     public int image;
     public ArrayList<Document> docsList;
 
-    public Category(){
+    public Category() {
     }
 
-    public Category(String title, String desc){
+    public Category(String title) {
         this.title = title;
-        this.description = desc;
     }
 
-    public Category(String title, String desc, int image){
+    public Category(String title, int image) {
         this.title = title;
-        this.description = desc;
         this.image = image;
     }
 
@@ -33,14 +30,6 @@ public class Category {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public int getImage() {
@@ -54,6 +43,7 @@ public class Category {
     public ArrayList<Document> getDocsList() {
         return docsList;
     }
+
     // todo maybe only to add or remove from list
     public void setDocsList(ArrayList<Document> docsList) {
         this.docsList = docsList;
