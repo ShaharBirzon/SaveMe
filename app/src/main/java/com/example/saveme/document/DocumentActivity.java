@@ -578,6 +578,17 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         }
 
         Intent myIntent = new Intent(getBaseContext(), AlarmReceiver.class);
+        myIntent.putExtra("call_reason", "edit_document");
+        myIntent.putExtra("position", position);
+        myIntent.putExtra("document_title", curDocument.getTitle());
+        myIntent.putExtra("category_title", categoryTitle);
+        myIntent.putExtra("document_comment", curDocument.getComment());
+        myIntent.putExtra("document_expiration_date", curDocument.getExpirationDate());
+        myIntent.putExtra("document_reminder_time", curDocument.getReminderTime());
+        myIntent.putExtra("has_photo", curDocument.getHasPicture());
+        myIntent.putExtra("has_file", curDocument.isHasFile());
+        myIntent.putExtra("file_download_uri", curDocument.getFileDownloadUri());
+        myIntent.putExtra("has_alarm", curDocument.getHasAlarm());
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getBaseContext(), 0, myIntent, 0);
 
         manager.set(AlarmManager.RTC_WAKEUP, cal_alarm.getTimeInMillis(), pendingIntent);
