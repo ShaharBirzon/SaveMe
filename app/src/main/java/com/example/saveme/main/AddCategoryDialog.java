@@ -153,10 +153,8 @@ public class AddCategoryDialog extends DialogFragment {
                 if (title.equals("Other")) {
                     titleInput.setVisibility(View.VISIBLE);
                     validateCategoryTitle();
-                    ((RelativeLayout.LayoutParams) chooseIconButton.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.et_title);
                 } else {
-                    titleInput.setVisibility(View.INVISIBLE);
-                    ((RelativeLayout.LayoutParams) chooseIconButton.getLayoutParams()).addRule(RelativeLayout.BELOW, R.id.spinner_title);
+                    titleInput.setVisibility(View.GONE);
                 }
             }
 
