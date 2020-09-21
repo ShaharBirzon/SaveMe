@@ -74,19 +74,19 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     private int position;
     private Spinner reminderSpinner1;
     private Spinner reminderSpinner2;
-    SwitchMaterial reminderSwitch;
+    private SwitchMaterial reminderSwitch;
     private Document curDocument = new Document();
-    private Button addPhotoBtn, addFileBtn;
+    private Button addImageBtn, addFileBtn;
     private Uri selectedImage, fileUri, fileDownloadUri;
-    ImageView documentImageView;
-    LinearLayout filePreviewLayout;
-    private boolean changedPhoto, changedReminderTime = false, addedFile = false;
+    private ImageView documentImageView;
+    private LinearLayout filePreviewLayout;
+    private boolean changedImage, changedReminderTime = false, addedFile = false;
     private boolean isAlarm = false;
-    CheckBox check1;
-    CheckBox check2;
-    TimePicker alarmTimePicker1;
-    TimePicker alarmTimePicker2;
-    DatePicker datePicker;
+    private CheckBox check1;
+    private CheckBox check2;
+    private TimePicker alarmTimePicker1;
+    private TimePicker alarmTimePicker2;
+    private DatePicker datePicker;
 
     private View v1;
     private View v2;
@@ -101,7 +101,6 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     private View v11;
 
     private boolean isDocumentTitleValid = false;
-
     private static StorageReference storageReference;
     private FirebaseStorage storage;
 
@@ -169,11 +168,11 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             }
         });
 
-        changedPhoto = false;
-        addPhotoBtn.setOnClickListener(new View.OnClickListener() {
+        changedImage = false;
+        addImageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                uploadPhotoOnClickAS();
+                uploadImageOnClick();
             }
         });
         addFileBtn.setOnClickListener(new View.OnClickListener() {
@@ -230,8 +229,10 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         curDocument.setComment(intentCreatedMe.getStringExtra("document_comment"));
         curDocument.setExpirationDate(intentCreatedMe.getStringExtra("document_expiration_date"));
         position = intentCreatedMe.getIntExtra("position", -1);
-        boolean hasPicture = intentCreatedMe.getBooleanExtra("has_photo", false);
-        if (hasPicture) {
+        boolean hasImage = intentCreatedMe.getBooleanExtra("has_image", false);
+        if (hasImage) {
+            Button btnAddImage = findViewById(R.id.btn_add_doc_image);
+            btnAddImage.setText(R.string.change_image);
             //upload document's image from storage
             storageReference.child("Files").
                     child(MyPreferences.getUserDocumentPathFromPreferences(getApplicationContext())).child(categoryTitle).child(curDocument.getTitle()).child("image").getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
@@ -251,6 +252,8 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         }
         curDocument.setHasFile(intentCreatedMe.getBooleanExtra("has_file", false));
         if (curDocument.isHasFile()) {
+            Button btnAddImage = findViewById(R.id.btn_add_doc_file);
+            btnAddImage.setText(R.string.change_file);
             filePreviewLayout.setVisibility(View.VISIBLE);
             curDocument.setFileDownloadUri(intentCreatedMe.getStringExtra("file_download_uri"));
             fileDownloadUri = Uri.parse(curDocument.getFileDownloadUri());
@@ -304,7 +307,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         documentExpirationDateET = findViewById(R.id.et_expiration_date);
         documentImageView = findViewById(R.id.iv_doc);
         filePreviewLayout = findViewById(R.id.ll_doc_file_prev);
-        addPhotoBtn = findViewById(R.id.btn_add_doc_photo);
+        addImageBtn = findViewById(R.id.btn_add_doc_image);
         addFileBtn = findViewById(R.id.btn_add_doc_file);
 
         v1 = findViewById(R.id.et_time1);
@@ -399,10 +402,10 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         if (callReason.equals("edit_document")) {
             intentBack.putExtra("document_position", position);
         }
-        if (changedPhoto) {
-            intentBack.putExtra("has_photo", true);
+        if (changedImage) {
+            intentBack.putExtra("has_image", true);
             intentBack.putExtra("imageUri", selectedImage.toString());
-            Log.d(TAG, "adding photo");
+            Log.d(TAG, "adding image");
         }
         if (addedFile) {
             intentBack.putExtra("file_download_uri", fileDownloadUri.toString());
@@ -523,10 +526,10 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     }
 
     /**
-     * this method opens the gallery to choose image. Activates when user clicks on an upload photo
+     * this method opens the gallery to choose image. Activates when user clicks on an upload image
      * button.
      */
-    public void uploadPhotoOnClickAS() {
+    public void uploadImageOnClick() {
         CropImage.activity()
                 .setCropMenuCropButtonTitle("finish cropping")
                 .setCropShape(CropImageView.CropShape.RECTANGLE)
@@ -566,8 +569,10 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             Bitmap previewBitmap = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * 0.5), (int) (bitmap.getHeight() * 0.5), true);
             documentImageView.setImageBitmap(previewBitmap);
             curDocument.setBitmap(previewBitmap);
-            curDocument.setHasPicture(true);
-            changedPhoto = true;
+            curDocument.setHasImage(true);
+            changedImage = true;
+            Button btnAddImage = findViewById(R.id.btn_add_doc_image);
+            btnAddImage.setText(R.string.change_image);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -582,6 +587,8 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         curDocument.setHasFile(true);
         filePreviewLayout.setVisibility(View.VISIBLE);
         addedFile = true;
+        Button btnAddImage = findViewById(R.id.btn_add_doc_file);
+        btnAddImage.setText("R.string.change_file");
     }
 
 
@@ -607,7 +614,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         myIntent.putExtra("document_comment", curDocument.getComment());
         myIntent.putExtra("document_expiration_date", curDocument.getExpirationDate());
         myIntent.putExtra("document_reminder_time", curDocument.getReminderTime());
-        myIntent.putExtra("has_photo", curDocument.getHasPicture());
+        myIntent.putExtra("has_image", curDocument.getHasImage());
         myIntent.putExtra("has_file", curDocument.isHasFile());
         myIntent.putExtra("file_download_uri", curDocument.getFileDownloadUri());
         myIntent.putExtra("has_alarm", curDocument.getHasAlarm());

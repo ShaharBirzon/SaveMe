@@ -44,7 +44,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         documentIntent.putExtra("document_comment", intent.getStringExtra("document_comment"));
         documentIntent.putExtra("document_expiration_date", intent.getStringExtra("document_expiration_date"));
         documentIntent.putExtra("document_reminder_time", intent.getStringExtra("document_reminder_time"));
-        documentIntent.putExtra("has_photo", intent.getBooleanExtra("has_photo", false));
+        documentIntent.putExtra("has_image", intent.getBooleanExtra("has_image", false));
         documentIntent.putExtra("has_file", intent.getBooleanExtra("has_file", false));
         documentIntent.putExtra("file_download_uri", intent.getStringExtra("file_download_uri"));
         documentIntent.putExtra("has_alarm", intent.getBooleanExtra("has_alarm", false));
