@@ -14,7 +14,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".document.DisplayFileActivity"></activity>
+        <activity android:name=".document.DisplayImageActivity"></activity>
+        <activity android:name=".document.DisplayFileActivity" />
         <activity
             android:name=".document.DocumentActivity"
             android:screenOrientation="portrait"

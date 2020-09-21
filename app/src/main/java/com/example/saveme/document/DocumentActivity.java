@@ -54,6 +54,7 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
@@ -239,6 +240,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
                     Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                     Bitmap previewBitmap = Bitmap.createScaledBitmap(bmp, (int) (bmp.getWidth() * 0.5), (int) (bmp.getHeight() * 0.5), true);
                     documentImageView.setImageBitmap(previewBitmap);
+                    curDocument.setBitmap(previewBitmap);
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -698,5 +700,19 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
                 });
             }
         });
+    }
+
+    /**
+     * the method moves to a full screen of the image when image is clicked
+     *
+     * @param view - view
+     */
+    public void onImageClick(View view) {
+        final Intent fullScreenIntent = new Intent(this, DisplayImageActivity.class);
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        curDocument.getBitmap().compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+        fullScreenIntent.putExtra("image", byteArray);
+        startActivity(fullScreenIntent);
     }
 }
