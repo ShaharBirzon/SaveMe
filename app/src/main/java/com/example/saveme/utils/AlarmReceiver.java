@@ -48,6 +48,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         documentIntent.putExtra("has_file", intent.getBooleanExtra("has_file", false));
         documentIntent.putExtra("file_download_uri", intent.getStringExtra("file_download_uri"));
         documentIntent.putExtra("has_alarm", intent.getBooleanExtra("has_alarm", false));
+        documentIntent.putExtra("is_add_event_to_phone_calender", intent.getBooleanExtra("is_add_event_to_phone_calender", false));
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, documentIntent, 0);
 
 
