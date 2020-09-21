@@ -153,17 +153,17 @@ public class CategoryActivity extends AppCompatActivity {
         String expirationDate = data.getStringExtra("document_expiration_date");
         String reminderTime = data.getStringExtra("document_reminder_time");
         boolean hasAlarm = data.getBooleanExtra("is_alarm", false);
-        boolean addedPhoto = data.getBooleanExtra("has_photo", false);
-        if (addedPhoto) {
+        boolean hasImage = data.getBooleanExtra("has_image", false);
+        if (hasImage) {
             String imageString = data.getStringExtra("imageUri");
             Uri imageUri = Uri.parse(imageString);
-            FirebaseMediate.uploadPhotoToStorage(imageUri, this, getApplicationContext(), categoryTitle, title, "image");
+            FirebaseMediate.uploadImageToStorage(imageUri, this, getApplicationContext(), categoryTitle, title, "image");
         }
         //todo delete?
         String fileDownloadUriStr = data.getStringExtra("file_download_uri");
         boolean hasFile = data.getBooleanExtra("has_file", false);
         Log.e(TAG, "adding new document " + title);
-        Document newDocument = new Document(title, comment, expirationDate, null, addedPhoto, hasAlarm, hasFile, fileDownloadUriStr, reminderTime); //todo change
+        Document newDocument = new Document(title, comment, expirationDate, null, hasImage, hasAlarm, hasFile, fileDownloadUriStr, reminderTime); //todo change
         documentList.add(newDocument);
         FirebaseMediate.addNewDocument(categoryTitle, newDocument);
         documentAdapter.notifyItemInserted(documentList.size() - 1);
@@ -179,11 +179,11 @@ public class CategoryActivity extends AppCompatActivity {
         String reminderTime = data.getStringExtra("document_reminder_time");
         int position = data.getIntExtra("document_position", DEFAULT_POSITION_VALUE);
         boolean hasAlarm = data.getBooleanExtra("is_alarm", false);
-        boolean addedPhoto = data.getBooleanExtra("has_photo", false);
-        if (addedPhoto) {
+        boolean hasImage = data.getBooleanExtra("has_image", false);
+        if (hasImage) {
             String imageString = data.getStringExtra("imageUri");
             Uri imageUri = Uri.parse(imageString);
-            FirebaseMediate.uploadPhotoToStorage(imageUri, this, getApplicationContext(), categoryTitle, title, "image");
+            FirebaseMediate.uploadImageToStorage(imageUri, this, getApplicationContext(), categoryTitle, title, "image");
         }
         String fileDownloadUriStr = data.getStringExtra("file_download_uri");
         boolean hasFile = data.getBooleanExtra("has_file", false);
@@ -227,7 +227,7 @@ public class CategoryActivity extends AppCompatActivity {
                 intent.putExtra("document_comment", document.getComment());
                 intent.putExtra("document_expiration_date", document.getExpirationDate());
                 intent.putExtra("document_reminder_time", document.getReminderTime());
-                intent.putExtra("has_photo", document.getHasPicture());
+                intent.putExtra("has_image", document.getHasImage());
                 intent.putExtra("has_file", document.isHasFile());
                 intent.putExtra("file_download_uri", document.getFileDownloadUri());
                 intent.putExtra("has_alarm", document.getHasAlarm());

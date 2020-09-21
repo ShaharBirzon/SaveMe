@@ -240,16 +240,16 @@ public class FirebaseMediate extends Application {
      * @param activity      - the activity calling this method.
      * @param context       - the activity context.
      * @param categoryTitle
-     * @param photoType     - the photo type (profilePic/apartmentPic).
+     * @param imageType     - the image type (profilePic/apartmentPic).
      */
-    public static void uploadPhotoToStorage(Uri selectedImage, final Activity activity, Context context, String categoryTitle, String documentTitle, String photoType) {
+    public static void uploadImageToStorage(Uri selectedImage, final Activity activity, Context context, String categoryTitle, String documentTitle, String imageType) {
         if (selectedImage != null) {
             final ProgressDialog progressDialog = new ProgressDialog(activity);
             progressDialog.setTitle("Uploading the document to the cloud");
             progressDialog.show();
             progressDialog.setCancelable(false);
             StorageReference ref = storageReference.child("Files").
-                    child(MyPreferences.getUserDocumentPathFromPreferences(context)).child(categoryTitle).child(documentTitle).child(photoType);
+                    child(MyPreferences.getUserDocumentPathFromPreferences(context)).child(categoryTitle).child(documentTitle).child(imageType);
             ref.putFile(selectedImage)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -276,10 +276,10 @@ public class FirebaseMediate extends Application {
         }
     }
 
-    public Uri getImageFromFirebaseStorage(Context context, String categoryTitle, String documentTitle, String photoType) {
+    public Uri getImageFromFirebaseStorage(Context context, String categoryTitle, String documentTitle, String imageType) {
         final Uri[] imageUri = {null};
         StorageReference ref = storageReference.child("Files").
-                child(MyPreferences.getUserDocumentPathFromPreferences(context)).child(categoryTitle).child(documentTitle).child(photoType);
+                child(MyPreferences.getUserDocumentPathFromPreferences(context)).child(categoryTitle).child(documentTitle).child(imageType);
         ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {

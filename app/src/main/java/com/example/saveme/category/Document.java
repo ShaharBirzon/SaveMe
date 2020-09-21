@@ -9,28 +9,28 @@ public class Document {
     private String reminderTime;
     private Bitmap bitmap;
     private String fileDownloadUri;
-    private boolean hasPicture;
+    private boolean hasImage;
     private boolean hasFile;
     private boolean hasAlarm;
 
-    // todo add attr for images
+
     public Document() {
     }
 
-    public Document(String title, String comment, String expirationDate, Bitmap bitmap, boolean hasPicture) {
+    public Document(String title, String comment, String expirationDate, Bitmap bitmap, boolean hasImage) {
         this.title = title;
         this.comment = comment;
         this.expirationDate = expirationDate;
         this.bitmap = bitmap;
-        this.hasPicture = hasPicture;
+        this.hasImage = hasImage;
     }
 
-    public Document(String title, String comment, String expirationDate, Bitmap bitmap, boolean hasPicture, boolean hasAlarm, boolean hasFile, String fileDownloadUri, String reminderTime) {
+    public Document(String title, String comment, String expirationDate, Bitmap bitmap, boolean hasImage, boolean hasAlarm, boolean hasFile, String fileDownloadUri, String reminderTime) {
         this.title = title;
         this.comment = comment;
         this.expirationDate = expirationDate;
         this.bitmap = bitmap;
-        this.hasPicture = hasPicture;
+        this.hasImage = hasImage;
         this.hasFile = hasFile;
         this.hasAlarm = hasAlarm;
         this.fileDownloadUri = fileDownloadUri;
@@ -74,16 +74,16 @@ public class Document {
         this.bitmap = bitmap;
     }
 
-    public boolean getHasPicture() {
-        return hasPicture;
+    public boolean getHasImage() {
+        return hasImage;
     }
 
     public boolean getHasAlarm() {
         return hasAlarm;
     }
 
-    public void setHasPicture(Boolean hasPicture) {
-        this.hasPicture = hasPicture;
+    public void setHasImage(Boolean hasImage) {
+        this.hasImage = hasImage;
     }
 
     public boolean isHasFile() {
