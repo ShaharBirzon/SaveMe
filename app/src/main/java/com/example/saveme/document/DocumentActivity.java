@@ -237,7 +237,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
                 @Override
                 public void onSuccess(byte[] bytes) {
                     Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                    Bitmap previewBitmap = Bitmap.createScaledBitmap(bmp, (int) (bmp.getWidth() * 0.1), (int) (bmp.getHeight() * 0.1), true);
+                    Bitmap previewBitmap = Bitmap.createScaledBitmap(bmp, (int) (bmp.getWidth() * 0.5), (int) (bmp.getHeight() * 0.5), true);
                     documentImageView.setImageBitmap(previewBitmap);
                 }
             }).addOnFailureListener(new OnFailureListener() {

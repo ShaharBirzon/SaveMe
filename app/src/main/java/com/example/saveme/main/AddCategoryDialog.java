@@ -40,14 +40,13 @@ public class AddCategoryDialog extends DialogFragment {
 
 
     public interface OnInputListener {
-        void sendInput(String title, String description, int image);
+        void sendInput(String title, int image);
     }
 
     public OnInputListener mOnInputListener;
 
     //widgets
     private TextInputLayout titleInput;
-    private TextInputLayout descriptionInput;
     private Button actionOkButton, actionCancelButton, chooseIconButton;
     private Spinner titleSpinner;
 
@@ -65,7 +64,6 @@ public class AddCategoryDialog extends DialogFragment {
         titleInput.setVisibility(View.INVISIBLE);
         titleSpinner = view.findViewById(R.id.spinner_title);
         setCategoryTitle();
-        descriptionInput = view.findViewById(R.id.et_description);
 
         actionCancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,10 +121,9 @@ public class AddCategoryDialog extends DialogFragment {
         if (title == null || title.equals("")) {
             title = titleSpinner.getSelectedItem().toString();
         }
-        String description = descriptionInput.getEditText().getText().toString();
 
         //TODO  add image
-        mOnInputListener.sendInput(title, description, iconImageValue);
+        mOnInputListener.sendInput(title, iconImageValue);
 
         getDialog().dismiss();
     }

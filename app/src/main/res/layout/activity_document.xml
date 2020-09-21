@@ -121,7 +121,7 @@
                 android:id="@+id/tv_doc_file_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="added file: <file name>"
+                android:text="@string/added_file_file_name"
                 android:textSize="16sp" />
 
         </LinearLayout>

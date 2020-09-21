@@ -13,6 +13,7 @@
     <string name="choose_icon">Choose icon</string>
     <string name="description">Description</string>
     <string name="save">SAVE</string>
+    <string name="added_file_file_name"><![CDATA[added file: <file name>]]></string>
 
     <string-array name="categories">
         <item>Choose Name…</item>
