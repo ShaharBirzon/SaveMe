@@ -55,56 +55,76 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/et_comment" />
 
-    <LinearLayout
-        android:id="@+id/add_doc_buttons"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/sep_line1">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_add_doc_photo"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        <LinearLayout
+            android:id="@+id/add_doc_buttons"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="12dp"
-            android:text="add photo"
-            app:icon="@drawable/ic_image"
-            app:layout_constraintStart_toStartOf="parent" />
+            android:layout_marginTop="24dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/sep_line1">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_add_doc_file"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="add file"
-            app:icon="@drawable/ic_insert_file"
-            app:layout_constraintStart_toStartOf="parent" />
-    </LinearLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_add_doc_photo"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="12dp"
+                android:text="add photo"
+                app:icon="@drawable/ic_image"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_add_doc_file"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="add file"
+                app:icon="@drawable/ic_insert_file"
+                app:layout_constraintStart_toStartOf="parent" />
+        </LinearLayout>
 
         <ImageView
             android:id="@+id/iv_doc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="16dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/add_doc_buttons" />
-
-        <ImageView
-            android:id="@+id/iv_doc_file"
-            android:layout_width="125dp"
-            android:layout_height="67dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginRight="20dp"
+            android:layout_marginTop="8dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/add_doc_buttons"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ll_doc_file_prev" />
+
+        <LinearLayout
+            android:id="@+id/ll_doc_file_prev"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
             android:onClick="onClickOpenFile"
-            app:srcCompat="@drawable/folder" />
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/add_doc_buttons">
+
+            <ImageView
+                android:id="@+id/iv_doc_file"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:alpha="0.6"
+                android:paddingRight="8dp"
+                android:src="@drawable/ic_insert_file"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/add_doc_buttons" />
+
+            <TextView
+                android:id="@+id/tv_doc_file_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="added file: <file name>"
+                android:textSize="16sp" />
+
+        </LinearLayout>
 
         <View
             android:id="@+id/sep_line2"
@@ -117,25 +137,25 @@
             app:layout_constraintTop_toBottomOf="@id/iv_doc" />
 
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/et_expiration_date"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginRight="16dp"
-        android:hint="Expiration Date"
-        app:helperText="press calendar icon"
-        app:layout_constraintTop_toBottomOf="@id/sep_line2"
-        app:startIconDrawable="@drawable/ic_date">
-
-        <com.google.android.material.textfield.TextInputEditText
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/et_expiration_date"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="date" />
+            android:layout_marginTop="24dp"
+            android:hint="Expiration Date"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
+            app:helperText="press calendar icon"
+            app:layout_constraintTop_toBottomOf="@id/sep_line2"
+            app:startIconDrawable="@drawable/ic_date">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="date" />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
         android:id="@+id/textView4"

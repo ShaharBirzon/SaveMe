@@ -16,7 +16,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     private String CHANNEL_ID = "CHANNEL_ID";
     private String TEXT_TITLE = "Reminder!";
-    private String CONTENT_TITLE = " is about to expire";
+    private String CONTENT_TITLE = "One of your docs is about to expire";
 
 
     @Override
