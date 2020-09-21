@@ -12,6 +12,7 @@ public class Document {
     private boolean hasImage;
     private boolean hasFile;
     private boolean hasAlarm;
+    private boolean isAddEventToPhoneCalender;
 
 
     public Document() {
@@ -25,7 +26,7 @@ public class Document {
         this.hasImage = hasImage;
     }
 
-    public Document(String title, String comment, String expirationDate, Bitmap bitmap, boolean hasImage, boolean hasAlarm, boolean hasFile, String fileDownloadUri, String reminderTime) {
+    public Document(String title, String comment, String expirationDate, Bitmap bitmap, boolean hasImage, boolean hasAlarm, boolean hasFile, String fileDownloadUri, String reminderTime, boolean isAddEventToPhoneCalender) {
         this.title = title;
         this.comment = comment;
         this.expirationDate = expirationDate;
@@ -34,6 +35,8 @@ public class Document {
         this.hasFile = hasFile;
         this.hasAlarm = hasAlarm;
         this.fileDownloadUri = fileDownloadUri;
+        this.reminderTime = reminderTime;
+        this.isAddEventToPhoneCalender = isAddEventToPhoneCalender;
     }
 
 
@@ -108,5 +111,13 @@ public class Document {
 
     public void setReminderTime(String reminderTime) {
         this.reminderTime = reminderTime;
+    }
+
+    public boolean getIsAddEventToPhoneCalender() {
+        return isAddEventToPhoneCalender;
+    }
+
+    public void setIsAddEventToPhoneCalender(boolean addEventToPhoneCalender) {
+        isAddEventToPhoneCalender = addEventToPhoneCalender;
     }
 }
