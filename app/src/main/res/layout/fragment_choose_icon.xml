@@ -147,6 +147,7 @@
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@android:color/darker_gray"
             android:text="@string/cancel" />
 
         <Button
