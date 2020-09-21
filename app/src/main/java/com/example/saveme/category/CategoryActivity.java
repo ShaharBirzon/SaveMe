@@ -153,6 +153,7 @@ public class CategoryActivity extends AppCompatActivity {
         String expirationDate = data.getStringExtra("document_expiration_date");
         String reminderTime = data.getStringExtra("document_reminder_time");
         boolean hasAlarm = data.getBooleanExtra("is_alarm", false);
+        boolean isAddEventToPhoneCalender = data.getBooleanExtra("is_add_event_to_phone_calender", false);
         boolean addedPhoto = data.getBooleanExtra("has_photo", false);
         if (addedPhoto) {
             String imageString = data.getStringExtra("imageUri");
@@ -163,7 +164,7 @@ public class CategoryActivity extends AppCompatActivity {
         String fileDownloadUriStr = data.getStringExtra("file_download_uri");
         boolean hasFile = data.getBooleanExtra("has_file", false);
         Log.e(TAG, "adding new document " + title);
-        Document newDocument = new Document(title, comment, expirationDate, null, addedPhoto, hasAlarm, hasFile, fileDownloadUriStr, reminderTime); //todo change
+        Document newDocument = new Document(title, comment, expirationDate, null, addedPhoto, hasAlarm, hasFile, fileDownloadUriStr, reminderTime, isAddEventToPhoneCalender); //todo change
         documentList.add(newDocument);
         FirebaseMediate.addNewDocument(categoryTitle, newDocument);
         documentAdapter.notifyItemInserted(documentList.size() - 1);
@@ -179,6 +180,7 @@ public class CategoryActivity extends AppCompatActivity {
         String reminderTime = data.getStringExtra("document_reminder_time");
         int position = data.getIntExtra("document_position", DEFAULT_POSITION_VALUE);
         boolean hasAlarm = data.getBooleanExtra("is_alarm", false);
+        boolean isAddEventToPhoneCalender = data.getBooleanExtra("is_add_event_to_phone_calender", false);
         boolean addedPhoto = data.getBooleanExtra("has_photo", false);
         if (addedPhoto) {
             String imageString = data.getStringExtra("imageUri");
@@ -202,6 +204,7 @@ public class CategoryActivity extends AppCompatActivity {
         document.setReminderTime(reminderTime);
         document.setHasFile(hasFile);
         document.setHasAlarm(hasAlarm);
+        document.setIsAddEventToPhoneCalender(isAddEventToPhoneCalender);
         document.setFileDownloadUri(fileDownloadUriStr);
         // todo add other fields
         FirebaseMediate.addNewDocument(categoryTitle, document);
@@ -231,6 +234,7 @@ public class CategoryActivity extends AppCompatActivity {
                 intent.putExtra("has_file", document.isHasFile());
                 intent.putExtra("file_download_uri", document.getFileDownloadUri());
                 intent.putExtra("has_alarm", document.getHasAlarm());
+                intent.putExtra("is_add_event_to_phone_calender", document.getIsAddEventToPhoneCalender());
                 // todo add more into intent
                 startActivityForResult(intent, EDIT_DOCUMENT);
             }

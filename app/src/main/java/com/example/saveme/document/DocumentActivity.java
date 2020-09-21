@@ -261,6 +261,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             reminderSwitch.setChecked(true);
             setFirstRemainderFieldsVisibility(View.VISIBLE);
             reminderTimeET1.getEditText().setText(intentCreatedMe.getStringExtra("document_reminder_time"));
+            check1.setChecked(intentCreatedMe.getBooleanExtra("is_add_event_to_phone_calender", false));
         }
         // todo add preview of image
         initializeActivityFieldsWithDocumentDataFromDB();
@@ -412,6 +413,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         intentBack.putExtra("document_expiration_date", documentExpirationDateET.getEditText().getText().toString());
         intentBack.putExtra("document_reminder_time", reminderTimeET1.getEditText().getText().toString());
         intentBack.putExtra("is_alarm", isAlarm);
+        intentBack.putExtra("is_add_event_to_phone_calender", check1.isChecked());
 
         //todo add others
         setResult(RESULT_OK, intentBack);
@@ -487,8 +489,8 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     //todo check!!
     private void addToCalendar(String docTitle, TimePicker timePicker) {
         Calendar cal = Calendar.getInstance();
-        cal.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth(),
-                timePicker.getCurrentHour(), timePicker.getCurrentMinute(), 0);
+        cal.set(getExpirationDateYear(), getExpirationDateMonth(), getExpirationDateDay(),
+                getReminderHourTime(timePicker), getReminderMinutesTime(timePicker), 0);
         long startTime = cal.getTimeInMillis();
         Intent intent = new Intent(Intent.ACTION_EDIT);
         intent.setType("vnd.android.cursor.item/event");
@@ -500,6 +502,24 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         startActivity(intent);
 
 
+    }
+
+    private Integer getReminderHourTime(TimePicker timePicker) {
+        if (timePicker!=null){
+            return timePicker.getCurrentHour();
+        }
+        else {
+            return Integer.parseInt(reminderTimeET1.getEditText().getText().toString().split(":")[0]);
+        }
+    }
+
+    private Integer getReminderMinutesTime(TimePicker timePicker) {
+        if (timePicker!=null){
+            return timePicker.getCurrentMinute();
+        }
+        else {
+            return Integer.parseInt(reminderTimeET1.getEditText().getText().toString().split(":")[1]);
+        }
     }
 
     /**
@@ -573,7 +593,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         Calendar cal_now = Calendar.getInstance();
         cal_now.setTime(date);
         cal_alarm.set(getExpirationDateYear(), getExpirationDateMonth(), getExpirationDateDay(),
-                time.getCurrentHour(), time.getCurrentMinute(), 0);
+                getReminderHourTime(time), time.getCurrentMinute(), 0);
 
         if (cal_alarm.before(cal_now)) {
             return -1;
@@ -591,6 +611,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         myIntent.putExtra("has_file", curDocument.isHasFile());
         myIntent.putExtra("file_download_uri", curDocument.getFileDownloadUri());
         myIntent.putExtra("has_alarm", curDocument.getHasAlarm());
+        myIntent.putExtra("is_add_event_to_phone_calender", curDocument.getIsAddEventToPhoneCalender());
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getBaseContext(), 0, myIntent, 0);
 
         manager.set(AlarmManager.RTC_WAKEUP, cal_alarm.getTimeInMillis(), pendingIntent);
