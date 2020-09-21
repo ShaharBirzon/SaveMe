@@ -151,6 +151,7 @@ public class CategoryActivity extends AppCompatActivity {
         String title = data.getStringExtra("document_title");
         String comment = data.getStringExtra("document_comment");
         String expirationDate = data.getStringExtra("document_expiration_date");
+        String reminderTime = data.getStringExtra("document_reminder_time");
         boolean hasAlarm = data.getBooleanExtra("is_alarm", false);
         boolean addedPhoto = data.getBooleanExtra("has_photo", false);
         if (addedPhoto) {
@@ -162,7 +163,7 @@ public class CategoryActivity extends AppCompatActivity {
         String fileDownloadUriStr = data.getStringExtra("file_download_uri");
         boolean hasFile = data.getBooleanExtra("has_file", false);
         Log.e(TAG, "adding new document " + title);
-        Document newDocument = new Document(title, comment, expirationDate, null, addedPhoto, hasAlarm, hasFile, fileDownloadUriStr); //todo change
+        Document newDocument = new Document(title, comment, expirationDate, null, addedPhoto, hasAlarm, hasFile, fileDownloadUriStr, reminderTime); //todo change
         documentList.add(newDocument);
         FirebaseMediate.addNewDocument(categoryTitle, newDocument);
         documentAdapter.notifyItemInserted(documentList.size() - 1);
@@ -175,6 +176,7 @@ public class CategoryActivity extends AppCompatActivity {
         String title = data.getStringExtra("document_title");
         String comment = data.getStringExtra("document_comment");
         String expirationDate = data.getStringExtra("document_expiration_date");
+        String reminderTime = data.getStringExtra("document_reminder_time");
         int position = data.getIntExtra("document_position", DEFAULT_POSITION_VALUE);
         boolean hasAlarm = data.getBooleanExtra("is_alarm", false);
         boolean addedPhoto = data.getBooleanExtra("has_photo", false);
@@ -197,6 +199,7 @@ public class CategoryActivity extends AppCompatActivity {
         if (!expirationDate.equals(document.getExpirationDate())) {
             document.setExpirationDate(expirationDate);
         }
+        document.setReminderTime(reminderTime);
         document.setHasFile(hasFile);
         document.setHasAlarm(hasAlarm);
         document.setFileDownloadUri(fileDownloadUriStr);
@@ -223,6 +226,7 @@ public class CategoryActivity extends AppCompatActivity {
                 intent.putExtra("category_title", categoryTitle);
                 intent.putExtra("document_comment", document.getComment());
                 intent.putExtra("document_expiration_date", document.getExpirationDate());
+                intent.putExtra("document_reminder_time", document.getReminderTime());
                 intent.putExtra("has_photo", document.getHasPicture());
                 intent.putExtra("has_file", document.isHasFile());
                 intent.putExtra("file_download_uri", document.getFileDownloadUri());
