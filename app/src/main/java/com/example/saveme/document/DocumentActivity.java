@@ -27,6 +27,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Switch;
 
@@ -76,7 +77,8 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     private Document curDocument = new Document();
     private Button addPhotoBtn, addFileBtn;
     private Uri selectedImage, fileUri, fileDownloadUri;
-    ImageView documentImageView, fileImageView;
+    ImageView documentImageView;
+    LinearLayout filePreviewLayout;
     private boolean changedPhoto, addedFile = false;
     private boolean isAlarm = false;
     CheckBox check1;
@@ -109,7 +111,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
         initializeActivityFields();
-        fileImageView.setVisibility(View.INVISIBLE);
+        filePreviewLayout.setVisibility(View.GONE);
         setReminderTime();
         // todo add other
 
@@ -122,7 +124,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         boolean hasFile = intentCreatedMe.getBooleanExtra("has_file", false);
         curDocument.setHasFile(hasFile);
         if (hasFile) {
-            fileImageView.setVisibility(View.VISIBLE);
+            filePreviewLayout.setVisibility(View.VISIBLE);
         }
 
         documentExpirationDateET.setStartIconOnClickListener(new View.OnClickListener() {
@@ -247,7 +249,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         }
         curDocument.setHasFile(intentCreatedMe.getBooleanExtra("has_file", false));
         if (curDocument.isHasFile()) {
-            fileImageView.setVisibility(View.VISIBLE);
+            filePreviewLayout.setVisibility(View.VISIBLE);
             curDocument.setFileDownloadUri(intentCreatedMe.getStringExtra("file_download_uri"));
             fileDownloadUri = Uri.parse(curDocument.getFileDownloadUri());
         }
@@ -296,7 +298,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         check2 = findViewById(R.id.checkbox_calendar2);
         documentExpirationDateET = findViewById(R.id.et_expiration_date);
         documentImageView = findViewById(R.id.iv_doc);
-        fileImageView = findViewById(R.id.iv_doc_file);
+        filePreviewLayout = findViewById(R.id.ll_doc_file_prev);
         addPhotoBtn = findViewById(R.id.btn_add_doc_photo);
         addFileBtn = findViewById(R.id.btn_add_doc_file);
 
@@ -552,7 +554,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         Log.d(TAG, "adding file to document activity");
         uploadDocumentFileToDB(getApplicationContext(), categoryTitle, curDocument.getTitle(), fileUri);
         curDocument.setHasFile(true);
-        fileImageView.setVisibility(View.VISIBLE);
+        filePreviewLayout.setVisibility(View.VISIBLE);
         addedFile = true;
     }
 
