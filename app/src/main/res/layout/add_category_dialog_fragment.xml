@@ -46,33 +46,26 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <LinearLayout
-        android:id="@+id/ll_choose_icon"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_choose_icon"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_marginTop="16dp"
-        android:layout_centerHorizontal="true"
         android:layout_below="@id/et_title"
-        android:orientation="horizontal">
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="20dp"
+        android:text="@string/choose_icon"
+        app:icon="@drawable/ic_insert_icon" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_choose_icon"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/choose_icon"
-            app:icon="@drawable/ic_insert_icon" />
-
-        <ImageView
-            android:id="@+id/iv_icon_img_prev"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:visibility="gone"
-            android:paddingLeft="16dp"
-            android:paddingStart="16dp" />
-
-    </LinearLayout>
+    <ImageView
+        android:id="@+id/iv_icon_img_prev"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_below="@id/et_title"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="16dp"/>
 
 
     <Button
@@ -80,7 +73,7 @@
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/ll_choose_icon"
+        android:layout_below="@id/btn_choose_icon"
         android:layout_alignParentRight="true"
         android:layout_marginTop="20dp"
         android:text="@string/save" />
@@ -90,7 +83,7 @@
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/ll_choose_icon"
+        android:layout_below="@id/btn_choose_icon"
         android:layout_marginTop="20dp"
         android:layout_toStartOf="@id/btn_action_ok"
         android:layout_toLeftOf="@id/btn_action_ok"
