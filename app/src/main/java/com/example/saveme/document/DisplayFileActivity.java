@@ -35,7 +35,8 @@ public class DisplayFileActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         String doc="https://drive.google.com/viewerng/viewer?embedded=true&url="+url;
-        WebView webView = (WebView) findViewById(R.id.webView);
+        final WebView webView = (WebView) findViewById(R.id.webView);
+        webView.setVisibility(View.INVISIBLE);
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
         webView.getSettings().setJavaScriptEnabled(true);
@@ -50,8 +51,9 @@ public class DisplayFileActivity extends AppCompatActivity {
                 actionBar.setTitle("Loading..");
                 if (newProgress==100){
                     progressBar.setVisibility(View.GONE);
+                    webView.setVisibility(View.VISIBLE);
+                    actionBar.setTitle("SaveMe");
                 }
-                actionBar.setTitle("SaveMe");
             }
         });
         webView.loadUrl(doc);

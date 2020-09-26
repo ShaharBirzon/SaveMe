@@ -98,6 +98,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     private boolean isDocumentTitleValid = false;
     private static StorageReference storageReference;
     private FirebaseStorage storage;
+    private boolean isUploadingFile = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -296,7 +297,6 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         documentTitleET.getEditText().setText(curDocument.getTitle());
         documentCommentET.getEditText().setText(curDocument.getComment());
         documentExpirationDateET.getEditText().setText(curDocument.getExpirationDate());
-
     }
 
     private void showDatePickerDialog() {
@@ -353,14 +353,12 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             intentBack.putExtra("document_position", position);
         }
         if (changedImage) {
-            intentBack.putExtra("has_image", true);
             intentBack.putExtra("imageUri", selectedImage.toString());
             Log.d(TAG, "adding image");
         }
-        if (addedFile) {
-            intentBack.putExtra("file_download_uri", fileDownloadUri.toString());
-            intentBack.putExtra("has_file", true);
-        }
+        intentBack.putExtra("has_image", curDocument.getHasImage());
+        intentBack.putExtra("file_download_uri", curDocument.getFileDownloadUri());
+        intentBack.putExtra("has_file", curDocument.isHasFile());
         intentBack.putExtra("document_title", documentTitleET.getEditText().getText().toString());
         intentBack.putExtra("document_comment", documentCommentET.getEditText().getText().toString());
         intentBack.putExtra("document_expiration_date", documentExpirationDateET.getEditText().getText().toString());
@@ -383,7 +381,10 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             Toast.makeText(getApplicationContext(), "invalid Title", Toast.LENGTH_LONG).show();
             return false;
         } else if (isAlarm && documentExpirationDateET.getEditText().getText().toString().equals("")) {
-            Toast.makeText(getApplicationContext(), "Cannot set alarm without expiration date", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Can't set alarm without expiration date", Toast.LENGTH_LONG).show();
+            return false;
+        } else if (isUploadingFile) {
+            Toast.makeText(getApplicationContext(), "Can't save document while uploading file", Toast.LENGTH_LONG).show();
             return false;
         }
         return true;
@@ -409,6 +410,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 reminderSpinner1.setSelection(position);
                 String title = titlesAdapter.getItem(position);
+
                 switch (title){
                     case "day before":
                         alarmBeforeDay = 1;
@@ -639,6 +641,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     }
 
     private void uploadDocumentFileToDB(Context context, String categoryTitle, String documentTitle, final Uri fileUri) {
+        isUploadingFile = true;
         final StorageReference ref = storageReference.child("Files").
                 child(MyPreferences.getUserDocumentPathFromPreferences(context)).child(categoryTitle).child(documentTitle).child("file");
 
@@ -658,6 +661,8 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
                     public void onComplete(@NonNull Task<Uri> task) {
                         if (task.isSuccessful()) {
                             fileDownloadUri = task.getResult();
+                            curDocument.setFileDownloadUri(fileDownloadUri.toString());
+                            isUploadingFile = false;
                         } else {
                             // Handle failures
                             // ...
