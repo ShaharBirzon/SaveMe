@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.RelativeLayout;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -49,6 +49,7 @@ public class AddCategoryDialog extends DialogFragment {
     private TextInputLayout titleInput;
     private Button actionOkButton, actionCancelButton, chooseIconButton;
     private Spinner titleSpinner;
+    private ImageView iconPrevView;
 
     private int iconImageValue = DEFAULT_ICON; //initialized to default icon
 
@@ -60,6 +61,7 @@ public class AddCategoryDialog extends DialogFragment {
         actionCancelButton = view.findViewById(R.id.btn_action_cancel_icon_selection);
         actionOkButton = view.findViewById(R.id.btn_action_ok);
         chooseIconButton = view.findViewById(R.id.btn_choose_icon);
+        iconPrevView = view.findViewById(R.id.iv_icon_img_prev);
         titleInput = view.findViewById(R.id.et_title);
         titleInput.setVisibility(View.INVISIBLE);
         titleSpinner = view.findViewById(R.id.spinner_title);
@@ -170,6 +172,8 @@ public class AddCategoryDialog extends DialogFragment {
         if (requestCode == CATEGORY_ICON_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 iconImageValue = data.getIntExtra("iconIntValue", DEFAULT_ICON);
+                iconPrevView.setVisibility(View.VISIBLE);
+                iconPrevView.setImageResource(iconImageValue);
                 Log.d(TAG, "set icon image to value: " + Integer.toString(iconImageValue));
             }
         }
