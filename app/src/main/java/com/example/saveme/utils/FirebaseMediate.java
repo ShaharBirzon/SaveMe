@@ -67,12 +67,14 @@ public class FirebaseMediate extends Application {
      * @param context
      */
     public static void initializeDataFromDB(Context context) {
+        Log.d(TAG, "started initializeDataFromDB");
         appContext = context;
         db = FirebaseFirestore.getInstance();
         usersCollectionRef = db.collection("users");//todo if use only once it's ok here
 
         String userDocumentPath = MyPreferences.getUserDocumentPathFromPreferences(appContext);
         if (userDocumentPath != null) {
+            Log.d(TAG, "started initialize user data from DB");
             userDocumentRef = db.document(userDocumentPath);
             categoriesRef = userDocumentRef.collection("categories");
             initializeUserDocumentSnapshotFromDB();
