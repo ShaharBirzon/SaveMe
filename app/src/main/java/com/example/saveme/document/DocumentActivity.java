@@ -383,9 +383,9 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
      */
     public void onClickSaveDocumentButton(View view) {
         if (!isInputValid()) {
-            Toast.makeText(getApplicationContext(), "invalid input data", Toast.LENGTH_LONG).show();
             return;
         }
+
         if (changedReminderTime && !reminderTimeET1.getEditText().getText().toString().equals("") && !documentExpirationDateET.getEditText().getText().toString().equals("")) {
             Log.i("document activity", "valid for alarm");
             if (setAlarm(alarmTimePicker1) != 0) {
@@ -429,7 +429,14 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
      * @return true if user input is valid, false otherwise.
      */
     private boolean isInputValid() {
-        return isDocumentTitleValid;
+        if (!isDocumentTitleValid) {
+            Toast.makeText(getApplicationContext(), "invalid Title", Toast.LENGTH_LONG).show();
+            return false;
+        } else if (isAlarm && documentExpirationDateET.getEditText().getText().toString().equals("")) {
+            Toast.makeText(getApplicationContext(), "Cannot set alarm without expiration date", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        return true;
     }
 
 
@@ -508,19 +515,17 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     }
 
     private Integer getReminderHourTime(TimePicker timePicker) {
-        if (timePicker!=null){
+        if (timePicker != null) {
             return timePicker.getCurrentHour();
-        }
-        else {
+        } else {
             return Integer.parseInt(reminderTimeET1.getEditText().getText().toString().split(":")[0]);
         }
     }
 
     private Integer getReminderMinutesTime(TimePicker timePicker) {
-        if (timePicker!=null){
+        if (timePicker != null) {
             return timePicker.getCurrentMinute();
-        }
-        else {
+        } else {
             return Integer.parseInt(reminderTimeET1.getEditText().getText().toString().split(":")[1]);
         }
     }
