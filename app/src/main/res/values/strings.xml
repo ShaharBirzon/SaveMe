@@ -13,7 +13,7 @@
     <string name="choose_icon">Choose icon</string>
     <string name="description">Description</string>
     <string name="save">SAVE</string>
-    <string name="added_file_file_name"><![CDATA[added file: <file name>]]></string>
+    <string name="added_file_file_name">click to preview document</string>
     <string name="change_image">change image</string>
     <string name="add_image">add image</string>
     <string name="add_file">add file</string>
@@ -32,11 +32,9 @@
     </string-array>
 
     <string-array name="times">
-        <item>this time</item>
-        <item>1 day before</item>
-        <item>2 days before</item>
-        <item>1 week before</item>
-        <item>2 weeks before</item>
+        <item>day before</item>
+        <item>week before</item>
+        <item>month before</item>
     </string-array>
 
 
