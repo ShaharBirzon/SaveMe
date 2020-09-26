@@ -87,6 +87,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     private TimePicker alarmTimePicker1;
     private TimePicker alarmTimePicker2;
     private DatePicker datePicker;
+    private long alarmBeforeTime = 0;
 
     private View v1;
     private View v2;
@@ -459,7 +460,22 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 reminderSpinner1.setSelection(position);
                 String title = titlesAdapter.getItem(position);
-                //todo implement
+                switch (title){
+                    case "1 day before":
+                        alarmBeforeTime = 86400000;
+                        break;
+                    case "2 days before":
+                        alarmBeforeTime = 172800000;
+                        break;
+                    case "1 week before":
+                        alarmBeforeTime = 604800000;
+                        break;
+                    case "2 weeks before":
+                        alarmBeforeTime = 604800000 + 604800000;
+                        break;
+                    default:
+                        alarmBeforeTime = 0;
+                }
             }
 
             @Override
@@ -626,7 +642,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         myIntent.putExtra("is_add_event_to_phone_calender", curDocument.getIsAddEventToPhoneCalender());
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getBaseContext(), 0, myIntent, 0);
 
-        manager.set(AlarmManager.RTC_WAKEUP, cal_alarm.getTimeInMillis(), pendingIntent);
+        manager.set(AlarmManager.RTC_WAKEUP, cal_alarm.getTimeInMillis() - alarmBeforeTime, pendingIntent);
         return 0;
     }
 
