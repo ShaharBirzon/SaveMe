@@ -139,7 +139,7 @@ public class AddCategoryDialog extends DialogFragment {
     }
 
     /**
-     * Handles the event where the user chooses a neighborhood
+     * Handles the event where the user chooses a category name
      */
     private void setCategoryTitle() {
         final ArrayAdapter<String> titlesAdapter = new ArrayAdapter<>(AddCategoryDialog.this.getActivity(), android.R.layout.simple_list_item_1, categoriesTitles);
