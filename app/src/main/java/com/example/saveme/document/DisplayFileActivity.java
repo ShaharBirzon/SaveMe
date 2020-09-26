@@ -26,8 +26,8 @@ public class DisplayFileActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar); // setting toolbar is important before calling getSupportActionBar()
         final ActionBar actionBar = getSupportActionBar();
 
-        Intent intentCreatedMe = getIntent();
-        String file = intentCreatedMe.getStringExtra("file_url");
+        final Intent intentCreatedMe = getIntent();
+        final String file = intentCreatedMe.getStringExtra("file_url");
         String url =null;
         try {
             url= URLEncoder.encode(file,"UTF-8");
