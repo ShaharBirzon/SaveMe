@@ -159,19 +159,19 @@
             android:layout_marginTop="24dp"
             android:layout_marginRight="16dp"
             android:hint="Expiration Date"
-            app:helperText="press calendar icon"
             app:layout_constraintTop_toBottomOf="@id/sep_line2"
             app:startIconDrawable="@drawable/ic_date">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:focusableInTouchMode="false"
                 android:inputType="date" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/tv_title_reminder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -205,47 +205,34 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
-            android:hint="When?"
+            android:hint="Time"
             android:visibility="gone"
-            app:helperText="press clock icon"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/add_alarm"
+            app:layout_constraintTop_toBottomOf="@id/spinner_times1"
             app:startIconDrawable="@drawable/ic_access_time_black_24dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:focusableInTouchMode="false"
                 android:inputType="time" />
 
         </com.google.android.material.textfield.TextInputLayout>
-
-        <TextView
-            android:id="@+id/tv_reminder1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="24dp"
-            android:text="how much time before?"
-            android:textSize="16sp"
-            android:visibility="gone"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/et_time1" />
 
         <Spinner
             android:id="@+id/spinner_times1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_reminder1"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/tv_reminder1"
-            app:layout_constraintTop_toTopOf="@+id/tv_reminder1" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_title_reminder" />
 
         <TextView
             android:id="@+id/tv_add_to_calendar1"
@@ -258,7 +245,7 @@
             android:textSize="16sp"
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_reminder1" />
+            app:layout_constraintTop_toBottomOf="@+id/et_time1" />
 
         <CheckBox
             android:id="@+id/checkbox_calendar1"
@@ -270,83 +257,6 @@
             app:layout_constraintBottom_toBottomOf="@+id/tv_add_to_calendar1"
             app:layout_constraintStart_toEndOf="@+id/tv_add_to_calendar1"
             app:layout_constraintTop_toTopOf="@+id/tv_add_to_calendar1" />
-
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/et_time2"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:hint="@string/enter_time"
-            android:visibility="gone"
-            app:helperText="press clock icon"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/checkbox_calendar1"
-            app:startIconDrawable="@drawable/ic_access_time_black_24dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="time" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <TextView
-            android:id="@+id/tv_reminder2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="24dp"
-            android:text="how many time before?"
-            android:textSize="16sp"
-            android:visibility="gone"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/et_time2" />
-
-        <Spinner
-            android:id="@+id/spinner_times2"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_reminder2"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/tv_reminder2"
-            app:layout_constraintTop_toTopOf="@+id/tv_reminder2" />
-
-        <TextView
-            android:id="@+id/tv_add_to_calendar2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="20dp"
-            android:text="Add event to phone calendar"
-            android:textSize="16sp"
-            android:visibility="gone"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_reminder2" />
-
-        <CheckBox
-            android:id="@+id/checkbox_calendar2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_add_to_calendar2"
-            app:layout_constraintStart_toEndOf="@+id/tv_add_to_calendar2"
-            app:layout_constraintTop_toTopOf="@+id/tv_add_to_calendar2" />
 
 
         <Button
@@ -361,20 +271,7 @@
             android:text="Save"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/checkbox_calendar2" />
-
-        <Button
-            android:id="@+id/btn_add_another_alarm"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:onClick="onAddAlarmButtonClick"
-            android:text="add reminder"
-            android:visibility="gone"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/checkbox_calendar2" />
+            app:layout_constraintTop_toBottomOf="@id/checkbox_calendar1" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

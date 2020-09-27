@@ -71,12 +71,10 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     private TextInputLayout documentCommentET;
     private TextInputLayout documentExpirationDateET;
     private TextInputLayout reminderTimeET1;
-    private TextInputLayout reminderTimeET2;
     private String callReason;
     private String categoryTitle;
     private int position;
     private Spinner reminderSpinner1;
-    private Spinner reminderSpinner2;
     private SwitchMaterial reminderSwitch;
     private Document curDocument = new Document();
     private Button addImageBtn, addFileBtn;
@@ -87,23 +85,17 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     private boolean changedImage, changedReminderTime = false, addedFile = false;
     private boolean isAlarm = false;
     private CheckBox check1;
-    private CheckBox check2;
     private TimePicker alarmTimePicker1;
-    private TimePicker alarmTimePicker2;
     private DatePicker datePicker;
-    private long alarmBeforeTime = 0;
+    private int alarmBeforeDay = 0;
+    private long alarmBeforeWeek = 0;
+    private int alarmBeforeMonth = 0;
 
     private View v1;
-    private View v2;
-    private View v3;
     private View v4;
     private View v5;
     private View v6;
-    private View v7;
-    private View v8;
-    private View v9;
-    private View v10;
-    private View v11;
+
 
     private boolean isDocumentTitleValid = false;
     private static StorageReference storageReference;
@@ -140,6 +132,13 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             }
         });
 
+        documentExpirationDateET.getEditText().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDatePickerDialog();
+            }
+        });
+
         reminderSwitch.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -151,11 +150,6 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
                     isAlarm = false;
                     setFirstRemainderFieldsVisibility(View.GONE);
                     v6.setVisibility(View.GONE);
-                    v7.setVisibility(View.GONE);
-                    v8.setVisibility(View.GONE);
-                    v9.setVisibility(View.GONE);
-                    v10.setVisibility(View.GONE);
-                    v11.setVisibility(View.GONE);
                 }
             }
         });
@@ -167,12 +161,13 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             }
         });
 
-        reminderTimeET2.setStartIconOnClickListener(new View.OnClickListener() {
+        reminderTimeET1.getEditText().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showTimePickerDialog2();
+                showTimePickerDialog1();
             }
         });
+
 
         changedImage = false;
         addImageBtn.setOnClickListener(new View.OnClickListener() {
@@ -212,22 +207,11 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             }
         });
 
-        check2.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
-
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) {
-                    addToCalendar(documentTitleET.getEditText().getText().toString(), alarmTimePicker2);
-                }
-            }
-        });
         addFieldsValidation();
     }
 
     private void setFirstRemainderFieldsVisibility(int visibility) {
         v1.setVisibility(visibility);
-        v2.setVisibility(visibility);
-        v3.setVisibility(visibility);
         v4.setVisibility(visibility);
         v5.setVisibility(visibility);
         v6.setVisibility(visibility);
@@ -307,12 +291,9 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         documentTitleET = findViewById(R.id.et_document_title);
         documentCommentET = findViewById(R.id.et_comment);
         reminderTimeET1 = findViewById(R.id.et_time1);
-        reminderTimeET2 = findViewById(R.id.et_time2);
         reminderSwitch = findViewById(R.id.add_alarm);
         reminderSpinner1 = findViewById(R.id.spinner_times1);
-        reminderSpinner2 = findViewById(R.id.spinner_times2);
         check1 = findViewById(R.id.checkbox_calendar1);
-        check2 = findViewById(R.id.checkbox_calendar2);
         documentExpirationDateET = findViewById(R.id.et_expiration_date);
         documentImageView = findViewById(R.id.iv_doc);
         filePreviewLayout = findViewById(R.id.ll_doc_file_prev);
@@ -322,16 +303,10 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         addFileBtn = findViewById(R.id.btn_add_doc_file);
 
         v1 = findViewById(R.id.et_time1);
-        v2 = findViewById(R.id.btn_add_another_alarm);
-        v3 = findViewById(R.id.tv_reminder1);
         v4 = findViewById(R.id.tv_add_to_calendar1);
         v5 = findViewById(R.id.checkbox_calendar1);
         v6 = findViewById(R.id.spinner_times1);
-        v7 = findViewById(R.id.et_time2);
-        v8 = findViewById(R.id.tv_reminder2);
-        v9 = findViewById(R.id.tv_add_to_calendar2);
-        v10 = findViewById(R.id.checkbox_calendar2);
-        v11 = findViewById(R.id.spinner_times2);
+
     }
 
     /**
@@ -370,21 +345,6 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
 
     }
 
-    private void showTimePickerDialog2() {
-        TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker timePicker, int hour, int min) {
-                alarmTimePicker2 = timePicker;
-                String time = hour + ":" + min;
-                reminderTimeET2.getEditText().setText(time);
-
-            }
-        },
-                Calendar.getInstance().get(Calendar.HOUR_OF_DAY),
-                Calendar.getInstance().get(Calendar.MINUTE), true);
-        timePickerDialog.show();
-
-    }
 
     /**
      * when the save button is pressed
@@ -466,21 +426,17 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 reminderSpinner1.setSelection(position);
                 String title = titlesAdapter.getItem(position);
-                switch (title) {
-                    case "1 day before":
-                        alarmBeforeTime = 86400000;
+
+                switch (title){
+                    case "day before":
+                        alarmBeforeDay = 1;
                         break;
-                    case "2 days before":
-                        alarmBeforeTime = 172800000;
+                    case "week before":
+                        alarmBeforeWeek = 604800000;
                         break;
-                    case "1 week before":
-                        alarmBeforeTime = 604800000;
+                    case "month before":
+                        alarmBeforeMonth = 1;
                         break;
-                    case "2 weeks before":
-                        alarmBeforeTime = 604800000 + 604800000;
-                        break;
-                    default:
-                        alarmBeforeTime = 0;
                 }
             }
 
@@ -488,35 +444,8 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             public void onNothingSelected(AdapterView<?> parentView) {
             }
         });
-
-        reminderSpinner2.setAdapter(titlesAdapter);
-        reminderSpinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                reminderSpinner1.setSelection(position);
-                String title = titlesAdapter.getItem(position);
-                //todo implement
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-            }
-        });
     }
 
-    public void onAddAlarmButtonClick(View view) {
-        View v7 = findViewById(R.id.et_time2);
-        View v8 = findViewById(R.id.tv_reminder2);
-        View v9 = findViewById(R.id.tv_add_to_calendar2);
-        View v10 = findViewById(R.id.checkbox_calendar2);
-        View v11 = findViewById(R.id.spinner_times2);
-        v7.setVisibility(View.VISIBLE);
-        v8.setVisibility(View.VISIBLE);
-        v9.setVisibility(View.VISIBLE);
-        v10.setVisibility(View.VISIBLE);
-        v11.setVisibility(View.VISIBLE);
-        view.setVisibility(View.GONE);
-    }
 
     //todo check!!
     private void addToCalendar(String docTitle, TimePicker timePicker) {
@@ -615,7 +544,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         filePreviewLayout.setVisibility(View.VISIBLE);
         addedFile = true;
         Button btnAddImage = findViewById(R.id.btn_add_doc_file);
-        btnAddImage.setText("R.string.change_file");
+        btnAddImage.setText(R.string.change_file);
     }
 
 
@@ -626,7 +555,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         Calendar cal_alarm = Calendar.getInstance();
         Calendar cal_now = Calendar.getInstance();
         cal_now.setTime(date);
-        cal_alarm.set(getExpirationDateYear(), getExpirationDateMonth(), getExpirationDateDay(),
+        cal_alarm.set(getExpirationDateYear(), getExpirationDateMonth() - alarmBeforeMonth, getExpirationDateDay() - alarmBeforeDay,
                 getReminderHourTime(time), time.getCurrentMinute(), 0);
 
         if (cal_alarm.before(cal_now)) {
@@ -648,7 +577,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         myIntent.putExtra("is_add_event_to_phone_calender", curDocument.getIsAddEventToPhoneCalender());
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getBaseContext(), 0, myIntent, 0);
 
-        manager.set(AlarmManager.RTC_WAKEUP, cal_alarm.getTimeInMillis() - alarmBeforeTime, pendingIntent);
+        manager.set(AlarmManager.RTC_WAKEUP, cal_alarm.getTimeInMillis() - alarmBeforeWeek, pendingIntent);
         return 0;
     }
 
