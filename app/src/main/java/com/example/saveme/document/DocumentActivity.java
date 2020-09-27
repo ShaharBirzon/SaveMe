@@ -184,7 +184,12 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         addFileBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                selectFile();
+                if( isDocumentTitleValid) {
+                    selectFile();
+                }
+                else {
+                    Toast.makeText(DocumentActivity.this, "please choose document title first", Toast.LENGTH_LONG).show();
+                }
                 //todo change to this
 //                if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
 //                    selectFile();
@@ -216,9 +221,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
                 }
             }
         });
-
         addFieldsValidation();
-
     }
 
     private void setFirstRemainderFieldsVisibility(int visibility) {
