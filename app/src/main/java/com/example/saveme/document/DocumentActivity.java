@@ -68,7 +68,6 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     private TextInputLayout documentCommentET;
     private TextInputLayout documentExpirationDateET;
     private TextInputLayout reminderTimeET1;
-    private TextInputLayout reminderTimeET2;
     private String callReason;
     private String categoryTitle;
     private int position;
@@ -89,7 +88,6 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     private int alarmBeforeMonth = 0;
 
     private View v1;
-    private View v3;
     private View v4;
     private View v5;
     private View v6;
@@ -130,6 +128,13 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             }
         });
 
+        documentExpirationDateET.getEditText().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDatePickerDialog();
+            }
+        });
+
         reminderSwitch.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -146,6 +151,13 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         });
 
         reminderTimeET1.setStartIconOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showTimePickerDialog1();
+            }
+        });
+
+        reminderTimeET1.getEditText().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showTimePickerDialog1();
@@ -192,7 +204,6 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
 
     private void setFirstRemainderFieldsVisibility(int visibility) {
         v1.setVisibility(visibility);
-        v3.setVisibility(visibility);
         v4.setVisibility(visibility);
         v5.setVisibility(visibility);
         v6.setVisibility(visibility);
@@ -282,7 +293,6 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         addFileBtn = findViewById(R.id.btn_add_doc_file);
 
         v1 = findViewById(R.id.et_time1);
-        v3 = findViewById(R.id.tv_reminder1);
         v4 = findViewById(R.id.tv_add_to_calendar1);
         v5 = findViewById(R.id.checkbox_calendar1);
         v6 = findViewById(R.id.spinner_times1);
