@@ -28,6 +28,7 @@ import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Switch;
 
@@ -48,6 +49,8 @@ import com.example.saveme.category.CategoryActivity;
 import com.example.saveme.category.Document;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnPausedListener;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.theartofdev.edmodo.cropper.CropImage;
@@ -78,6 +81,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     private Uri selectedImage, fileUri, fileDownloadUri;
     private ImageView documentImageView;
     private LinearLayout filePreviewLayout;
+    private ProgressBar progressBar;
     private boolean changedImage, changedReminderTime = false, addedFile = false;
     private boolean isAlarm = false;
     private CheckBox check1;
@@ -175,7 +179,12 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         addFileBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                selectFile();
+                if( isDocumentTitleValid) {
+                    selectFile();
+                }
+                else {
+                    Toast.makeText(DocumentActivity.this, "please choose document title first", Toast.LENGTH_LONG).show();
+                }
                 //todo change to this
 //                if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
 //                    selectFile();
@@ -199,7 +208,6 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         });
 
         addFieldsValidation();
-
     }
 
     private void setFirstRemainderFieldsVisibility(int visibility) {
@@ -289,6 +297,8 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         documentExpirationDateET = findViewById(R.id.et_expiration_date);
         documentImageView = findViewById(R.id.iv_doc);
         filePreviewLayout = findViewById(R.id.ll_doc_file_prev);
+        progressBar = findViewById(R.id.fileProgressBar);
+        progressBar.setVisibility(View.INVISIBLE);
         addImageBtn = findViewById(R.id.btn_add_doc_image);
         addFileBtn = findViewById(R.id.btn_add_doc_file);
 
@@ -346,17 +356,6 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             return;
         }
 
-        if (changedReminderTime && !reminderTimeET1.getEditText().getText().toString().equals("") && !documentExpirationDateET.getEditText().getText().toString().equals("")) {
-            Log.i("document activity", "valid for alarm");
-            if (setAlarm(alarmTimePicker1) != 0) {
-                Toast toast = Toast.makeText(getApplicationContext(), "This time has passed!", Toast.LENGTH_SHORT);
-                toast.show();
-                return;
-            }
-        }
-        Log.i("document activity", "after if");
-
-
         Intent intentBack = new Intent(DocumentActivity.this, CategoryActivity.class);
 
         if (callReason.equals("edit_document")) {
@@ -396,6 +395,13 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         } else if (isUploadingFile) {
             Toast.makeText(getApplicationContext(), "Can't save document while uploading file", Toast.LENGTH_LONG).show();
             return false;
+        }
+        if (changedReminderTime && !reminderTimeET1.getEditText().getText().toString().equals("") && !documentExpirationDateET.getEditText().getText().toString().equals("")) {
+            Log.i("document activity", "valid for alarm");
+            if (setAlarm(alarmTimePicker1) != 0) {
+                Toast.makeText(getApplicationContext(), "This time has passed!", Toast.LENGTH_LONG).show();
+                return false;
+            }
         }
         return true;
     }
@@ -652,6 +658,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
 
     private void uploadDocumentFileToDB(Context context, String categoryTitle, String documentTitle, final Uri fileUri) {
         isUploadingFile = true;
+        progressBar.setVisibility(View.VISIBLE);
         final StorageReference ref = storageReference.child("Files").
                 child(MyPreferences.getUserDocumentPathFromPreferences(context)).child(categoryTitle).child(documentTitle).child("file");
 
@@ -673,12 +680,26 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
                             fileDownloadUri = task.getResult();
                             curDocument.setFileDownloadUri(fileDownloadUri.toString());
                             isUploadingFile = false;
+                            progressBar.setVisibility(View.INVISIBLE);
                         } else {
                             // Handle failures
                             // ...
                         }
                     }
                 });
+            }
+        }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                Log.i(TAG, "Upload is " + progress + "% done");
+                int currentProgress = (int) progress;
+                progressBar.setProgress(currentProgress);
+            }
+        }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onPaused(UploadTask.TaskSnapshot taskSnapshot) {
+                Log.i(TAG, "Upload is paused");
             }
         });
     }
