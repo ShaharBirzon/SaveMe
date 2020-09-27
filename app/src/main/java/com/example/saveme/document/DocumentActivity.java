@@ -1,6 +1,7 @@
 package com.example.saveme.document;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
@@ -9,6 +10,7 @@ import android.app.DatePickerDialog;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -19,6 +21,7 @@ import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -38,6 +41,9 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.example.saveme.utils.AlarmReceiver;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.vision.Frame;
+import com.google.android.gms.vision.text.TextBlock;
+import com.google.android.gms.vision.text.TextRecognizer;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import android.widget.TimePicker;
@@ -59,6 +65,9 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -101,6 +110,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     private static StorageReference storageReference;
     private FirebaseStorage storage;
     private boolean isUploadingFile = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -529,9 +539,69 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             changedImage = true;
             Button btnAddImage = findViewById(R.id.btn_add_doc_image);
             btnAddImage.setText(R.string.change_image);
+            doOCROnImage(bitmap);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /*
+    check if there is a date in image with OCR
+     */
+    private void doOCROnImage(Bitmap bitmap) {
+        // do OCR for image to check if an expiration date exists
+        TextRecognizer textRecognizer = new TextRecognizer.Builder(this).build();
+        Frame imageFrame = new Frame.Builder().setBitmap(bitmap).build();
+        String imageText = "";
+        SparseArray<TextBlock> textBlocks = textRecognizer.detect(imageFrame);
+        DateFormat inputDateFormat = new SimpleDateFormat("dd/MM/yy");
+        DateFormat outputDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Date d = null;
+        String stringDate = null;
+        for (int i = 0; i < textBlocks.size(); i++) {
+            TextBlock textBlock = textBlocks.get(textBlocks.keyAt(i));
+            imageText = textBlock.getValue();
+            Log.d(TAG, imageText);
+            try {
+                d = inputDateFormat.parse(imageText);
+                stringDate = outputDateFormat.format(d);
+                Log.d(TAG, "the date: " + d.toString());
+                break;
+                // string contains valid date
+            } catch (ParseException ex) {
+                // string contains invalid date
+                Log.d(TAG, "the date is error");
+            }
+        }
+        if (d != null) {
+            startExpirationDateDialog(stringDate);
+        }
+    }
+
+    /*
+    the method checks if to set the date received from OCR to expiration date
+     */
+    private void startExpirationDateDialog(String stringDate) {
+        final AlertDialog.Builder deleteAlertBuilder = new AlertDialog.Builder(this);
+        deleteAlertBuilder.setMessage("Do you want to set " + stringDate + " as expiration date?");
+        deleteAlertBuilder.setCancelable(true);
+        //if wants to delete for sure
+        final String finalStringDate = stringDate;
+        deleteAlertBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                curDocument.setExpirationDate(finalStringDate);
+                documentExpirationDateET.getEditText().setText(curDocument.getExpirationDate());
+                dialog.cancel();
+            }
+        });
+        deleteAlertBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+        AlertDialog DeleteAlertDialog = deleteAlertBuilder.create();
+        DeleteAlertDialog.show();
     }
 
     /*
