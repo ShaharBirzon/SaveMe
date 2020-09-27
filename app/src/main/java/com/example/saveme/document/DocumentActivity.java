@@ -113,7 +113,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         setReminderTime();
         // todo add other
 
-        Intent intentCreatedMe = getIntent();
+        final Intent intentCreatedMe = getIntent();
         categoryTitle = intentCreatedMe.getStringExtra("category_title");
         callReason = intentCreatedMe.getStringExtra("call_reason");
         if (callReason.equals("edit_document")) {
@@ -179,10 +179,9 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         addFileBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if( isDocumentTitleValid) {
+                if (isDocumentTitleValid) {
                     selectFile();
-                }
-                else {
+                } else {
                     Toast.makeText(DocumentActivity.this, "please choose document title first", Toast.LENGTH_LONG).show();
                 }
                 //todo change to this
@@ -224,6 +223,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         position = intentCreatedMe.getIntExtra("position", -1);
         boolean hasImage = intentCreatedMe.getBooleanExtra("has_image", false);
         if (hasImage) {
+            curDocument.setHasImage(true);
             Button btnAddImage = findViewById(R.id.btn_add_doc_image);
             btnAddImage.setText(R.string.change_image);
             //upload document's image from storage
@@ -234,7 +234,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
                     Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                     Bitmap previewBitmap = Bitmap.createScaledBitmap(bmp, (int) (bmp.getWidth() * 0.5), (int) (bmp.getHeight() * 0.5), true);
                     documentImageView.setImageBitmap(previewBitmap);
-                    curDocument.setBitmap(previewBitmap);
+                    curDocument.setBitmap(bmp);
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -361,11 +361,11 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         if (callReason.equals("edit_document")) {
             intentBack.putExtra("document_position", position);
         }
-        if (changedImage) {
+        if (selectedImage != null) {
             intentBack.putExtra("imageUri", selectedImage.toString());
-            Log.d(TAG, "adding image");
         }
         intentBack.putExtra("has_image", curDocument.getHasImage());
+        intentBack.putExtra("changed_image", changedImage);
         intentBack.putExtra("file_download_uri", curDocument.getFileDownloadUri());
         intentBack.putExtra("has_file", curDocument.isHasFile());
         intentBack.putExtra("document_title", documentTitleET.getEditText().getText().toString());
@@ -427,7 +427,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
                 reminderSpinner1.setSelection(position);
                 String title = titlesAdapter.getItem(position);
 
-                switch (title){
+                switch (title) {
                     case "day before":
                         alarmBeforeDay = 1;
                         break;

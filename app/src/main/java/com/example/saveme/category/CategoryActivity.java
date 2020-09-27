@@ -155,8 +155,9 @@ public class CategoryActivity extends AppCompatActivity {
         boolean hasAlarm = data.getBooleanExtra("is_alarm", false);
 
         boolean isAddEventToPhoneCalender = data.getBooleanExtra("is_add_event_to_phone_calender", false);
-        boolean hasImage = data.getBooleanExtra("has_photo", false);
-        if (hasImage) {
+        boolean hasImage = data.getBooleanExtra("has_image", false);
+        boolean changedImage = data.getBooleanExtra("changed_image", false);
+        if (hasImage && changedImage) {
             String imageString = data.getStringExtra("imageUri");
             Uri imageUri = Uri.parse(imageString);
             FirebaseMediate.uploadImageToStorage(imageUri, this, getApplicationContext(), categoryTitle, title, "image");
@@ -184,7 +185,8 @@ public class CategoryActivity extends AppCompatActivity {
 
         boolean isAddEventToPhoneCalender = data.getBooleanExtra("is_add_event_to_phone_calender", false);
         boolean hasImage = data.getBooleanExtra("has_image", false);
-        if (hasImage) {
+        boolean changedImage = data.getBooleanExtra("changed_image", false);
+        if (hasImage && changedImage) {
             String imageString = data.getStringExtra("imageUri");
             Uri imageUri = Uri.parse(imageString);
             FirebaseMediate.uploadImageToStorage(imageUri, this, getApplicationContext(), categoryTitle, title, "image");
