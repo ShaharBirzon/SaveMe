@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:642729297439:android:ea20b994bcc98d5d1c772a",
         "android_client_info": {
-          "package_name": "com.example.saveme"
+          "package_name": "com.save.saveme"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "642729297439-dsfs7s6fl4pq9f1d8c9kopj055psjh78.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.saveme",
+            "package_name": "com.save.saveme",
             "certificate_hash": "133bde8ecbe7679237a95d5e65fc1314fcdcfe52"
           }
         },
