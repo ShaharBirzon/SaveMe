@@ -34,6 +34,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.save.saveme.main.MainActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -175,17 +176,46 @@ public class FirebaseMediate extends Application {
      * This method adds a user to firestore database. called only once, when sign up.
      *
      * @param userToAdd the user to add.
+     * @param fireStoreCallBack
      */
-    public static void addUserToFirestoreDB(User userToAdd) {
+    public static void addUserToFirestoreDB(final User userToAdd, final MainActivity.FireStoreCallBack fireStoreCallBack) {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();//todo use
 
         // Add a new User document with a generated ID
         userDocumentRef = usersCollectionRef.document(firebaseUser.getUid());
         MyPreferences.saveUserDocumentPathToPreferences(appContext, userDocumentRef.getPath());
         categoriesRef = userDocumentRef.collection("categories");
-        addCategories(userToAdd.getCategories());
+        categoriesRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot documentSnapshots) {
+                if (documentSnapshots.isEmpty()) {
+                    Log.d(TAG, "onSuccess: LIST EMPTY so add default categories list");
+                    addCategories(userToAdd.getCategories());
+                } else {
+                    // Convert the whole Query Snapshot to a list
+                    // of objects directly! No need to fetch each
+                    // document.
+                    List<Category> categoriesList = documentSnapshots.toObjects(Category.class);
+
+                    // Add all to your list
+                    categories.clear();
+                    categories.addAll(categoriesList);
+                    fireStoreCallBack.onCallBack(categories);
+                    Log.d(TAG, "onSuccess: " + categories);
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e(TAG, "Error getting categories data from Firebase!!!");
+            }
+        });
     }
 
+    /**
+     * add categories to user's categories list.
+     * @param categories the categories to add to user's categories list.
+     */
     private static void addCategories(ArrayList<Category> categories) {
         for (Category category : categories) {
             addCategory(category);

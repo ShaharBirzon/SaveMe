@@ -47,8 +47,19 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
         if (MyPreferences.isFirstTime(getApplicationContext())) {
             categories = FirebaseMediate.getDefaultCategories();
             User user = new User(categories);
-            FirebaseMediate.addUserToFirestoreDB(user);
+            FirebaseMediate.addUserToFirestoreDB(user, new FireStoreCallBack() {
+
+                @Override
+                public void onCallBack(ArrayList<Category> categories) {
+                    Log.d(TAG, "got to update categories onCallBack, with categories: " + categories);
+                    MainActivity.this.categories.clear();
+                    MainActivity.this.categories.addAll(categories);// Adapter has to have same categories ArrayList
+                    categoryAdapter.notifyDataSetChanged();
+                }
+            });
         } else {
+            Log.d(TAG, "got to else - not user's first time");
+
             categories = FirebaseMediate.getUserCategories();
         }
 
@@ -71,6 +82,11 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
         TextView nameTxt = findViewById(R.id.tv_welcome_name);
         nameTxt.setText(welcomeString);
     }
+
+    public interface FireStoreCallBack {
+        void onCallBack(ArrayList<Category> categories);
+    }
+
 
     private void initializeRecyclerView() {
         //set recycler view and category adapter
