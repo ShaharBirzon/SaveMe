@@ -46,21 +46,26 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
         // checks if needs to sign up or log in
         if (MyPreferences.isFirstTime(getApplicationContext())) {
             categories = FirebaseMediate.getDefaultCategories();
-            User user = new User(categories);
-            FirebaseMediate.addUserToFirestoreDB(user, new FireStoreCallBack() {
+            FirebaseMediate.addUserToFirestoreDB(new FireStoreCallBack() {
 
                 @Override
                 public void onCallBack(ArrayList<Category> categories) {
-                    Log.d(TAG, "got to update categories onCallBack, with categories: " + categories);
-                    MainActivity.this.categories.clear();
-                    MainActivity.this.categories.addAll(categories);// Adapter has to have same categories ArrayList
-                    categoryAdapter.notifyDataSetChanged();
+                    updateCategoriesFromFirestoreDB(categories);
                 }
             });
         } else {
             Log.d(TAG, "got to else - not user's first time");
 
             categories = FirebaseMediate.getUserCategories();
+            if (categories.isEmpty()){
+                FirebaseMediate.initializeUserCategoriesSnapshotFromDB(new FireStoreCallBack() {
+
+                    @Override
+                    public void onCallBack(ArrayList<Category> categories) {
+                        updateCategoriesFromFirestoreDB(categories);
+                    }
+                });
+            }
         }
 
         // initializes the recycler view and the adapter
@@ -81,6 +86,13 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
         }
         TextView nameTxt = findViewById(R.id.tv_welcome_name);
         nameTxt.setText(welcomeString);
+    }
+
+    private void updateCategoriesFromFirestoreDB(ArrayList<Category> categories) {
+        Log.d(TAG, "got to update categories onCallBack, with categories: " + categories);
+        MainActivity.this.categories.clear();
+        MainActivity.this.categories.addAll(categories);// Adapter has to have same categories ArrayList
+        categoryAdapter.notifyDataSetChanged();
     }
 
     public interface FireStoreCallBack {

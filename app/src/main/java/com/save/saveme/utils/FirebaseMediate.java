@@ -67,7 +67,7 @@ public class FirebaseMediate extends Application {
      *
      * @param context
      */
-    public static void initializeDataFromDB(Context context) {
+    public void initializeDataFromDB(Context context) {
         Log.d(TAG, "started initializeDataFromDB");
         appContext = context;
         db = FirebaseFirestore.getInstance();
@@ -79,38 +79,13 @@ public class FirebaseMediate extends Application {
             userDocumentRef = db.document(userDocumentPath);
             categoriesRef = userDocumentRef.collection("categories");
             initializeUserDocumentSnapshotFromDB();
-            initializeUserCategoriesSnapshotFromDB();
-        }
-    }
-
-    private static void initializeUserCategoriesSnapshotFromDB() {
-        categoriesRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot documentSnapshots) {
-                if (documentSnapshots.isEmpty()) {
-                    Log.d(TAG, "onSuccess: LIST EMPTY");
-                    return;
-                } else {
-                    // Convert the whole Query Snapshot to a list
-                    // of objects directly! No need to fetch each
-                    // document.
-                    List<Category> categoriesList = documentSnapshots.toObjects(Category.class);
-
-                    // Add all to your list
-                    categories.clear();
-                    categories.addAll(categoriesList);
-                    Log.d(TAG, "onSuccess: " + categories);
+            initializeUserCategoriesSnapshotFromDB(new MainActivity.FireStoreCallBack() {
+                @Override
+                public void onCallBack(ArrayList<Category> categories) {
+                    FirebaseMediate.this.categories = categories;
                 }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.e(TAG, "Error getting data!!!");
-            }
-        });
-
-        Log.d(TAG, "successful userCategoriesSnapshot from db");
-
+            });
+        }
     }
 
     /**
@@ -175,22 +150,27 @@ public class FirebaseMediate extends Application {
     /**
      * This method adds a user to firestore database. called only once, when sign up.
      *
-     * @param userToAdd the user to add.
      * @param fireStoreCallBack
      */
-    public static void addUserToFirestoreDB(final User userToAdd, final MainActivity.FireStoreCallBack fireStoreCallBack) {
+    public static void addUserToFirestoreDB(final MainActivity.FireStoreCallBack fireStoreCallBack) {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();//todo use
 
         // Add a new User document with a generated ID
         userDocumentRef = usersCollectionRef.document(firebaseUser.getUid());
         MyPreferences.saveUserDocumentPathToPreferences(appContext, userDocumentRef.getPath());
         categoriesRef = userDocumentRef.collection("categories");
+        initializeUserCategoriesSnapshotFromDB(fireStoreCallBack);
+    }
+
+    public static void initializeUserCategoriesSnapshotFromDB(final MainActivity.FireStoreCallBack fireStoreCallBack) {
         categoriesRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot documentSnapshots) {
                 if (documentSnapshots.isEmpty()) {
-                    Log.d(TAG, "onSuccess: LIST EMPTY so add default categories list");
-                    addCategories(userToAdd.getCategories());
+                    Log.d(TAG, "onSuccess initializeUserCategoriesSnapshotFromDB: LIST EMPTY so add default categories list");
+                    ArrayList<Category> defaultCategories = getDefaultCategories();
+                    categories.addAll(defaultCategories);
+                    addCategories(defaultCategories);
                 } else {
                     // Convert the whole Query Snapshot to a list
                     // of objects directly! No need to fetch each
@@ -200,9 +180,9 @@ public class FirebaseMediate extends Application {
                     // Add all to your list
                     categories.clear();
                     categories.addAll(categoriesList);
-                    fireStoreCallBack.onCallBack(categories);
-                    Log.d(TAG, "onSuccess: " + categories);
+                    Log.d(TAG, "onSuccess initializeUserCategoriesSnapshotFromDB: " + categories);
                 }
+                fireStoreCallBack.onCallBack(categories);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
