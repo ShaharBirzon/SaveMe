@@ -29,6 +29,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * the main class of the app - shows the categories of the user
+ */
 public class MainActivity extends AppCompatActivity implements AddCategoryDialog.OnInputListener {
 
     public static final int CATEGORY_REQUEST_CODE = 333;
@@ -57,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
             Log.d(TAG, "got to else - not user's first time");
 
             categories = FirebaseMediate.getUserCategories();
-            if (categories.isEmpty()){
+            if (categories.isEmpty()) {
                 FirebaseMediate.initializeUserCategoriesSnapshotFromDB(new FireStoreCallBack() {
 
                     @Override
@@ -88,6 +91,9 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
         nameTxt.setText(welcomeString);
     }
 
+    /*
+     * updates categories presented
+     */
     private void updateCategoriesFromFirestoreDB(ArrayList<Category> categories) {
         Log.d(TAG, "got to update categories onCallBack, with categories: " + categories);
         MainActivity.this.categories.clear();
@@ -95,16 +101,21 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
         categoryAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * interface for firestore callback
+     */
     public interface FireStoreCallBack {
         void onCallBack(ArrayList<Category> categories);
     }
 
-
+    /*
+     * initializes the recycler view
+     */
     private void initializeRecyclerView() {
         //set recycler view and category adapter
         recyclerView = findViewById(R.id.category_recycler);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-        categoryAdapter = new CategoryAdapter(categories); //todo check stay same order
+        categoryAdapter = new CategoryAdapter(categories);
         recyclerView.setAdapter(categoryAdapter);
 
         recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -131,14 +142,13 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
             public void onCategoryClicked(int position) {
                 Log.d("category clicked", "category was clicked");
                 lastCategoryPosition = position;
-                Category category = categories.get(position); //todo check how to get current category like this or from adapter?
+                Category category = categories.get(position);
                 Intent intent = new Intent(MainActivity.this, CategoryActivity.class);
                 intent.putExtra("category_name", category.title);
                 Gson gson = new Gson();
                 String json = gson.toJson(categories.get(position).getDocsList());
                 intent.putExtra("docList", json);
 
-                // todo add more
                 startActivityForResult(intent, CATEGORY_REQUEST_CODE);
             }
         });
@@ -146,7 +156,6 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CATEGORY_REQUEST_CODE) {
             //add new document
@@ -167,8 +176,8 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
 
 
     /*
-        when a category is long clicked
-         */
+     * when a category is long clicked
+     */
     private void initializeCategoryLongClickListener() {
         // builder for the delete dialog of long click
         final AlertDialog.Builder deleteAlertBuilder = new AlertDialog.Builder(this);
@@ -181,7 +190,7 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
 
                 deleteAlertBuilder.setMessage("Are you sure you want do delete?");
                 deleteAlertBuilder.setCancelable(true);
-                final Category category_to_delete = categories.get(position); //todo check how to get current category like this or from adapter?
+                final Category category_to_delete = categories.get(position);
 
                 //if wants to delete for sure
                 deleteAlertBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -205,6 +214,11 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
         });
     }
 
+    /**
+     * a method when the add category button is pressed
+     *
+     * @param view - view
+     */
     public void onClickAddCategoryButton(View view) {
         String[] categoriesTitles = this.getResources().getStringArray(R.array.categories);
         List<String> categoriesTitlesList = new ArrayList<>(Arrays.asList(categoriesTitles));
@@ -224,10 +238,12 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
         addNewCategory(category);
     }
 
+    /*
+     * add the given category
+     */
     private void addNewCategory(Category category) {
         categories.add(category);
         FirebaseMediate.addCategory(category);
         categoryAdapter.notifyItemInserted(categories.size() - 1);
     }
-
 }

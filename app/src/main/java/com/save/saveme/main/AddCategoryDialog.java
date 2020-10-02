@@ -24,10 +24,14 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import static android.app.Activity.RESULT_OK;
 
+/**
+ * a dialog to add a category
+ */
 public class AddCategoryDialog extends DialogFragment {
     private static final String TAG = "AddCategoryFragment";
     private static final int CATEGORY_ICON_REQUEST_CODE = 111;
     public static final int DEFAULT_ICON = R.drawable.buy;
+    public static final int MAX_CATEGORY_NAME_LENGTH = 20;
     private String[] categoriesTitles; //categories titles not used for spinner
     private boolean isCategoryTitleValid = false;
 
@@ -37,7 +41,6 @@ public class AddCategoryDialog extends DialogFragment {
     public AddCategoryDialog(String[] categoriesTitles) {
         this.categoriesTitles = categoriesTitles;
     }
-
 
     public interface OnInputListener {
         void sendInput(String title, int image);
@@ -79,12 +82,10 @@ public class AddCategoryDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: capturing input");
-                if(userInputValid()){
+                if (userInputValid()) {
                     addNewCategory();
-                }
-                else {
-                    //todo change message
-                    Toast.makeText(getContext(), "invalid input", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getContext(), "invalid title", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -102,31 +103,37 @@ public class AddCategoryDialog extends DialogFragment {
         return view;
     }
 
+    /*
+     * checks if user input is valid
+     */
     private boolean userInputValid() {
         return isCategoryTitleValid();
     }
 
+    /*
+     * checks if category title is valid
+     */
     private boolean isCategoryTitleValid() {
         String title = titleInput.getEditText().getText().toString();
-        boolean isTitleChosen=false;
+        boolean isTitleChosen = false;
         if (title.equals("")) {
             title = titleSpinner.getSelectedItem().toString();
-            if (!title.equals("Choose Name…") && !title.equals("Other")){
-                isTitleChosen =true;
+            if (!title.equals("Choose Name…") && !title.equals("Other")) {
+                isTitleChosen = true;
             }
         }
         return isCategoryTitleValid || isTitleChosen;
     }
 
+    /*
+     * add a new category method
+     */
     private void addNewCategory() {
         String title = titleInput.getEditText().getText().toString();
         if (title == null || title.equals("")) {
             title = titleSpinner.getSelectedItem().toString();
         }
-
-        //TODO  add image
         mOnInputListener.sendInput(title, iconImageValue);
-
         getDialog().dismiss();
     }
 
@@ -193,13 +200,12 @@ public class AddCategoryDialog extends DialogFragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 isCategoryTitleValid = false;
                 int inputLength = titleInput.getEditText().getText().toString().length();
-                if (inputLength >= 16) {//todo check number
+                if (inputLength >= MAX_CATEGORY_NAME_LENGTH) {
                     titleInput.setError("Maximum Limit Reached!");
                 } else if (inputLength == 0) {
                     titleInput.setError("Category title is required!");
                 } else {
                     titleInput.setError(null);
-//                    curDocument.setTitle(documentTitleET.getEditText().getText().toString());
                     isCategoryTitleValid = true;
                 }
             }
@@ -215,7 +221,7 @@ public class AddCategoryDialog extends DialogFragment {
      */
     private void setIsDocumentTitleValidToTrueIfValid() {
         int inputLength = titleInput.getEditText().getText().toString().length();
-        if (inputLength < 16 && inputLength > 0) {
+        if (inputLength < MAX_CATEGORY_NAME_LENGTH && inputLength > 0) {
             isCategoryTitleValid = true;
         }
     }

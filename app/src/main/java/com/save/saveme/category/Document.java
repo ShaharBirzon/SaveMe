@@ -2,6 +2,9 @@ package com.save.saveme.category;
 
 import android.graphics.Bitmap;
 
+/**
+ * the class that represents a document
+ */
 public class Document {
     private String title;
     private String comment;

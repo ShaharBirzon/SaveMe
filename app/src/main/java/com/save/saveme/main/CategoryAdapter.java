@@ -9,16 +9,16 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-//import com.squareup.picasso.Picasso; todo add later
-
 import com.save.saveme.R;
 
 import java.util.ArrayList;
 
+/**
+ * a class for the category adapter
+ */
 public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ArrayList<Category> categories;
-
     private CategoryClickListener categoryClickListener;
     private CategoryLongClickListener categoryLongClickListener;
 
@@ -38,7 +38,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
         Category catItem = categories.get(position);
         CategoryItemHolder catHolder = ((CategoryItemHolder) holder);
-        // Picasso.get().load(catItem.image).into(catHolder.image); todo check
         catHolder.title.setText(catItem.title);
         catHolder.image.setImageResource(catItem.getImage());
 
@@ -56,11 +55,11 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                if (categoryLongClickListener!=null){
+                if (categoryLongClickListener != null) {
                     categoryLongClickListener.onCategoryLongClicked(position);
                     return true;
                 }
-                return false; //todo check
+                return false;
             }
         });
     }
@@ -70,22 +69,37 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         return categories.size();
     }
 
-
+    /**
+     * set a category click listener
+     *
+     * @param categoryClickListener - the listener
+     */
     public void setCategoryClickListener(CategoryClickListener categoryClickListener) {
         this.categoryClickListener = categoryClickListener;
     }
 
+    /**
+     * set a long click listener
+     *
+     * @param categoryLongClickListener - the listener
+     */
     public void setCategoryLongClickListener(CategoryLongClickListener categoryLongClickListener) {
         this.categoryLongClickListener = categoryLongClickListener;
     }
 
-    //delete a category
-    public void deleteCategory(Category category){
+    /**
+     * deletes a category from adapter
+     *
+     * @param category - the adapter
+     */
+    public void deleteCategory(Category category) {
         categories.remove(category);
     }
-
 }
 
+/**
+ * a class for a category holder
+ */
 class CategoryItemHolder extends RecyclerView.ViewHolder {
     ImageView image;
     TextView title;

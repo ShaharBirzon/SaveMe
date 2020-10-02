@@ -26,6 +26,9 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
+/**
+ * this class represents the category activity
+ */
 public class CategoryActivity extends AppCompatActivity {
 
     public static final int NEW_DOCUMENT = 111;
@@ -36,8 +39,8 @@ public class CategoryActivity extends AppCompatActivity {
     private DocumentAdapter documentAdapter;
     private static final String TAG = "CategoryActivity";
     private String categoryTitle;
-    ImageView docImg;
-    TextView noDocTxt;
+    private ImageView docImg;
+    private TextView noDocTxt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +56,6 @@ public class CategoryActivity extends AppCompatActivity {
         if (documentList == null) {
             documentList = new ArrayList<>();
         }
-
         // initializes the recycler view and the adapter
         initializeRecyclerView();
 
@@ -68,15 +70,11 @@ public class CategoryActivity extends AppCompatActivity {
         titleTxt.setText(categoryTitle);
         docImg = findViewById(R.id.iv_doc_img);
         noDocTxt = findViewById(R.id.tv_no_docs);
-        if (documentList.size() > 0){
+        if (documentList.size() > 0) {
             docImg.setVisibility(View.GONE);
             noDocTxt.setVisibility(View.GONE);
         }
-
-
-
     }
-
 
     /*
     the function initializes the recycler view and the adapter
@@ -84,12 +82,10 @@ public class CategoryActivity extends AppCompatActivity {
     private void initializeRecyclerView() {
         //set recycler view and document adapter
         recyclerView = findViewById(R.id.document_recycler);
-        // todo check which layout
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
         documentAdapter = new DocumentAdapter(documentList);
         recyclerView.setAdapter(documentAdapter);
-
         recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
@@ -118,7 +114,7 @@ public class CategoryActivity extends AppCompatActivity {
 
     /**
      * @param requestCode - a new document or an edited documetn
-     * @param resultCode
+     * @param resultCode  - the result code
      * @param data        - the info from document activity
      */
     @Override
@@ -129,11 +125,10 @@ public class CategoryActivity extends AppCompatActivity {
             //add new document
             if (resultCode == RESULT_OK) {
                 addDocument(data);
-                if (documentList.size() > 0){
+                if (documentList.size() > 0) {
                     docImg.setVisibility(View.GONE);
                     noDocTxt.setVisibility(View.GONE);
                 }
-
             }
         }
         if (requestCode == EDIT_DOCUMENT) {
@@ -153,7 +148,6 @@ public class CategoryActivity extends AppCompatActivity {
         String expirationDate = data.getStringExtra("document_expiration_date");
         String reminderTime = data.getStringExtra("document_reminder_time");
         boolean hasAlarm = data.getBooleanExtra("is_alarm", false);
-
         boolean isAddEventToPhoneCalender = data.getBooleanExtra("is_add_event_to_phone_calender", false);
         boolean hasImage = data.getBooleanExtra("has_image", false);
         boolean changedImage = data.getBooleanExtra("changed_image", false);
@@ -162,11 +156,10 @@ public class CategoryActivity extends AppCompatActivity {
             Uri imageUri = Uri.parse(imageString);
             FirebaseMediate.uploadImageToStorage(imageUri, this, getApplicationContext(), categoryTitle, title, "image");
         }
-        //todo delete?
         String fileDownloadUriStr = data.getStringExtra("file_download_uri");
         boolean hasFile = data.getBooleanExtra("has_file", false);
         Log.e(TAG, "adding new document " + title);
-        Document newDocument = new Document(title, comment, expirationDate, null, hasImage, hasAlarm, hasFile, fileDownloadUriStr, reminderTime, isAddEventToPhoneCalender); //todo change
+        Document newDocument = new Document(title, comment, expirationDate, null, hasImage, hasAlarm, hasFile, fileDownloadUriStr, reminderTime, isAddEventToPhoneCalender);
         documentList.add(newDocument);
         FirebaseMediate.addNewDocument(categoryTitle, newDocument);
         documentAdapter.notifyItemInserted(documentList.size() - 1);
@@ -182,7 +175,6 @@ public class CategoryActivity extends AppCompatActivity {
         String reminderTime = data.getStringExtra("document_reminder_time");
         int position = data.getIntExtra("document_position", DEFAULT_POSITION_VALUE);
         boolean hasAlarm = data.getBooleanExtra("is_alarm", false);
-
         boolean isAddEventToPhoneCalender = data.getBooleanExtra("is_add_event_to_phone_calender", false);
         boolean hasImage = data.getBooleanExtra("has_image", false);
         boolean changedImage = data.getBooleanExtra("changed_image", false);
@@ -210,11 +202,9 @@ public class CategoryActivity extends AppCompatActivity {
         document.setHasAlarm(hasAlarm);
         document.setIsAddEventToPhoneCalender(isAddEventToPhoneCalender);
         document.setFileDownloadUri(fileDownloadUriStr);
-        // todo add other fields
         FirebaseMediate.addNewDocument(categoryTitle, document);
         documentAdapter.notifyDataSetChanged();
     }
-
 
     /*
     when a document is clicked
@@ -225,7 +215,7 @@ public class CategoryActivity extends AppCompatActivity {
             @Override
             public void onDocumentClicked(int position) {
                 Log.d("document clicked", "document was clicked");
-                Document document = documentList.get(position); //todo check how to get current document like this or from adapter?
+                Document document = documentList.get(position);
                 Intent intent = new Intent(CategoryActivity.this, DocumentActivity.class);
                 intent.putExtra("call_reason", "edit_document");
                 intent.putExtra("position", position);
@@ -239,7 +229,6 @@ public class CategoryActivity extends AppCompatActivity {
                 intent.putExtra("file_download_uri", document.getFileDownloadUri());
                 intent.putExtra("has_alarm", document.getHasAlarm());
                 intent.putExtra("is_add_event_to_phone_calender", document.getIsAddEventToPhoneCalender());
-                // todo add more into intent
                 startActivityForResult(intent, EDIT_DOCUMENT);
             }
         });
@@ -260,14 +249,14 @@ public class CategoryActivity extends AppCompatActivity {
 
                 deleteAlertBuilder.setMessage("Are you sure you want do delete?");
                 deleteAlertBuilder.setCancelable(true);
-                final Document document_to_delete = documentList.get(position); //todo check how to get current document like this or from adapter?
+                final Document document_to_delete = documentList.get(position);
 
                 //if wants to delete for sure
                 deleteAlertBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         documentAdapter.deleteDocument(document_to_delete);
-                        FirebaseMediate.removeDocument(categoryTitle, document_to_delete); //todo remove from firebase
+                        FirebaseMediate.removeDocument(categoryTitle, document_to_delete);
                         documentAdapter.notifyDataSetChanged();
                         dialog.cancel();
                     }
@@ -283,6 +272,9 @@ public class CategoryActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * when the back button is pressed
+     */
     @Override
     public void onBackPressed() {
         Gson gson = new Gson();
@@ -293,6 +285,11 @@ public class CategoryActivity extends AppCompatActivity {
         finish();
     }
 
+    /**
+     * when the back button is pressed
+     *
+     * @param view - the view
+     */
     public void onBackClick(View view) {
         Gson gson = new Gson();
         String json = gson.toJson(documentList);
@@ -300,9 +297,5 @@ public class CategoryActivity extends AppCompatActivity {
         intent.putExtra("docList", json);
         setResult(RESULT_OK, intent);
         finish();
-    }
-
-    public void onClickChooseIcon(View view) {
-
     }
 }
