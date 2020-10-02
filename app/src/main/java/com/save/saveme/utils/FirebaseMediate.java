@@ -225,9 +225,9 @@ public class FirebaseMediate extends Application {
      */
     public static ArrayList<Category> getDefaultCategories() {
         ArrayList<Category> defaultCategories = new ArrayList<>();
-        defaultCategories.add(new Category("Car", R.drawable.car));
-        defaultCategories.add(new Category("Bank", R.drawable.money));
-        defaultCategories.add(new Category("Personal", R.drawable.id));
+        defaultCategories.add(new Category("Car", 10));
+        defaultCategories.add(new Category("Bank", 0));
+        defaultCategories.add(new Category("Personal", 3));
         return defaultCategories;
     }
 

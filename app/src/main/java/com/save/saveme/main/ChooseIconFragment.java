@@ -24,7 +24,6 @@ import static android.app.Activity.RESULT_OK;
  * a class for the icon selection
  */
 public class ChooseIconFragment extends DialogFragment {
-    private static final int[] iconImages = {R.drawable.money, R.drawable.tax, R.drawable.lipstick, R.drawable.id, R.drawable.house, R.drawable.garden, R.drawable.fish, R.drawable.fan, R.drawable.email, R.drawable.dog, R.drawable.car, R.drawable.cake, R.drawable.buy, R.drawable.cat, R.drawable.company};
     private int lastImageToBeSelected = 0;
     private ImageView lastImage = null;
     private static final String TAG = "ChooseIconFragment";
@@ -78,7 +77,7 @@ public class ChooseIconFragment extends DialogFragment {
             public void onClick(View v) {
                 Log.d(TAG, "onClick: actionSaveButton");
                 Intent intent = new Intent(ChooseIconFragment.this.getActivity(), AddCategoryDialog.class);
-                intent.putExtra("iconIntValue", iconImages[lastImageToBeSelected]);
+                intent.putExtra("iconIntValue", lastImageToBeSelected);
                 getTargetFragment().onActivityResult(getTargetRequestCode(), RESULT_OK, intent);
                 getDialog().dismiss();
             }
