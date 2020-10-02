@@ -15,7 +15,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -64,8 +63,6 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -800,10 +797,27 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         Bitmap bmp = curDocument.getBitmap();
         Bitmap previewBitmap = Bitmap.createScaledBitmap(bmp, (int) (bmp.getWidth() * 0.5), (int) (bmp.getHeight() * 0.5), true);
-        previewBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        Bitmap compressedBitmap = scaleDownBitmap(previewBitmap, 1024, true); //todo check what should be maxImageSize
+        compressedBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byte[] byteArray = stream.toByteArray();
         fullScreenIntent.putExtra("image", byteArray);
         startActivity(fullScreenIntent);
+    }
+
+    /*
+     * scales down the bitmap
+     */
+    private static Bitmap scaleDownBitmap(Bitmap realImage, float maxImageSize,
+                                          boolean filter) {
+        float ratio = Math.min(
+                (float) maxImageSize / realImage.getWidth(),
+                (float) maxImageSize / realImage.getHeight());
+        int width = Math.round((float) ratio * realImage.getWidth());
+        int height = Math.round((float) ratio * realImage.getHeight());
+
+        Bitmap newBitmap = Bitmap.createScaledBitmap(realImage, width,
+                height, filter);
+        return newBitmap;
     }
 
     @Override
