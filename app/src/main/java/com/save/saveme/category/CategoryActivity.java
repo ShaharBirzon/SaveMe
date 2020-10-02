@@ -8,8 +8,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -150,12 +152,7 @@ public class CategoryActivity extends AppCompatActivity {
         boolean hasAlarm = data.getBooleanExtra("is_alarm", false);
         boolean isAddEventToPhoneCalender = data.getBooleanExtra("is_add_event_to_phone_calender", false);
         boolean hasImage = data.getBooleanExtra("has_image", false);
-        boolean changedImage = data.getBooleanExtra("changed_image", false);
-        if (hasImage && changedImage) {
-            String imageString = data.getStringExtra("imageUri");
-            Uri imageUri = Uri.parse(imageString);
-            FirebaseMediate.uploadImageToStorage(imageUri, this, getApplicationContext(), categoryTitle, title, "image");
-        }
+
         String fileDownloadUriStr = data.getStringExtra("file_download_uri");
         boolean hasFile = data.getBooleanExtra("has_file", false);
         Log.e(TAG, "adding new document " + title);
@@ -177,12 +174,6 @@ public class CategoryActivity extends AppCompatActivity {
         boolean hasAlarm = data.getBooleanExtra("is_alarm", false);
         boolean isAddEventToPhoneCalender = data.getBooleanExtra("is_add_event_to_phone_calender", false);
         boolean hasImage = data.getBooleanExtra("has_image", false);
-        boolean changedImage = data.getBooleanExtra("changed_image", false);
-        if (hasImage && changedImage) {
-            String imageString = data.getStringExtra("imageUri");
-            Uri imageUri = Uri.parse(imageString);
-            FirebaseMediate.uploadImageToStorage(imageUri, this, getApplicationContext(), categoryTitle, title, "image");
-        }
         String fileDownloadUriStr = data.getStringExtra("file_download_uri");
         boolean hasFile = data.getBooleanExtra("has_file", false);
         Log.e(TAG, "editing document " + title);
@@ -202,6 +193,7 @@ public class CategoryActivity extends AppCompatActivity {
         document.setHasAlarm(hasAlarm);
         document.setIsAddEventToPhoneCalender(isAddEventToPhoneCalender);
         document.setFileDownloadUri(fileDownloadUriStr);
+        document.setHasImage(hasImage);
         FirebaseMediate.addNewDocument(categoryTitle, document);
         documentAdapter.notifyDataSetChanged();
     }

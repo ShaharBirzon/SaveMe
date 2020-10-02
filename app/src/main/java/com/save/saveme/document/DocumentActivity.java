@@ -15,6 +15,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -33,6 +34,7 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Switch;
 
+import com.save.saveme.utils.FirebaseMediate;
 import com.save.saveme.utils.MyPreferences;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -62,6 +64,8 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -240,12 +244,13 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
                     Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                     Bitmap previewBitmap = Bitmap.createScaledBitmap(bmp, (int) (bmp.getWidth() * 0.5), (int) (bmp.getHeight() * 0.5), true);
                     documentImageView.setImageBitmap(previewBitmap);
-                    curDocument.setBitmap(previewBitmap);
+                    curDocument.setBitmap(bmp);
+                    Log.d(TAG, "successfully fetch document image from firebase storage");
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
-                    Log.d(TAG, "failed to fetch image from firebase storage");
+                    Log.e(TAG, "failed to fetch image from firebase storage");
                 }
             });
         }
@@ -371,16 +376,17 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             return;
         }
 
+        if (curDocument.getHasImage() && changedImage) {
+            FirebaseMediate.uploadImageToFirebaseStorageDB(curDocument.getBitmap(), getApplicationContext(), categoryTitle, documentTitleET.getEditText().getText().toString(), "image");
+        }
+
         Intent intentBack = new Intent(DocumentActivity.this, CategoryActivity.class);
 
         if (callReason.equals("edit_document")) {
             intentBack.putExtra("document_position", position);
         }
-        if (selectedImage != null) {
-            intentBack.putExtra("imageUri", selectedImage.toString());
-        }
+
         intentBack.putExtra("has_image", curDocument.getHasImage());
-        intentBack.putExtra("changed_image", changedImage);
         intentBack.putExtra("file_download_uri", curDocument.getFileDownloadUri());
         intentBack.putExtra("has_file", curDocument.isHasFile());
         intentBack.putExtra("document_title", documentTitleET.getEditText().getText().toString());
@@ -540,7 +546,9 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
                     , selectedImage);
             Bitmap previewBitmap = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * 0.5), (int) (bitmap.getHeight() * 0.5), true);
             documentImageView.setImageBitmap(previewBitmap);
-            curDocument.setBitmap(previewBitmap);
+            documentImageView.setDrawingCacheEnabled(true);
+            documentImageView.buildDrawingCache();
+            curDocument.setBitmap(bitmap);
             curDocument.setHasImage(true);
             changedImage = true;
             Button btnAddImage = findViewById(R.id.btn_add_doc_image);
@@ -790,7 +798,9 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     public void onImageClick(View view) {
         final Intent fullScreenIntent = new Intent(this, DisplayImageActivity.class);
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        curDocument.getBitmap().compress(Bitmap.CompressFormat.PNG, 100, stream);
+        Bitmap bmp = curDocument.getBitmap();
+        Bitmap previewBitmap = Bitmap.createScaledBitmap(bmp, (int) (bmp.getWidth() * 0.5), (int) (bmp.getHeight() * 0.5), true);
+        previewBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byte[] byteArray = stream.toByteArray();
         fullScreenIntent.putExtra("image", byteArray);
         startActivity(fullScreenIntent);
