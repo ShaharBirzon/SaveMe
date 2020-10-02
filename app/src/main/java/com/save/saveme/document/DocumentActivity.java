@@ -35,6 +35,7 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Switch;
 
+import com.save.saveme.main.AddCategoryDialog;
 import com.save.saveme.utils.MyPreferences;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -68,10 +69,11 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class DocumentActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
+public class DocumentActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, ExpirationDateDialog.OnExpirationDateInputListener {
 
     private static final String TAG = "DocumentActivity";
     private static final long ONE_MEGABYTE = 1024 * 1024;
@@ -557,51 +559,32 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         DateFormat inputDateFormat = new SimpleDateFormat("dd/MM/yy");
         DateFormat outputDateFormat = new SimpleDateFormat("dd/MM/yyyy");
         Date d = null;
-        String stringDate = null;
+        ArrayList<String> possibleDates = new ArrayList<>();
         for (int i = 0; i < textBlocks.size(); i++) {
             TextBlock textBlock = textBlocks.get(textBlocks.keyAt(i));
             imageText = textBlock.getValue();
             Log.d(TAG, imageText);
             try {
                 d = inputDateFormat.parse(imageText);
-                stringDate = outputDateFormat.format(d);
+                possibleDates.add(outputDateFormat.format(d));
                 Log.d(TAG, "the date: " + d.toString());
-                break;
                 // string contains valid date
             } catch (ParseException ex) {
                 // string contains invalid date
                 Log.d(TAG, "the date is error");
             }
         }
-        if (d != null) {
-            startExpirationDateDialog(stringDate);
+        if (!possibleDates.isEmpty()) {
+            startExpirationDateDialog(possibleDates);
         }
     }
 
     /*
     the method checks if to set the date received from OCR to expiration date
      */
-    private void startExpirationDateDialog(String stringDate) {
-        final AlertDialog.Builder deleteAlertBuilder = new AlertDialog.Builder(this);
-        deleteAlertBuilder.setMessage("Do you want to set " + stringDate + " as expiration date?");
-        deleteAlertBuilder.setCancelable(true);
-        //if wants to delete for sure
-        final String finalStringDate = stringDate;
-        deleteAlertBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                curDocument.setExpirationDate(finalStringDate);
-                documentExpirationDateET.getEditText().setText(curDocument.getExpirationDate());
-                dialog.cancel();
-            }
-        });
-        deleteAlertBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.cancel();
-            }
-        });
-        AlertDialog DeleteAlertDialog = deleteAlertBuilder.create();
-        DeleteAlertDialog.show();
+    private void startExpirationDateDialog(ArrayList<String> possibleDates) {
+        ExpirationDateDialog expirationDateDialog = new ExpirationDateDialog(possibleDates.toArray(new String[0]));
+        expirationDateDialog.show(getSupportFragmentManager(), "ExpirationDateDialog");
     }
 
     /*
@@ -786,5 +769,11 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         byte[] byteArray = stream.toByteArray();
         fullScreenIntent.putExtra("image", byteArray);
         startActivity(fullScreenIntent);
+    }
+
+    @Override
+    public void sendInput(String date) {
+        curDocument.setExpirationDate(date);
+        documentExpirationDateET.getEditText().setText(date);
     }
 }
