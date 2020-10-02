@@ -5,6 +5,9 @@ import com.save.saveme.main.Category;
 
 import java.util.ArrayList;
 
+/**
+ * a class for the user
+ */
 public class User {
     ArrayList< Category> categories;
 

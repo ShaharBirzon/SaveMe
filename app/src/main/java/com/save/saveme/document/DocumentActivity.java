@@ -1,7 +1,6 @@
 package com.save.saveme.document;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
@@ -10,7 +9,6 @@ import android.app.DatePickerDialog;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -35,7 +33,6 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Switch;
 
-import com.save.saveme.main.AddCategoryDialog;
 import com.save.saveme.utils.MyPreferences;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -73,6 +70,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ * a class for the document activity
+ */
 public class DocumentActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, ExpirationDateDialog.OnExpirationDateInputListener {
 
     private static final String TAG = "DocumentActivity";
@@ -93,7 +93,8 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     private ImageView documentImageView;
     private LinearLayout filePreviewLayout;
     private ProgressBar progressBar;
-    private boolean changedImage, changedReminderTime = false, addedFile = false;
+    private boolean changedImage;
+    private boolean changedReminderTime = false;
     private boolean isAlarm = false;
     private CheckBox check1;
     private TimePicker alarmTimePicker1;
@@ -106,7 +107,6 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     private View v4;
     private View v5;
     private View v6;
-
 
     private boolean isDocumentTitleValid = false;
     private static StorageReference storageReference;
@@ -123,7 +123,6 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         initializeActivityFields();
         filePreviewLayout.setVisibility(View.GONE);
         setReminderTime();
-        // todo add other
 
         final Intent intentCreatedMe = getIntent();
         categoryTitle = intentCreatedMe.getStringExtra("category_title");
@@ -180,7 +179,6 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             }
         });
 
-
         changedImage = false;
         addImageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -196,15 +194,6 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
                 } else {
                     Toast.makeText(DocumentActivity.this, "please choose document title first", Toast.LENGTH_LONG).show();
                 }
-                //todo change to this
-//                if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-//                    selectFile();
-//                } else {
-//                    Log.e(TAG, "missing permission");
-//
-//                    ActivityCompat.requestPermissions(DocumentActivity.this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 225);
-//                }
-
             }
         });
 
@@ -217,10 +206,12 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
                 }
             }
         });
-
         addFieldsValidation();
     }
 
+    /*
+     * make remainder visible
+     */
     private void setFirstRemainderFieldsVisibility(int visibility) {
         v1.setVisibility(visibility);
         v4.setVisibility(visibility);
@@ -228,6 +219,9 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         v6.setVisibility(visibility);
     }
 
+    /*
+     * when a document is edited
+     */
     private void handleEditDocument(Intent intentCreatedMe) {
         curDocument.setTitle(intentCreatedMe.getStringExtra("document_title"));
         curDocument.setComment(intentCreatedMe.getStringExtra("document_comment"));
@@ -271,7 +265,6 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             reminderTimeET1.getEditText().setText(intentCreatedMe.getStringExtra("document_reminder_time"));
             check1.setChecked(intentCreatedMe.getBooleanExtra("is_add_event_to_phone_calender", false));
         }
-        // todo add preview of image
         initializeActivityFieldsWithDocumentDataFromDB();
     }
 
@@ -292,11 +285,14 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         startActivityForResult(Intent.createChooser(fileIntent, "Select Your File"), FILE_REQUEST_CODE);
     }
 
+    /*
+     * validate doc fields
+     */
     private void addFieldsValidation() {
         validateDocumentTitle();
     }
 
-    /**
+    /*
      * This method initializes Activity view Fields.
      */
     private void initializeActivityFields() {
@@ -318,10 +314,9 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         v4 = findViewById(R.id.tv_add_to_calendar1);
         v5 = findViewById(R.id.checkbox_calendar1);
         v6 = findViewById(R.id.spinner_times1);
-
     }
 
-    /**
+    /*
      * This method initializes Activity Fields With Document Data From DB
      */
     private void initializeActivityFieldsWithDocumentDataFromDB() {
@@ -331,6 +326,9 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         documentExpirationDateET.getEditText().setText(curDocument.getExpirationDate());
     }
 
+    /*
+     * show date dialog
+     */
     private void showDatePickerDialog() {
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, this,
                 Calendar.getInstance().get(Calendar.YEAR),
@@ -340,14 +338,16 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
 
     }
 
-
+    /*
+     * show time picker
+     */
     private void showTimePickerDialog1() {
         final TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int hour, int min) {
                 alarmTimePicker1 = timePicker;
                 String minStr = "" + min;
-                if (min < 10){
+                if (min < 10) {
                     minStr = "0" + min;
                 }
                 String time = hour + ":" + minStr;
@@ -360,7 +360,6 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         timePickerDialog.show();
 
     }
-
 
     /**
      * when the save button is pressed
@@ -391,7 +390,6 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         intentBack.putExtra("is_alarm", isAlarm);
         intentBack.putExtra("is_add_event_to_phone_calender", check1.isChecked());
 
-        //todo add others
         setResult(RESULT_OK, intentBack);
         finish();
     }
@@ -463,7 +461,9 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     }
 
 
-    //todo check!!
+    /*
+     * add expiration date to calendar
+     */
     private void addToCalendar(String docTitle, TimePicker timePicker) {
         Calendar cal = Calendar.getInstance();
         cal.set(getExpirationDateYear(), getExpirationDateMonth(), getExpirationDateDay(),
@@ -477,8 +477,6 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         intent.putExtra("title", "Reminder! your document: " + docTitle + " is expired");
 
         startActivity(intent);
-
-
     }
 
     private Integer getReminderHourTime(TimePicker timePicker) {
@@ -489,6 +487,9 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         }
     }
 
+    /*
+     * get remainder time
+     */
     private Integer getReminderMinutesTime(TimePicker timePicker) {
         if (timePicker != null) {
             return timePicker.getCurrentMinute();
@@ -527,7 +528,6 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
                 addFileToDoc();
             } else {
                 Log.e(TAG, "got to????");
-
             }
     }
 
@@ -562,7 +562,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         SparseArray<TextBlock> textBlocks = textRecognizer.detect(imageFrame);
         DateFormat inputDateFormat = new SimpleDateFormat("dd/MM/yy");
         DateFormat outputDateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        Date d = null;
+        Date d;
         ArrayList<String> possibleDates = new ArrayList<>();
         for (int i = 0; i < textBlocks.size(); i++) {
             TextBlock textBlock = textBlocks.get(textBlocks.keyAt(i));
@@ -599,12 +599,17 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         uploadDocumentFileToDB(getApplicationContext(), categoryTitle, curDocument.getTitle(), fileUri);
         curDocument.setHasFile(true);
         filePreviewLayout.setVisibility(View.VISIBLE);
-        addedFile = true;
         Button btnAddImage = findViewById(R.id.btn_add_doc_file);
         btnAddImage.setText(R.string.change_file);
     }
 
 
+    /**
+     * set an alarm
+     *
+     * @param time - time of alarm
+     * @return
+     */
     public int setAlarm(TimePicker time) {
         Log.i("document activity", "entered setAlarm");
         AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
@@ -638,6 +643,9 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         return 0;
     }
 
+    /*
+     * get expiration date year
+     */
     private int getExpirationDateYear() {
         if (datePicker != null) {
             return datePicker.getYear();
@@ -646,6 +654,9 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         }
     }
 
+    /*
+     * get expiration date month
+     */
     private int getExpirationDateMonth() {
         if (datePicker != null) {
             return datePicker.getMonth();
@@ -654,6 +665,9 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         }
     }
 
+    /*
+     * get expiration date day
+     */
     private int getExpirationDateDay() {
         if (datePicker != null) {
             return datePicker.getDayOfMonth();
@@ -662,7 +676,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         }
     }
 
-    /**
+    /*
      * validate the entered name.
      */
     private void validateDocumentTitle() {
@@ -676,7 +690,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 isDocumentTitleValid = false;
                 int inputLength = documentTitleET.getEditText().getText().toString().length();
-                if (inputLength >= 16) {//todo check number
+                if (inputLength >= 16) {
                     documentTitleET.setError("Maximum Limit Reached!");
                 } else if (inputLength == 0) {
                     documentTitleET.setError("Document title is required!");
@@ -693,7 +707,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         });
     }
 
-    /**
+    /*
      * set isDocumentTitleValid to true if document title is valid
      */
     private void setIsDocumentTitleValidToTrueIfValid() {
@@ -703,7 +717,11 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         }
     }
 
-
+    /**
+     * when a file is clicked
+     *
+     * @param view - view
+     */
     public void onClickOpenFile(View view) {
         if (fileDownloadUri != null) {
             Intent intent = new Intent(DocumentActivity.this, DisplayFileActivity.class);
@@ -713,6 +731,9 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         }
     }
 
+    /*
+     * upload file to DB
+     */
     private void uploadDocumentFileToDB(Context context, String categoryTitle, String documentTitle, final Uri fileUri) {
         isUploadingFile = true;
         progressBar.setVisibility(View.VISIBLE);

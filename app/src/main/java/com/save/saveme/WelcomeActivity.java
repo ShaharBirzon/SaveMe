@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.save.saveme.main.MainActivity;
-import com.save.saveme.utils.FirebaseMediate;
 import com.save.saveme.utils.MyPreferences;
 import com.facebook.FacebookSdk;
 import com.firebase.ui.auth.AuthUI;
@@ -20,7 +19,9 @@ import com.google.android.gms.tasks.Task;
 import java.util.Arrays;
 import java.util.List;
 
-
+/**
+ * a class for the welcome activity - activity before the app starts
+ */
 public class WelcomeActivity extends AppCompatActivity {
     private static final int SPLASH_TIME_OUT = 3000;
     private static final int RC_SIGN_IN = 123;
@@ -31,14 +32,7 @@ public class WelcomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(this);
-        //FirebaseMediate.initializeDataFromDB(getApplicationContext());
-        //todo maybe use for facebook login
-//        AccessToken accessToken = AccessToken.getCurrentAccessToken();
-//        boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
-
-        //Then you can later perform the actual login, such as in a custom button's OnClickListener:
-        //LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
-
+        //FirebaseMediate.initializeDataFromDB(getApplicationContext()); todo delete amit check
         setContentView(R.layout.activity_welcome);
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -68,14 +62,13 @@ public class WelcomeActivity extends AppCompatActivity {
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()
                         .setAvailableProviders(providers)
-                        .setIsSmartLockEnabled(false)//todo delete?
+                        .setIsSmartLockEnabled(true)//todo check
                         .setTheme(R.style.LoginTheme)
                         .setLogo(R.drawable.logo)
                         .build(),
                 RC_SIGN_IN);
     }
 
-    // [START auth_fui_result]
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -85,7 +78,6 @@ public class WelcomeActivity extends AppCompatActivity {
 
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
-
                 Log.d(TAG, "Sign in successfully");
                 Intent mainIntent = new Intent(WelcomeActivity.this, MainActivity.class);
                 startActivity(mainIntent);
@@ -100,9 +92,9 @@ public class WelcomeActivity extends AppCompatActivity {
         }
     }
 
-
-    // [END auth_fui_result]
-
+    /**
+     * sign out
+     */
     public void signOut() {//todo is in right place
         // [START auth_fui_signout]
         AuthUI.getInstance()
@@ -115,6 +107,9 @@ public class WelcomeActivity extends AppCompatActivity {
         // [END auth_fui_signout]
     }
 
+    /**
+     * delete
+     */
     public void delete() { //todo is in right place
         // [START auth_fui_delete]
         AuthUI.getInstance()
@@ -128,4 +123,3 @@ public class WelcomeActivity extends AppCompatActivity {
         // [END auth_fui_delete]
     }
 }
-//todo maybe need to change facebook id in string in res

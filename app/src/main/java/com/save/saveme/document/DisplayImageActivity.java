@@ -10,6 +10,9 @@ import android.widget.ImageView;
 
 import com.save.saveme.R;
 
+/**
+ * a class to display the document image on full screen
+ */
 public class DisplayImageActivity extends AppCompatActivity {
 
     private static final String TAG = "DocumentActivity";

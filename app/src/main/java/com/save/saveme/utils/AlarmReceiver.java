@@ -14,6 +14,9 @@ import androidx.core.app.NotificationManagerCompat;
 import com.save.saveme.R;
 import com.save.saveme.document.DocumentActivity;
 
+/**
+ * alarm reciever class for push notification
+ */
 public class AlarmReceiver extends BroadcastReceiver {
 
     private String CHANNEL_ID = "CHANNEL_ID";
@@ -36,11 +39,10 @@ public class AlarmReceiver extends BroadcastReceiver {
         Intent documentIntent = new Intent(context, DocumentActivity.class);
         documentIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
-        //todo maybe can use calling intent from args and change destination.
         documentIntent.putExtra("call_reason", "edit_document");
         documentIntent.putExtra("position", intent.getIntExtra("position", -1));
         documentIntent.putExtra("document_title", intent.getStringExtra("document_title"));
-        documentIntent.putExtra("category_title",  intent.getStringExtra("category_title"));
+        documentIntent.putExtra("category_title", intent.getStringExtra("category_title"));
         documentIntent.putExtra("document_comment", intent.getStringExtra("document_comment"));
         documentIntent.putExtra("document_expiration_date", intent.getStringExtra("document_expiration_date"));
         documentIntent.putExtra("document_reminder_time", intent.getStringExtra("document_reminder_time"));
@@ -51,17 +53,14 @@ public class AlarmReceiver extends BroadcastReceiver {
         documentIntent.putExtra("is_add_event_to_phone_calender", intent.getBooleanExtra("is_add_event_to_phone_calender", false));
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, documentIntent, 0);
 
-
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_event_busy)
                 .setContentTitle(TEXT_TITLE)
                 .setContentText(CONTENT_TITLE)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setContentIntent(pendingIntent)
-        ;
+                .setContentIntent(pendingIntent);
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(1, builder.build());
 
     }
-
 }

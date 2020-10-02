@@ -14,7 +14,6 @@ import androidx.annotation.Nullable;
 import com.save.saveme.R;
 import com.save.saveme.category.Document;
 import com.save.saveme.main.Category;
-import com.save.saveme.User;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -39,7 +38,9 @@ import com.save.saveme.main.MainActivity;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * a class the handles connection with the firebase
+ */
 public class FirebaseMediate extends Application {
     private static ArrayList<Category> categories = new ArrayList<>();
     private static final String TAG = "FirebaseMediate";
@@ -48,7 +49,6 @@ public class FirebaseMediate extends Application {
     private static CollectionReference usersCollectionRef;
     private static Context appContext;
     private static CollectionReference categoriesRef;
-    private static DocumentSnapshot userDocumentSnapshot; //todo needed?
     private static StorageReference storageReference;
     private FirebaseStorage storage;
 
@@ -65,13 +65,13 @@ public class FirebaseMediate extends Application {
     /**
      * This method initializes the firestore fields from data from the database.
      *
-     * @param context
+     * @param context - the context
      */
     public void initializeDataFromDB(Context context) {
         Log.d(TAG, "started initializeDataFromDB");
         appContext = context;
         db = FirebaseFirestore.getInstance();
-        usersCollectionRef = db.collection("users");//todo if use only once it's ok here
+        usersCollectionRef = db.collection("users");
 
         String userDocumentPath = MyPreferences.getUserDocumentPathFromPreferences(appContext);
         if (userDocumentPath != null) {
@@ -95,7 +95,6 @@ public class FirebaseMediate extends Application {
         userDocumentRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                userDocumentSnapshot = value;
             }
         });
         Log.d(TAG, "successful setUserCollectionRef from db");
@@ -150,10 +149,10 @@ public class FirebaseMediate extends Application {
     /**
      * This method adds a user to firestore database. called only once, when sign up.
      *
-     * @param fireStoreCallBack
+     * @param fireStoreCallBack - callback
      */
     public static void addUserToFirestoreDB(final MainActivity.FireStoreCallBack fireStoreCallBack) {
-        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();//todo use
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
         // Add a new User document with a generated ID
         userDocumentRef = usersCollectionRef.document(firebaseUser.getUid());
@@ -162,6 +161,11 @@ public class FirebaseMediate extends Application {
         initializeUserCategoriesSnapshotFromDB(fireStoreCallBack);
     }
 
+    /**
+     * initalize the user's categories from DB
+     *
+     * @param fireStoreCallBack - callback
+     */
     public static void initializeUserCategoriesSnapshotFromDB(final MainActivity.FireStoreCallBack fireStoreCallBack) {
         categoriesRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
@@ -172,9 +176,6 @@ public class FirebaseMediate extends Application {
                     categories.addAll(defaultCategories);
                     addCategories(defaultCategories);
                 } else {
-                    // Convert the whole Query Snapshot to a list
-                    // of objects directly! No need to fetch each
-                    // document.
                     List<Category> categoriesList = documentSnapshots.toObjects(Category.class);
 
                     // Add all to your list
@@ -194,6 +195,7 @@ public class FirebaseMediate extends Application {
 
     /**
      * add categories to user's categories list.
+     *
      * @param categories the categories to add to user's categories list.
      */
     private static void addCategories(ArrayList<Category> categories) {
@@ -205,16 +207,16 @@ public class FirebaseMediate extends Application {
     /**
      * Add new document to firestore database.
      *
-     * @param categoryName The category name the document is been added to.
-     * @param newDocument  The new document.
+     * @param categoryName - The category name the document is been added to.
+     * @param newDocument  - The new document.
      */
     public static void addNewDocument(String categoryName, Document newDocument) {
         db.document(categoriesRef.getPath() + "/" + categoryName).update("docsList", FieldValue.arrayUnion(newDocument));
     }
 
     /**
-     * @param categoryName     The category name the document is been removed from.
-     * @param documentToDelete The document to delete.
+     * @param categoryName     - The category name the document is been removed from.
+     * @param documentToDelete - The document to delete.
      */
     public static void removeDocument(final String categoryName, final Document documentToDelete) {
 
@@ -229,7 +231,6 @@ public class FirebaseMediate extends Application {
             }
         });
     }
-
 
     /**
      * This method returns the default categories list.
@@ -251,7 +252,7 @@ public class FirebaseMediate extends Application {
      * @param selectedImage - the uri of the image to upload.
      * @param activity      - the activity calling this method.
      * @param context       - the activity context.
-     * @param categoryTitle
+     * @param categoryTitle - category title
      * @param imageType     - the image type (profilePic/apartmentPic).
      */
     public static void uploadImageToStorage(Uri selectedImage, final Activity activity, Context context, String categoryTitle, String documentTitle, String imageType) {
@@ -288,6 +289,15 @@ public class FirebaseMediate extends Application {
         }
     }
 
+    /**
+     * get image from firebase
+     *
+     * @param context       - context
+     * @param categoryTitle - category title
+     * @param documentTitle - document title
+     * @param imageType     - image type
+     * @return the image
+     */
     public Uri getImageFromFirebaseStorage(Context context, String categoryTitle, String documentTitle, String imageType) {
         final Uri[] imageUri = {null};
         StorageReference ref = storageReference.child("Files").
@@ -309,6 +319,14 @@ public class FirebaseMediate extends Application {
         return imageUri[0];
     }
 
+    /**
+     * upload file to DB
+     *
+     * @param context       - context
+     * @param categoryTitle - category title
+     * @param documentTitle - document title
+     * @param fileUri       - the uri of the file
+     */
     public static void uploadDocumentFileToDB(Context context, String categoryTitle, String documentTitle, final Uri fileUri) {
         StorageReference ref = storageReference.child("Files").
                 child(MyPreferences.getUserDocumentPathFromPreferences(context)).child(categoryTitle).child(documentTitle).child("file");
@@ -327,5 +345,4 @@ public class FirebaseMediate extends Application {
             }
         });
     }
-
 }
