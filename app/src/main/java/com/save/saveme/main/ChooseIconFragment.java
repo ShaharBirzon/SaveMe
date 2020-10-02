@@ -20,12 +20,16 @@ import com.save.saveme.R;
 
 import static android.app.Activity.RESULT_OK;
 
+/**
+ * a class for the icon selection
+ */
 public class ChooseIconFragment extends DialogFragment {
     private static final int[] iconImages = {R.drawable.money, R.drawable.tax, R.drawable.lipstick, R.drawable.id, R.drawable.house, R.drawable.garden, R.drawable.fish, R.drawable.fan, R.drawable.email, R.drawable.dog, R.drawable.car, R.drawable.cake, R.drawable.buy, R.drawable.cat, R.drawable.company};
-    private int lastImageToBeSelected = 0; //todo default image number
+    private int lastImageToBeSelected = 0;
     private ImageView lastImage = null;
     private static final String TAG = "ChooseIconFragment";
     private Drawable highlight;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -35,7 +39,7 @@ public class ChooseIconFragment extends DialogFragment {
         highlight = getResources().getDrawable(R.drawable.icon_selection);
         setButtonsOnClickMethods(view);
 
-        GridLayout grid = (GridLayout) view.findViewById(R.id.gl_choose_icon);
+        GridLayout grid = view.findViewById(R.id.gl_choose_icon);
         int childCount = grid.getChildCount();
 
         for (int i = 0; i < childCount; i++) {
@@ -56,6 +60,9 @@ public class ChooseIconFragment extends DialogFragment {
         return view;
     }
 
+    /*
+     * set buttons on clicks
+     */
     private void setButtonsOnClickMethods(View view) {
         Button actionSaveButton = view.findViewById(R.id.btn_save_category_icon);
         Button actionCancelButton = view.findViewById(R.id.btn_action_cancel_icon_selection);

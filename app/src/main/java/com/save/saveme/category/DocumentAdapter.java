@@ -12,11 +12,12 @@ import com.save.saveme.R;
 
 import java.util.ArrayList;
 
+/**
+ * adapter for the document adapter
+ */
 public class DocumentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ArrayList<Document> documents;
-
-    //todo add listeners
     private DocumentClickListener documentClickListener;
     private DocumentLongClickListener documentLongClickListener;
 
@@ -44,7 +45,6 @@ public class DocumentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         else {
             docHolder.alarmImg.setImageResource(R.drawable.ic_alarm_off);
         }
-
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,7 +62,7 @@ public class DocumentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     documentLongClickListener.onDocumentLongClicked(position);
                     return true;
                 }
-                return false; //todo check
+                return false;
             }
         });
     }
@@ -81,22 +81,25 @@ public class DocumentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         this.documentLongClickListener = documentLongClickListener;
     }
 
-    //delete a document
+    /**
+     * delete a document from adapter
+     * @param document - the document to delte
+     */
     public void deleteDocument(Document document) {
         documents.remove(document);
     }
 }
 
+/**
+ * the document holder class for adapter
+ */
 class DocumentItemHolder extends RecyclerView.ViewHolder {
     TextView title;
     TextView expirationDate;
     ImageView alarmImg;
 
-    // todo check if need to add more
-
     public DocumentItemHolder(@NonNull View itemView) {
         super(itemView);
-        //todo check what needs to hold
         title = itemView.findViewById(R.id.document_title);
         expirationDate = itemView.findViewById(R.id.tv_expiry_date);
         alarmImg = itemView.findViewById(R.id.iv_alarm);
