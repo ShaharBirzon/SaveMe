@@ -16,6 +16,9 @@ import androidx.fragment.app.DialogFragment;
 
 import com.save.saveme.R;
 
+/**
+ * a dialog for the expiration date
+ */
 public class ExpirationDateDialog extends DialogFragment {
     private static final String TAG = "ExpirationDateDialog";
     private String[] possibleDates; //categories titles not used for spinner
