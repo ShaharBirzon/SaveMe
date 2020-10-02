@@ -333,12 +333,11 @@ public class FirebaseMediate extends Application {
     }
 
     /**
-     *
-     * @param bitmap
-     * @param context
-     * @param categoryTitle
-     * @param documentTitle
-     * @param imageType
+     * @param bitmap        - the bitmap of image
+     * @param context       - context
+     * @param categoryTitle - category title
+     * @param documentTitle - document title
+     * @param imageType     - image type
      */
     public static void uploadImageToFirebaseStorageDB(Bitmap bitmap, Context context, String categoryTitle, String documentTitle, String imageType) {
         // Get the data from an ImageView as bytes
@@ -346,7 +345,7 @@ public class FirebaseMediate extends Application {
                 child(MyPreferences.getUserDocumentPathFromPreferences(context)).child(categoryTitle).child(documentTitle).child("image");
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
         byte[] data = baos.toByteArray();
 
         UploadTask uploadTask = ref.putBytes(data);
