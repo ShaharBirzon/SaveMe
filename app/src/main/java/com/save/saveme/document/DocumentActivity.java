@@ -246,7 +246,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
                     Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                     Bitmap previewBitmap = Bitmap.createScaledBitmap(bmp, (int) (bmp.getWidth() * 0.5), (int) (bmp.getHeight() * 0.5), true);
                     documentImageView.setImageBitmap(previewBitmap);
-                    curDocument.setBitmap(bmp);
+                    curDocument.setBitmap(previewBitmap);
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -346,7 +346,11 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             @Override
             public void onTimeSet(TimePicker timePicker, int hour, int min) {
                 alarmTimePicker1 = timePicker;
-                String time = hour + ":" + min;
+                String minStr = "" + min;
+                if (min < 10){
+                    minStr = "0" + min;
+                }
+                String time = hour + ":" + minStr;
                 reminderTimeET1.getEditText().setText(time);
                 changedReminderTime = true;
             }
