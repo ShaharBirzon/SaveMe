@@ -21,6 +21,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private ArrayList<Category> categories;
     private CategoryClickListener categoryClickListener;
     private CategoryLongClickListener categoryLongClickListener;
+    private static final int[] iconImages = {R.drawable.money, R.drawable.tax, R.drawable.lipstick, R.drawable.id, R.drawable.house, R.drawable.garden, R.drawable.fish, R.drawable.fan, R.drawable.email, R.drawable.dog, R.drawable.car, R.drawable.cake, R.drawable.buy, R.drawable.cat, R.drawable.company};
 
     CategoryAdapter(ArrayList<Category> items) {
         categories = items;
@@ -39,7 +40,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         Category catItem = categories.get(position);
         CategoryItemHolder catHolder = ((CategoryItemHolder) holder);
         catHolder.title.setText(catItem.title);
-        catHolder.image.setImageResource(catItem.getImage());
+        catHolder.image.setImageResource(iconImages[catItem.getImage()]);
 
         // set click listener
         holder.itemView.setOnClickListener(new View.OnClickListener() {

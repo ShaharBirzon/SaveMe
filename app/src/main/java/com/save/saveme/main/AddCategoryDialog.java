@@ -55,6 +55,7 @@ public class AddCategoryDialog extends DialogFragment {
     private ImageView iconPrevView;
 
     private int iconImageValue = DEFAULT_ICON; //initialized to default icon
+    private static final int[] iconImages = {R.drawable.money, R.drawable.tax, R.drawable.lipstick, R.drawable.id, R.drawable.house, R.drawable.garden, R.drawable.fish, R.drawable.fan, R.drawable.email, R.drawable.dog, R.drawable.car, R.drawable.cake, R.drawable.buy, R.drawable.cat, R.drawable.company};
 
 
     @Nullable
@@ -180,7 +181,7 @@ public class AddCategoryDialog extends DialogFragment {
             if (resultCode == RESULT_OK) {
                 iconImageValue = data.getIntExtra("iconIntValue", DEFAULT_ICON);
                 iconPrevView.setVisibility(View.VISIBLE);
-                iconPrevView.setImageResource(iconImageValue);
+                iconPrevView.setImageResource(iconImages[iconImageValue]);
                 Log.d(TAG, "set icon image to value: " + Integer.toString(iconImageValue));
             }
         }
