@@ -4,12 +4,12 @@ import android.app.Activity;
 import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.save.saveme.R;
 import com.save.saveme.category.Document;
@@ -23,11 +23,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
@@ -35,6 +32,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.save.saveme.main.MainActivity;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,7 +76,6 @@ public class FirebaseMediate extends Application {
             Log.d(TAG, "started initialize user data from DB");
             userDocumentRef = db.document(userDocumentPath);
             categoriesRef = userDocumentRef.collection("categories");
-            initializeUserDocumentSnapshotFromDB();
             initializeUserCategoriesSnapshotFromDB(new MainActivity.FireStoreCallBack() {
                 @Override
                 public void onCallBack(ArrayList<Category> categories) {
@@ -88,17 +85,6 @@ public class FirebaseMediate extends Application {
         }
     }
 
-    /**
-     * This method initializes the userDocumentSnapshot.
-     */
-    public static void initializeUserDocumentSnapshotFromDB() {
-        userDocumentRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-            }
-        });
-        Log.d(TAG, "successful setUserCollectionRef from db");
-    }
 
     /**
      * This method is a getter  for user categories list.
@@ -345,4 +331,36 @@ public class FirebaseMediate extends Application {
             }
         });
     }
+
+    /**
+     *
+     * @param bitmap
+     * @param context
+     * @param categoryTitle
+     * @param documentTitle
+     * @param imageType
+     */
+    public static void uploadImageToFirebaseStorageDB(Bitmap bitmap, Context context, String categoryTitle, String documentTitle, String imageType) {
+        // Get the data from an ImageView as bytes
+        StorageReference ref = storageReference.child("Files").
+                child(MyPreferences.getUserDocumentPathFromPreferences(context)).child(categoryTitle).child(documentTitle).child("image");
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        UploadTask uploadTask = ref.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Log.e(TAG, "filed to upload the document image to the storage DB");
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Log.d(TAG, "successfully uploaded the document image to the storage DB");
+            }
+        });
+    }
+
 }
