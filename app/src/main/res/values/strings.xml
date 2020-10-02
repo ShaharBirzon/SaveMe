@@ -32,6 +32,7 @@
     </string-array>
 
     <string-array name="times">
+        <item>same day</item>
         <item>day before</item>
         <item>week before</item>
         <item>month before</item>
