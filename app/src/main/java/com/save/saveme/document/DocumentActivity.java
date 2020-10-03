@@ -293,6 +293,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
      */
     private void addFieldsValidation() {
         validateDocumentTitle();
+        validateDocumentComment();
     }
 
     /*
@@ -722,6 +723,23 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         if (inputLength < 16 && inputLength > 0) {
             isDocumentTitleValid = true;
         }
+    }
+
+    private void validateDocumentComment() {
+        documentCommentET.getEditText().addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                curDocument.setComment(documentCommentET.getEditText().getText().toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
     }
 
     /**
