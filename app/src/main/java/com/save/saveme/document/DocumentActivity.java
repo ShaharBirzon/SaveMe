@@ -79,6 +79,7 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
     private static final String TAG = "DocumentActivity";
     private static final long ONE_MEGABYTE = 1024 * 1024;
     public static final int FILE_REQUEST_CODE = 10;
+    private static int notificationId = 0;
     private TextInputLayout documentTitleET;
     private TextInputLayout documentCommentET;
     private TextInputLayout documentExpirationDateET;
@@ -629,9 +630,10 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
             return -1;
         }
 
-        Intent myIntent = new Intent(getBaseContext(), AlarmReceiver.class);
+        Intent myIntent = new Intent(getApplicationContext(), AlarmReceiver.class);
         myIntent.putExtra("call_reason", "edit_document");
         myIntent.putExtra("position", position);
+        myIntent.putExtra("notificationId", notificationId);
         myIntent.putExtra("document_title", curDocument.getTitle());
         myIntent.putExtra("category_title", categoryTitle);
         myIntent.putExtra("document_comment", curDocument.getComment());
@@ -642,8 +644,8 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         myIntent.putExtra("file_download_uri", curDocument.getFileDownloadUri());
         myIntent.putExtra("has_alarm", curDocument.getHasAlarm());
         myIntent.putExtra("is_add_event_to_phone_calender", curDocument.getIsAddEventToPhoneCalender());
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getBaseContext(), 0, myIntent, 0);
-
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), notificationId, myIntent, PendingIntent.FLAG_ONE_SHOT);
+        notificationId++;
         manager.set(AlarmManager.RTC_WAKEUP, cal_alarm.getTimeInMillis() - alarmBeforeWeek, pendingIntent);
         return 0;
     }
@@ -797,10 +799,11 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         Bitmap bmp = curDocument.getBitmap();
         Bitmap previewBitmap = Bitmap.createScaledBitmap(bmp, (int) (bmp.getWidth() * 0.5), (int) (bmp.getHeight() * 0.5), true);
-        Bitmap compressedBitmap = scaleDownBitmap(previewBitmap, 1024, true); //todo check what should be maxImageSize
-        compressedBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        Bitmap compressedBitmap = scaleDownBitmap(previewBitmap, 800, true); //todo check what should be maxImageSize
+        compressedBitmap.compress(Bitmap.CompressFormat.PNG, 50, stream);
         byte[] byteArray = stream.toByteArray();
         fullScreenIntent.putExtra("image", byteArray);
+        Log.d(TAG, "got to end of onImageClick");
         startActivity(fullScreenIntent);
     }
 

@@ -3,7 +3,10 @@ package com.save.saveme;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -37,6 +40,7 @@ public class WelcomeActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                initializeNotificationChannel();
                 if (MyPreferences.isFirstTime(getApplicationContext())) {
                     callSignUpActivity();
                 } else {
@@ -46,6 +50,21 @@ public class WelcomeActivity extends AppCompatActivity {
                 }
             }
         }, SPLASH_TIME_OUT);
+    }
+
+    /*
+    This method initialize NotificationChannel
+     */
+    private void initializeNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "my_channel_01";
+            String description = "description";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("CHANNEL_ID", name, importance);
+            channel.setDescription(description);
+            NotificationManager notificationManager = getApplicationContext().getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
 

@@ -30,7 +30,7 @@ import static android.app.Activity.RESULT_OK;
 public class AddCategoryDialog extends DialogFragment {
     private static final String TAG = "AddCategoryFragment";
     private static final int CATEGORY_ICON_REQUEST_CODE = 111;
-    public static final int DEFAULT_ICON = R.drawable.buy;
+    public static final int DEFAULT_ICON = 13; //R.drawable.buy
     public static final int MAX_CATEGORY_NAME_LENGTH = 20;
     private String[] categoriesTitles; //categories titles not used for spinner
     private boolean isCategoryTitleValid = false;

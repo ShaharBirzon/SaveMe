@@ -26,16 +26,6 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "my_channel_01";
-            String description = "description";
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-            channel.setDescription(description);
-            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
         Intent documentIntent = new Intent(context, DocumentActivity.class);
         documentIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
@@ -51,16 +41,18 @@ public class AlarmReceiver extends BroadcastReceiver {
         documentIntent.putExtra("file_download_uri", intent.getStringExtra("file_download_uri"));
         documentIntent.putExtra("has_alarm", intent.getBooleanExtra("has_alarm", false));
         documentIntent.putExtra("is_add_event_to_phone_calender", intent.getBooleanExtra("is_add_event_to_phone_calender", false));
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, documentIntent, 0);
+
+        final int notificationId = intent.getIntExtra("notificationId", 0);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationId, documentIntent, PendingIntent.FLAG_ONE_SHOT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_event_busy)
                 .setContentTitle(TEXT_TITLE)
                 .setContentText(CONTENT_TITLE)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setContentIntent(pendingIntent);
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-        notificationManager.notify(1, builder.build());
-
+        notificationManager.notify(notificationId, builder.build());
     }
 }
