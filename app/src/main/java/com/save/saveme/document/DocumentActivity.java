@@ -725,6 +725,9 @@ public class DocumentActivity extends AppCompatActivity implements DatePickerDia
         }
     }
 
+    /*
+    This method validates document comment is valid and saves the user input for this field.
+     */
     private void validateDocumentComment() {
         documentCommentET.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
