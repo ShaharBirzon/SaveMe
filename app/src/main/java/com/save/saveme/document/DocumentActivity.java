@@ -72,7 +72,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * a class for the document activity
+ * a class for the document activity. In this activity the user can enter data and upload a new doc
  */
 public class DocumentActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, ExpirationDateDialog.OnExpirationDateInputListener {
 

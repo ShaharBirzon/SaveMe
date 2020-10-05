@@ -13,7 +13,7 @@ import com.save.saveme.R;
 import java.util.ArrayList;
 
 /**
- * adapter for the document adapter
+ * adapter for the document list
  */
 public class DocumentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 

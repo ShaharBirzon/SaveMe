@@ -3,7 +3,7 @@ package com.save.saveme.category;
 import android.graphics.Bitmap;
 
 /**
- * the class that represents a document
+ * the class that represents a document item
  */
 public class Document {
     private String title;

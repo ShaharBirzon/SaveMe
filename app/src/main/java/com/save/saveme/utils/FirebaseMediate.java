@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * a class the handles connection with the firebase
+ * a class the handles connection and integration with the firebase firestore
  */
 public class FirebaseMediate extends Application {
     private static ArrayList<Category> categories = new ArrayList<>();

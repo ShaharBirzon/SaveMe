@@ -25,7 +25,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import static android.app.Activity.RESULT_OK;
 
 /**
- * a dialog to add a category
+ * a dialog for adding a category
  */
 public class AddCategoryDialog extends DialogFragment {
     private static final String TAG = "AddCategoryFragment";

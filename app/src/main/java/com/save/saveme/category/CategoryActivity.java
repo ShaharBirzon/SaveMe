@@ -29,7 +29,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 /**
- * this class represents the category activity
+ * this class represents the category activity. In this class the user can see the list of all
+ * documents saved that relates to the category
  */
 public class CategoryActivity extends AppCompatActivity {
 

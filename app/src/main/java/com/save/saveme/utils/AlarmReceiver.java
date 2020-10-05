@@ -15,7 +15,7 @@ import com.save.saveme.R;
 import com.save.saveme.document.DocumentActivity;
 
 /**
- * alarm reciever class for push notification
+ * alarm receiver class for push notifications
  */
 public class AlarmReceiver extends BroadcastReceiver {
 

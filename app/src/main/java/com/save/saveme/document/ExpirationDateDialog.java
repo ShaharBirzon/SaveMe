@@ -17,7 +17,8 @@ import androidx.fragment.app.DialogFragment;
 import com.save.saveme.R;
 
 /**
- * a dialog for the expiration date
+ * a dialog for the expiration date. This dialog present the found expiration dates from
+ * the document
  */
 public class ExpirationDateDialog extends DialogFragment {
     private static final String TAG = "ExpirationDateDialog";
