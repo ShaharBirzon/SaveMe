@@ -1,8 +1,8 @@
 package com.save.saveme.main;
 
 /**
- * an interface for a category listener
+ * an interface for a category click listener
  */
 public interface CategoryClickListener {
-    public void onCategoryClicked(int position);
+    void onCategoryClicked(int position);
 }

@@ -21,7 +21,7 @@ import com.save.saveme.R;
 import static android.app.Activity.RESULT_OK;
 
 /**
- * a class for the icon selection
+ * a class for the icon selection fragment
  */
 public class ChooseIconFragment extends DialogFragment {
     private int lastImageToBeSelected = 0;

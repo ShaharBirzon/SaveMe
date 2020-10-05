@@ -5,7 +5,7 @@ import com.save.saveme.category.Document;
 import java.util.ArrayList;
 
 /**
- * a class that represents a category
+ * a class that represents a category item
  */
 public class Category {
     public String title;

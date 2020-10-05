@@ -11,13 +11,11 @@
     <string name="twitter_consumer_secret" translatable="false">YOUR_CONSUMER_SECRET</string>
     <string name="cancel">CANCEL</string>
     <string name="choose_icon">Choose icon</string>
-    <string name="description">Description</string>
     <string name="save">SAVE</string>
     <string name="added_file_file_name">click to preview document</string>
     <string name="change_image">change image</string>
     <string name="add_image">add image</string>
     <string name="add_file">add file</string>
-    <string name="enter_time">At what time?</string>
     <string name="change_file">change file</string>
 
     <string-array name="categories">
