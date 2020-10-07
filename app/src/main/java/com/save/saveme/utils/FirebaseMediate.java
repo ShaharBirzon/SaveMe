@@ -79,7 +79,7 @@ public class FirebaseMediate extends Application {
             initializeUserCategoriesSnapshotFromDB(new MainActivity.FireStoreCallBack() {
                 @Override
                 public void onCallBack(ArrayList<Category> categories) {
-                    FirebaseMediate.this.categories = categories;
+                    FirebaseMediate.categories = categories;
                 }
             });
         }

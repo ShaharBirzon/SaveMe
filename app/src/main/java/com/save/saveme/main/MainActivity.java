@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
             Log.d(TAG, "got to else - not user's first time");
 
             categories = FirebaseMediate.getUserCategories();
+            Log.d(TAG, "categories length after FirebaseMediate.getUserCategories is: "+categories.size());
             if (categories.isEmpty()) {
                 FirebaseMediate.initializeUserCategoriesSnapshotFromDB(new FireStoreCallBack() {
 
@@ -94,11 +95,14 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
     /*
      * updates categories presented
      */
-    private void updateCategoriesFromFirestoreDB(ArrayList<Category> categories) {
-        Log.d(TAG, "got to update categories onCallBack, with categories: " + categories);
-        MainActivity.this.categories.clear();
-        MainActivity.this.categories.addAll(categories);// Adapter has to have same categories ArrayList
+    private void updateCategoriesFromFirestoreDB(ArrayList<Category> resCategories) {
+        Log.d(TAG, "got to update categories onCallBack, with categories: " + resCategories);
+        categories.clear();
+        for (Category category: resCategories){
+            categories.add(category);
+        }
         categoryAdapter.notifyDataSetChanged();
+        Log.d(TAG, "categories length after updateCategoriesFromFirestoreDB: "+categories.size());
     }
 
     /**
