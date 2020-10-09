@@ -7,8 +7,8 @@ android {
         applicationId "com.save.saveme"
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 3
-        versionName "1.3"
+        versionCode 4
+        versionName "1.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
@@ -33,7 +33,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
     implementation 'com.google.firebase:firebase-auth:19.4.0'
-    implementation 'com.google.firebase:firebase-analytics:17.5.0'
+    implementation 'com.google.firebase:firebase-analytics:17.6.0'
     implementation 'com.google.firebase:firebase-storage:19.2.0'
 
     implementation 'com.firebaseui:firebase-ui-auth:6.2.0'

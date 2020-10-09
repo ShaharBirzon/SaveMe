@@ -97,12 +97,15 @@ public class MainActivity extends AppCompatActivity implements AddCategoryDialog
      */
     private void updateCategoriesFromFirestoreDB(ArrayList<Category> resCategories) {
         Log.d(TAG, "got to update categories onCallBack, with categories: " + resCategories);
-        categories.clear();
-        for (Category category: resCategories){
-            categories.add(category);
+        Log.d(TAG, "got to update categories onCallBack, with resCategories size: " + resCategories.size());
+        if (MainActivity.this.categories.size()==0) {
+            for (Category category : resCategories) {
+                MainActivity.this.categories.add(category);
+                Log.d(TAG, "added category: " + category.getTitle());
+            }
         }
         categoryAdapter.notifyDataSetChanged();
-        Log.d(TAG, "categories length after updateCategoriesFromFirestoreDB: "+categories.size());
+        Log.d(TAG, "categories length after updateCategoriesFromFirestoreDB: "+ MainActivity.this.categories.size());
     }
 
     /**
